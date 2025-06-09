@@ -1,0 +1,9 @@
+# Ignore vscode settings
+.vs
+
+# Ignore Docker-managed volumes and runtime data
+**/config
+**/data
+
+# Ignore environment files that might contain secrets
+**/.env

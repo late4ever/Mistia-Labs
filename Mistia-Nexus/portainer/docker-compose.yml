@@ -1,0 +1,15 @@
+# docker-compose.yml for Portainer CE
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    ports:
+      # Port 9443 for the HTTPS UI, 8000 for the Edge Agent
+      - 9444:9443
+      - 8000:8000
+    volumes:
+      # Allows Portainer to manage the Docker environment
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Persistent data for Portainer itself
+      - ./data:/data
+    restart: unless-stopped

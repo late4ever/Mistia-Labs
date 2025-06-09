@@ -1,0 +1,17 @@
+# docker-compose.yml for Duplicati
+services:
+  duplicati:
+    image: lscr.io/linuxserver/duplicati:latest
+    container_name: duplicati
+    environment:
+      - PUID=1000
+      - PGID=10
+      - TZ=Asia/Singapore
+    volumes:
+      # Config data stored locally within this service's directory
+      - ./config:/config
+      # Gives Duplicati read-only access to the entire NAS filesystem
+      - /:/nasroot:ro # 'ro' for read-only is a safer default
+    ports:
+      - 8200:8200
+    restart: unless-stopped
