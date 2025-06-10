@@ -85,7 +85,6 @@ fi
 # Step 5: Set Script Permissions
 print_header "Step 6: Setting permissions for management scripts..."
 cd "$DEPLOY_DIR/Mistia-Nexus"
-sudo chown -R "$NAS_USER":"$NAS_GROUP" .
 sudo chmod +x start_all.sh stop_all.sh update_all.sh
 
 print_header "System Preparation Complete!"
