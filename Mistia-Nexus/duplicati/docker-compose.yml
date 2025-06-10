@@ -8,10 +8,10 @@ services:
       - PGID=10
       - TZ=Asia/Singapore
       - SETTINGS_ENCRYPTION_KEY=${DUPLICATI_SETTINGS_KEY}
+      - PASSWORD=${DUPLICATI_UI_PASSWORD}
     volumes:
       - ./config:/config
-      # Gives Duplicati read-only access to the entire NAS filesystem
-      - /:/nasroot:ro # 'ro' for read-only is a safer default
+      - /:/nasroot:ro
     ports:
       - 8200:8200
     restart: unless-stopped

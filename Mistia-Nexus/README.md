@@ -83,8 +83,9 @@ Before starting the containers, you must create the secret `.env` file for Dupli
 
     * Inside the editor, add the following line. Replace `YourSuperSecretKeyHere` with a strong, random password that you have generated and saved in a password manager.
 
-        ```
+        ```txt
         DUPLICATI_SETTINGS_KEY=YourSuperSecretKeyHere
+        DUPLICATI_UI_PASSWORD=YourChosenUIPassword
         ```
 
     * Save the file and exit (`Ctrl+O`, then `Enter`, then `Ctrl+X`).
