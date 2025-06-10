@@ -50,6 +50,7 @@ echo "NOTE: This change requires a new login session to take effect."
 # Step 4: Clone Repository and Set Upstream Tracking
 print_header "Step 4: Preparing to clone from GitHub repository..."
 cd "$DEPLOY_DIR"
+sudo chown -R "$NAS_USER":"$NAS_GROUP" .
 
 if [ -d ".git" ]; then
   echo "Repository already seems to be cloned. Skipping."
