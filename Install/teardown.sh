@@ -64,10 +64,6 @@ print_header "Step 4: Reverting system changes..."
 echo "Removing user '$NAS_USER' from the 'docker' group..."
 sudo gpasswd -d "$NAS_USER" docker || echo "User was not in docker group or group does not exist. Skipping."
 
-echo "Disabling the Docker service from starting on boot..."
-sudo systemctl disable docker || echo "Docker service was not enabled. Skipping."
-sudo systemctl stop docker || echo "Docker service was not running. Skipping."
-
 # Step 5: Clean up downloaded scripts from home directory
 print_header "Step 5: Cleaning up bootstrap scripts..."
 if [ -f ~/setup.sh ]; then
