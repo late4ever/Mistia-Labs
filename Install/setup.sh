@@ -1,16 +1,15 @@
 #!/bin/bash
 #
-# Mistia-Nexus Homelab Setup Script (v4 - Streamlined)
+# Mistia-Nexus Homelab Setup Script (v5 - Corrected Permissions)
 # This script automates the setup of Docker services on a Ugreen NAS.
 #
 
 # --- START OF CONFIGURATION ---
-# Static GitHub details. These are now hardcoded for simplicity.
 GIT_USER="late4ever"
 GIT_REPO="Mistia-Labs"
 GIT_BRANCH="main"
 NAS_USER="late4ever"
-# The absolute path on your NAS where services will be deployed
+NAS_GROUP="admin"
 DEPLOY_DIR="/volume2/docker"
 # --- END OF CONFIGURATION ---
 
@@ -19,7 +18,6 @@ set -e
 
 # --- SCRIPT FUNCTIONS ---
 
-# Function to print a formatted header
 print_header() {
   echo
   echo "======================================================================"
@@ -42,10 +40,10 @@ sudo usermod -aG docker "$NAS_USER"
 echo "NOTE: You may need to log out and log back in for this change to take full effect."
 echo "The script will continue using 'sudo' for Docker commands."
 
-# 3. Create Deployment Directory
-print_header "Step 3: Creating deployment directory at '$DEPLOY_DIR'..."
+# 3. Create Deployment Directory and Set Correct Ownership
+print_header "Step 3: Creating deployment directory and setting ownership..."
 sudo mkdir -p "$DEPLOY_DIR"
-sudo chown "$NAS_USER":"$NAS_USER" "$DEPLOY_DIR"
+sudo chown "$NAS_USER":"$NAS_GROUP" "$DEPLOY_DIR"
 cd "$DEPLOY_DIR"
 
 # 4. Clone Repository using Sparse Checkout
