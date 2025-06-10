@@ -27,7 +27,7 @@ Before you begin, complete these three manual steps on your NAS.
 
 ## 2. Automated Installation
 
-The installation is now a two-part process: preparing the system, then deploying the containers.
+The installation is now a three-part process: preparing the system, creating your secrets, and deploying the containers.
 
 ### Part A: Prepare the System
 
@@ -47,7 +47,7 @@ The installation is now a two-part process: preparing the system, then deploying
     printf "\n"
 
     curl -sL -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-      "https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/Install/setup.sh" \
+      "[https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/Install/setup.sh](https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/Install/setup.sh)" \
       -o setup.sh
 
     chmod +x setup.sh
@@ -57,7 +57,9 @@ The installation is now a two-part process: preparing the system, then deploying
 
     The script will run and finish by instructing you to log out.
 
-### Part B: Deploy the Containers
+### Part B: Create Application Secrets
+
+Before starting the containers, you must create the secret `.env` file for Duplicati.
 
 1. **Log Out & Log Back In:** As instructed by the script, close your SSH session and start a new one to apply your new Docker group permissions.
 
@@ -66,14 +68,37 @@ The installation is now a two-part process: preparing the system, then deploying
     ssh late4ever@mistia-nexus.local
     ```
 
-2. **Run the Start Script:** Navigate to the deployment directory and run the `start_all.sh` script to launch your Docker containers for the first time.
+2. **Create the Duplicati Secret File:**
+    * Navigate to the `duplicati` directory:
+
+        ```bash
+        cd /volume2/docker/duplicati
+        ```
+
+    * Create and edit the new `.env` file:
+
+        ```bash
+        nano .env
+        ```
+
+    * Inside the editor, add the following line. Replace `YourSuperSecretKeyHere` with a strong, random password that you have generated and saved in a password manager.
+
+        ```
+        DUPLICATI_SETTINGS_KEY=YourSuperSecretKeyHere
+        ```
+
+    * Save the file and exit (`Ctrl+O`, then `Enter`, then `Ctrl+X`).
+
+### Part C: Deploy the Containers
+
+1. **Run the Start Script:** Navigate to the main deployment directory and run the `start_all.sh` script to launch your Docker containers for the first time.
 
     ```bash
     cd /volume2/docker
     ./start_all.sh
     ```
 
-    Your containers will now start up correctly.
+    Your containers will now start up correctly, with Duplicati securely loading its key from your new `.env` file.
 
 ## 3. Post-Installation
 
@@ -87,8 +112,6 @@ For daily management, `cd` into the deployment directory (`/volume2/docker`) and
 * `./start_all.sh`: Starts all services.
 * `./stop_all.sh`: Stops all services.
 * `./update_all.sh`: Pulls the latest Docker images and restarts the services.
-
----
 
 ## 5. Teardown / Clean Up (For Fresh Testing)
 
@@ -106,6 +129,7 @@ If you need to completely reset your NAS to test the setup process from scratch,
     * This command will securely download and run the teardown script. It will ask for confirmation before deleting anything.
 
     ```bash
+    # --- Teardown Bootstrap ---
     read -sp 'Paste your GitHub PAT and press Enter: ' GITHUB_TOKEN
     printf "\n"
 
