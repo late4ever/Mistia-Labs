@@ -44,7 +44,7 @@ This process will securely download and execute the setup script.
     printf "\n"
   
     curl -sL -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-      "https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/install/setup.sh" \
+      "https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/Install/setup.sh" \
       -o setup.sh
 
     chmod +x setup.sh
