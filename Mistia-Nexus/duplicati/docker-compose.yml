@@ -7,8 +7,8 @@ services:
       - PUID=1000
       - PGID=10
       - TZ=Asia/Singapore
+      - SETTINGS_ENCRYPTION_KEY=${DUPLICATI_SETTINGS_KEY}
     volumes:
-      # Config data stored locally within this service's directory
       - ./config:/config
       # Gives Duplicati read-only access to the entire NAS filesystem
       - /:/nasroot:ro # 'ro' for read-only is a safer default
