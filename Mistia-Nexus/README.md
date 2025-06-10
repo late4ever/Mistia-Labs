@@ -2,11 +2,11 @@
 
 This repository contains the Infrastructure as Code (IaC) to automatically deploy and manage Docker services on a Ugreen NAS.
 
-The core of this automation is the `install/setup.sh` script, which handles package installation, repository cloning, and service deployment.
+The core of this automation is the `install/setup.sh` script, which handles package installation, repository cloning, and service deployment **securely**.
 
 ## 1. Prerequisites (Manual Steps)
 
-Before running the automated installer, you must complete these three manual steps on your NAS.
+Before running the automated installer, you must complete these three manual steps.
 
 1. **Initial System Setup:**
     * Complete the UGOS Pro setup wizard.
@@ -18,39 +18,54 @@ Before running the automated installer, you must complete these three manual ste
     * To clone this private repository, you need a PAT.
     * Follow the [GitHub documentation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) to create a **classic** token.
     * **You only need to grant the `repo` scope.**
-    * Copy the generated token and save it somewhere secure. You will need it to run the setup script.
+    * **Copy the generated token and have it ready to paste.** Do NOT save it in any file inside this repository.
+
+3. **Configure `setup.sh`:**
+    * Open the `install/setup.sh` file in this repository.
+    * Find the `NAS_USER` variable at the top and change its value to your actual username on the Ugreen NAS.
+    * Commit and push this change to your repository.
 
 ## 2. Automated Installation
 
-This single command will download and execute the setup script, automating the entire deployment.
+This process will securely download and execute the setup script.
 
 1. **Connect to your NAS via SSH:**
 
     ```bash
-    ssh late4ever@mistia-nexus.local -p 22
+    ssh late4ever@mistia-nexus.local
     ```
 
-2. **Run the Installer:**
-    * **Before pasting**, you must open the `install/setup.sh` file in your GitHub repository and **edit the configuration variables** at the top with your own `GIT_USER`, `GIT_REPO`, `GIT_PAT`, `NAS_USER`, etc.
-    * Once edited, paste this clean command into your SSH session and press Enter:
+2. **Run the Installer Bootstrap:**
+    * Copy the **entire multi-line block of commands** below and paste it into your SSH session.
+    * You will be prompted once to securely enter your PAT.
 
     ```bash
-    bash <(curl -sL https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/Install/setup.sh)
+    # --- Installer Bootstrap ---
+
+    # 1. Securely ask for your GitHub Personal Access Token
+    read -sp 'Paste your GitHub PAT and press Enter: ' GITHUB_TOKEN
+    printf "\n"
+
+    # 2. Download the installer script using the token for authentication
+    curl -sL -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+      "https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/install/setup.sh" \
+      -o setup.sh
+
+    # 3. Make the script executable
+    chmod +x setup.sh
+
+    # 4. Run the installer script, passing the token to it so you aren't asked again
+    ./setup.sh "${GITHUB_TOKEN}"
+
+    # --- End of Bootstrap ---
     ```
 
-The script will now run and perform all necessary setup steps.
+The script will now handle the rest of the setup automatically.
 
 ## 3. Post-Installation
 
-The script handles the technical setup, but you still need to configure the applications themselves.
-
-* **Portainer:** Access at `https://mistia-nexus.local:9444` to create your admin account and view your Docker environment.
-* **Duplicati:** Access at `http://mistia-nexus.local:8200` to configure your backup jobs (NVMe to HDD, PC to NAS, etc.).
+... (This section remains the same) ...
 
 ## 4. Ongoing Management
 
-For daily management, `cd` into the deployment directory (`/volume2/docker`) and use the provided scripts:
-
-* `./start_all.sh`: Starts all services.
-* `./stop_all.sh`: Stops all services.
-* `./update_all.sh`: Pulls the latest Docker images and restarts the services.
+... (This section remains the same) ...

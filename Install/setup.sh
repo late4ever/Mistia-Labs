@@ -1,28 +1,17 @@
 #!/bin/bash
 #
-# Mistia-Nexus Homelab Setup Script (v2 - Secure)
+# Mistia-Nexus Homelab Setup Script (v4 - Streamlined)
 # This script automates the setup of Docker services on a Ugreen NAS.
 #
 
 # --- START OF CONFIGURATION ---
-# !!! EDIT THESE VARIABLES BEFORE RUNNING !!!
-
-# Your GitHub username
+# Static GitHub details. These are now hardcoded for simplicity.
 GIT_USER="late4ever"
-
-# The name of your repository
 GIT_REPO="Mistia-Labs"
-
-# The main branch of your repository (usually 'main' or 'master')
 GIT_BRANCH="main"
-
-# The local user on your NAS that will run the services
 NAS_USER="late4ever"
-
 # The absolute path on your NAS where services will be deployed
-# This will be created on Volume 2 for resilience.
 DEPLOY_DIR="/volume2/docker"
-
 # --- END OF CONFIGURATION ---
 
 # Exit immediately if a command exits with a non-zero status.
@@ -50,7 +39,7 @@ sudo apt-get install -y git docker.io docker-compose
 # 2. Configure Docker Permissions
 print_header "Step 2: Adding user '$NAS_USER' to the Docker group..."
 sudo usermod -aG docker "$NAS_USER"
-echo "NOTE: You will need to log out and log back in for this change to take full effect."
+echo "NOTE: You may need to log out and log back in for this change to take full effect."
 echo "The script will continue using 'sudo' for Docker commands."
 
 # 3. Create Deployment Directory
@@ -59,14 +48,19 @@ sudo mkdir -p "$DEPLOY_DIR"
 sudo chown "$NAS_USER":"$NAS_USER" "$DEPLOY_DIR"
 cd "$DEPLOY_DIR"
 
-# 4. Clone Repository using Sparse Checkout and a Secure Prompt for PAT
+# 4. Clone Repository using Sparse Checkout
 print_header "Step 4: Preparing to clone from GitHub repository..."
 if [ -d ".git" ]; then
   echo "Repository already seems to be cloned. Skipping."
 else
-  # Securely prompt for the PAT. The '-s' flag hides the input.
-  read -sp 'Please paste your GitHub Personal Access Token (PAT): ' GIT_PAT_INPUT
-  printf "\n" # Adds a newline after the hidden input
+  # Check if PAT was passed as an argument to the script ($1). If not, prompt for it.
+  if [ -n "$1" ]; then
+    GIT_PAT_INPUT="$1"
+    echo "Using PAT provided by bootstrap..."
+  else
+    read -sp 'Please paste your GitHub Personal Access Token (PAT): ' GIT_PAT_INPUT
+    printf "\n"
+  fi
 
   if [ -z "$GIT_PAT_INPUT" ]; then
     echo "Error: No PAT provided. Aborting."
