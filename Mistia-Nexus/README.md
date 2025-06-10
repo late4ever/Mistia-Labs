@@ -40,32 +40,31 @@ This process will securely download and execute the setup script.
     * You will be prompted once to securely enter your PAT.
 
     ```bash
-    # --- Installer Bootstrap ---
-
-    # 1. Securely ask for your GitHub Personal Access Token
     read -sp 'Paste your GitHub PAT and press Enter: ' GITHUB_TOKEN
     printf "\n"
-
-    # 2. Download the installer script using the token for authentication
+  
     curl -sL -H "Authorization: Bearer ${GITHUB_TOKEN}" \
       "https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/install/setup.sh" \
       -o setup.sh
 
-    # 3. Make the script executable
     chmod +x setup.sh
 
-    # 4. Run the installer script, passing the token to it so you aren't asked again
     ./setup.sh "${GITHUB_TOKEN}"
-
-    # --- End of Bootstrap ---
     ```
 
 The script will now handle the rest of the setup automatically.
 
 ## 3. Post-Installation
 
-... (This section remains the same) ...
+The script handles the technical setup, but you still need to configure the applications themselves.
+
+* **Portainer:** Access at `https://mistia-nexus.local:9444` to create your admin account and view your Docker environment.
+* **Duplicati:** Access at `http://mistia-nexus.local:8200` to configure your backup jobs (NVMe to HDD, PC to NAS, etc.).
 
 ## 4. Ongoing Management
 
-... (This section remains the same) ...
+For daily management, `cd` into the deployment directory (`/volume2/docker`) and use the provided scripts:
+
+* `./start_all.sh`: Starts all services.
+* `./stop_all.sh`: Stops all services.
+* `./update_all.sh`: Pulls the latest Docker images and restarts the services.
