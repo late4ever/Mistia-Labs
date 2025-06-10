@@ -47,7 +47,7 @@ The installation is now a three-part process: preparing the system, creating you
     printf "\n"
 
     curl -sL -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-      "[https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/Install/setup.sh](https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/Install/setup.sh)" \
+      "https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/Install/setup.sh" \
       -o setup.sh
 
     chmod +x setup.sh
