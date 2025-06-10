@@ -27,7 +27,7 @@ Before you begin, complete these three manual steps on your NAS.
 
 ## 2. Automated Installation
 
-The installation is now a three-part process: preparing the system, creating your secrets, and deploying the containers.
+The installation is a three-part process: preparing the system, creating your secrets, and deploying the containers.
 
 ### Part A: Prepare the System
 
@@ -42,16 +42,12 @@ The installation is now a three-part process: preparing the system, creating you
     * You will be prompted once to securely enter your PAT.
 
     ```bash
-    # --- Installer Bootstrap ---
     read -sp 'Paste your GitHub PAT and press Enter: ' GITHUB_TOKEN
     printf "\n"
-
     curl -sL -H "Authorization: Bearer ${GITHUB_TOKEN}" \
       "https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/Install/setup.sh" \
       -o setup.sh
-
     chmod +x setup.sh
-
     ./setup.sh "${GITHUB_TOKEN}"
     ```
 
@@ -72,7 +68,7 @@ Before starting the containers, you must create the secret `.env` file for Dupli
     * Navigate to the `duplicati` directory:
 
         ```bash
-        cd /volume2/docker/duplicati
+        cd /volume2/Mistia-Nexus/duplicati
         ```
 
     * Create and edit the new `.env` file:
@@ -81,7 +77,7 @@ Before starting the containers, you must create the secret `.env` file for Dupli
         nano .env
         ```
 
-    * Inside the editor, add the following line. Replace `YourSuperSecretKeyHere` with a strong, random password that you have generated and saved in a password manager.
+    * Inside the editor, add the following line. Replace `YourSuperSecretKeyHere` and `YourChosenUIPassword` with a strong, random password that you have generated and saved in a password manager.
 
         ```txt
         DUPLICATI_SETTINGS_KEY=YourSuperSecretKeyHere
@@ -95,7 +91,7 @@ Before starting the containers, you must create the secret `.env` file for Dupli
 1. **Run the Start Script:** Navigate to the main deployment directory and run the `start_all.sh` script to launch your Docker containers for the first time.
 
     ```bash
-    cd /volume2/docker
+    cd /volume2/Mistia-Nexus
     ./start_all.sh
     ```
 
@@ -108,7 +104,7 @@ Before starting the containers, you must create the secret `.env` file for Dupli
 
 ## 4. Ongoing Management
 
-For daily management, `cd` into the deployment directory (`/volume2/docker`) and use the provided scripts:
+For daily management, `cd` into the deployment directory (`/volume2/Mistia-Nexus`) and use the provided scripts:
 
 * `./start_all.sh`: Starts all services.
 * `./stop_all.sh`: Stops all services.
@@ -130,16 +126,12 @@ If you need to completely reset your NAS to test the setup process from scratch,
     * This command will securely download and run the teardown script. It will ask for confirmation before deleting anything.
 
     ```bash
-    # --- Teardown Bootstrap ---
     read -sp 'Paste your GitHub PAT and press Enter: ' GITHUB_TOKEN
     printf "\n"
-
     curl -sL -H "Authorization: Bearer ${GITHUB_TOKEN}" \
       "https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/Install/teardown.sh" \
       -o teardown.sh
-
     chmod +x teardown.sh
-
     ./teardown.sh
     ```
 

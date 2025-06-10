@@ -11,7 +11,7 @@ GIT_REPO="Mistia-Labs"
 GIT_BRANCH="main"
 NAS_USER="late4ever"
 NAS_GROUP="admin" 
-DEPLOY_DIR="/volume2/docker"
+DEPLOY_DIR="/volume2"
 
 # --- END OF CONFIGURATION ---
 
@@ -39,8 +39,7 @@ sudo apt-get install -y git docker.io docker-compose
 
 # Step 2: Start and Enable Docker Service
 print_header "Step 2: Starting and enabling Docker service..."
-sudo systemctl start docker
-sudo systemctl enable docker
+sudo systemctl start docker && sudo systemctl enable docker
 echo "Docker service started and enabled for auto-start on boot."
 
 # Step 3: Configure Docker Permissions for current user
@@ -48,14 +47,10 @@ print_header "Step 3: Adding user '$NAS_USER' to the Docker group..."
 sudo usermod -aG docker "$NAS_USER"
 echo "NOTE: This change requires a new login session to take effect."
 
-# Step 4: Create Deployment Directory and Set Correct Ownership
-print_header "Step 4: Creating deployment directory and setting ownership..."
-sudo mkdir -p "$DEPLOY_DIR"
-sudo chown "$NAS_USER":"$NAS_GROUP" "$DEPLOY_DIR"
+# Step 4: Clone Repository and Set Upstream Tracking
+print_header "Step 4: Preparing to clone from GitHub repository..."
 cd "$DEPLOY_DIR"
 
-# Step 5: Clone Repository and Set Upstream Tracking
-print_header "Step 5: Preparing to clone from GitHub repository..."
 if [ -d ".git" ]; then
   echo "Repository already seems to be cloned. Skipping."
 else
@@ -81,18 +76,15 @@ else
 
   # Get the name of the current local branch (likely 'master' or 'main')
   LOCAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-  # Set the upstream tracking link for convenience (NEW STEP)
+  # Set the upstream tracking link for convenience
   git branch --set-upstream-to=origin/"$GIT_BRANCH" "$LOCAL_BRANCH"
   echo "Upstream branch set for easy 'git pull' in the future."
 fi
 
-# Step 6: Set up the final structure
-print_header "Step 6: Organizing deployed files..."
-sudo mv Mistia-Nexus/* .
-sudo rm -rf Mistia-Nexus
-
-# Step 7: Set Script Permissions
-print_header "Step 7: Setting permissions for management scripts..."
+# Step 5: Set Script Permissions
+print_header "Step 6: Setting permissions for management scripts..."
+cd "$DEPLOY_DIR/Mistia-Nexus"
+sudo chown -R "$NAS_USER":"$NAS_GROUP" .
 sudo chmod +x start_all.sh stop_all.sh update_all.sh
 
 print_header "System Preparation Complete!"
