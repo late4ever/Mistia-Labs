@@ -84,7 +84,7 @@ Before starting the containers, you must create the secret `.env` file for Dupli
         DUPLICATI_UI_PASSWORD=YourChosenUIPassword
         ```
 
-    * Save the file and exit (`Ctrl+O`, then `Enter`, then `Ctrl+X`).
+    * Save the file and exit (`Ctrl+X`, `y`, `Enter`).
 
 ### Part C: Deploy the Containers
 
