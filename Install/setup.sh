@@ -11,7 +11,7 @@ GIT_REPO="Mistia-Labs"
 GIT_BRANCH="main"
 NAS_USER="late4ever"
 NAS_GROUP="admin" 
-DEPLOY_DIR="/volume2"
+DEPLOY_DIR="/volume2/docker"
 
 # --- END OF CONFIGURATION ---
 
@@ -39,7 +39,8 @@ sudo apt-get install -y git docker.io docker-compose
 
 # Step 2: Start and Enable Docker Service
 print_header "Step 2: Starting and enabling Docker service..."
-sudo systemctl start docker && sudo systemctl enable docker
+sudo systemctl start docker
+sudo systemctl enable docker
 echo "Docker service started and enabled for auto-start on boot."
 
 # Step 3: Configure Docker Permissions for current user
@@ -47,11 +48,14 @@ print_header "Step 3: Adding user '$NAS_USER' to the Docker group..."
 sudo usermod -aG docker "$NAS_USER"
 echo "NOTE: This change requires a new login session to take effect."
 
-# Step 4: Clone Repository and Set Upstream Tracking
-print_header "Step 4: Preparing to clone from GitHub repository..."
+# Step 4: Create Deployment Directory and Set Correct Ownership
+print_header "Step 4: Creating deployment directory and setting ownership..."
+sudo mkdir -p "$DEPLOY_DIR"
+sudo chown "$NAS_USER":"$NAS_GROUP" "$DEPLOY_DIR"
 cd "$DEPLOY_DIR"
-sudo chown -R "$NAS_USER":"$NAS_GROUP" .
 
+# Step 5: Clone Repository and Set Upstream Tracking
+print_header "Step 5: Preparing to clone from GitHub repository..."
 if [ -d ".git" ]; then
   echo "Repository already seems to be cloned. Skipping."
 else
@@ -82,9 +86,9 @@ else
   echo "Upstream branch set for easy 'git pull' in the future."
 fi
 
-# Step 5: Set Script Permissions
+# Step 6: Set Script Permissions
 print_header "Step 6: Setting permissions for management scripts..."
-cd "$DEPLOY_DIR/Mistia-Nexus"
+cd "$DEPLOY_DIR"/Mistia-Nexus
 sudo chmod +x start_all.sh stop_all.sh update_all.sh
 
 print_header "System Preparation Complete!"

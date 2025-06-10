@@ -68,7 +68,7 @@ Before starting the containers, you must create the secret `.env` file for Dupli
     * Navigate to the `duplicati` directory:
 
         ```bash
-        cd /volume2/Mistia-Nexus/duplicati
+        cd /volume2/docker/Mistia-Nexus/duplicati
         ```
 
     * Create and edit the new `.env` file:
@@ -91,7 +91,7 @@ Before starting the containers, you must create the secret `.env` file for Dupli
 1. **Run the Start Script:** Navigate to the main deployment directory and run the `start_all.sh` script to launch your Docker containers for the first time.
 
     ```bash
-    cd /volume2/Mistia-Nexus
+    cd /volume2/docker/Mistia-Nexus
     ./start_all.sh
     ```
 
@@ -104,7 +104,7 @@ Before starting the containers, you must create the secret `.env` file for Dupli
 
 ## 4. Ongoing Management
 
-For daily management, `cd` into the deployment directory (`/volume2/Mistia-Nexus`) and use the provided scripts:
+For daily management, `cd` into the deployment directory (`/volume2/docker/Mistia-Nexus`) and use the provided scripts:
 
 * `./start_all.sh`: Starts all services.
 * `./stop_all.sh`: Stops all services.
