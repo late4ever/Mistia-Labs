@@ -98,8 +98,8 @@ print_header "Setup Complete!"
 echo
 echo "Your services are now running."
 echo "-------------------------------------"
-echo "Portainer: https://<Your-NAS-IP-Address>:9444"
-echo "Duplicati: http://<Your-NAS-IP-Address>:8200"
+echo "Portainer: https://mistia-nexus.local:9444"
+echo "Duplicati: http://mistia-nexus.local:8200"
 echo "-------------------------------------"
 echo "Remember to perform the post-install steps in the README (e.g., setting up Duplicati jobs)."
 echo

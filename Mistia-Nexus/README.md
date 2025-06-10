@@ -27,7 +27,7 @@ This single command will download and execute the setup script, automating the e
 1. **Connect to your NAS via SSH:**
 
     ```bash
-    ssh your_nas_username@<Your-NAS-IP-Address>
+    ssh late4ever@mistia-nexus.local -p 22
     ```
 
 2. **Run the Installer:**
@@ -35,7 +35,7 @@ This single command will download and execute the setup script, automating the e
     * Once edited, paste this clean command into your SSH session and press Enter:
 
     ```bash
-    bash <(curl -sL https://raw.githubusercontent.com/YourGitHubUsername/Mistia-Labs/main/install/setup.sh)
+    bash <(curl -sL https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/Install/setup.sh)
     ```
 
 The script will now run and perform all necessary setup steps.
@@ -44,8 +44,8 @@ The script will now run and perform all necessary setup steps.
 
 The script handles the technical setup, but you still need to configure the applications themselves.
 
-* **Portainer:** Access at `https://<Your-NAS-IP>:9444` to create your admin account and view your Docker environment.
-* **Duplicati:** Access at `http://<Your-NAS-IP>:8200` to configure your backup jobs (NVMe to HDD, PC to NAS, etc.).
+* **Portainer:** Access at `https://mistia-nexus.local:9444` to create your admin account and view your Docker environment.
+* **Duplicati:** Access at `http://mistia-nexus.local:8200` to configure your backup jobs (NVMe to HDD, PC to NAS, etc.).
 
 ## 4. Ongoing Management
 
