@@ -1,10 +1,11 @@
 #!/bin/bash
 #
-# Mistia-Nexus Homelab Setup Script (v7)
+# Mistia-Nexus Homelab Setup Script (v8)
 # This script prepares the system for Docker, but does not start the containers.
 #
 
 # --- START OF CONFIGURATION ---
+
 GIT_USER="late4ever"
 GIT_REPO="Mistia-Labs"
 GIT_BRANCH="main"
@@ -19,6 +20,7 @@ set -e
 
 # --- SCRIPT FUNCTIONS ---
 
+# Function to print a formatted header
 print_header() {
   echo
   echo "======================================================================"
@@ -52,7 +54,7 @@ sudo mkdir -p "$DEPLOY_DIR"
 sudo chown "$NAS_USER":"$NAS_GROUP" "$DEPLOY_DIR"
 cd "$DEPLOY_DIR"
 
-# Step 5: Clone Repository using Sparse Checkout
+# Step 5: Clone Repository and Set Upstream Tracking
 print_header "Step 5: Preparing to clone from GitHub repository..."
 if [ -d ".git" ]; then
   echo "Repository already seems to be cloned. Skipping."
@@ -76,6 +78,12 @@ else
   git config core.sparseCheckout true
   echo "Mistia-Nexus/*" > .git/info/sparse-checkout
   git pull origin "$GIT_BRANCH"
+
+  # Get the name of the current local branch (likely 'master' or 'main')
+  LOCAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  # Set the upstream tracking link for convenience (NEW STEP)
+  git branch --set-upstream-to=origin/"$GIT_BRANCH" "$LOCAL_BRANCH"
+  echo "Upstream branch set for easy 'git pull' in the future."
 fi
 
 # Step 6: Set up the final structure
