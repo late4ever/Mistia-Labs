@@ -81,4 +81,4 @@ fi
 
 print_header "Teardown Complete!"
 echo "The system has been cleaned of the homelab setup."
-echo "You can now reboot the NAS for a completely fresh state if desired (`sudo reboot`)."
+echo "You can now reboot the NAS for a completely fresh state if desired ('sudo reboot')."
