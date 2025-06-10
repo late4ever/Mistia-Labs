@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Mistia-Nexus Homelab Setup Script (v5 - Corrected Permissions)
-# This script automates the setup of Docker services on a Ugreen NAS.
+# Mistia-Nexus Homelab Setup Script (v7)
+# This script prepares the system for Docker, but does not start the containers.
 #
 
 # --- START OF CONFIGURATION ---
@@ -9,8 +9,9 @@ GIT_USER="late4ever"
 GIT_REPO="Mistia-Labs"
 GIT_BRANCH="main"
 NAS_USER="late4ever"
-NAS_GROUP="admin"
+NAS_GROUP="admin" 
 DEPLOY_DIR="/volume2/docker"
+
 # --- END OF CONFIGURATION ---
 
 # Exit immediately if a command exits with a non-zero status.
@@ -29,29 +30,33 @@ print_header() {
 
 print_header "Starting Mistia-Nexus Homelab Setup"
 
-# 1. Install System Dependencies
+# Step 1: Install System Dependencies
 print_header "Step 1: Installing Git, Docker, and Docker Compose..."
 sudo apt-get update
 sudo apt-get install -y git docker.io docker-compose
 
-# 2. Configure Docker Permissions
-print_header "Step 2: Adding user '$NAS_USER' to the Docker group..."
-sudo usermod -aG docker "$NAS_USER"
-echo "NOTE: You may need to log out and log back in for this change to take full effect."
-echo "The script will continue using 'sudo' for Docker commands."
+# Step 2: Start and Enable Docker Service
+print_header "Step 2: Starting and enabling Docker service..."
+sudo systemctl start docker
+sudo systemctl enable docker
+echo "Docker service started and enabled for auto-start on boot."
 
-# 3. Create Deployment Directory and Set Correct Ownership
-print_header "Step 3: Creating deployment directory and setting ownership..."
+# Step 3: Configure Docker Permissions for current user
+print_header "Step 3: Adding user '$NAS_USER' to the Docker group..."
+sudo usermod -aG docker "$NAS_USER"
+echo "NOTE: This change requires a new login session to take effect."
+
+# Step 4: Create Deployment Directory and Set Correct Ownership
+print_header "Step 4: Creating deployment directory and setting ownership..."
 sudo mkdir -p "$DEPLOY_DIR"
 sudo chown "$NAS_USER":"$NAS_GROUP" "$DEPLOY_DIR"
 cd "$DEPLOY_DIR"
 
-# 4. Clone Repository using Sparse Checkout
-print_header "Step 4: Preparing to clone from GitHub repository..."
+# Step 5: Clone Repository using Sparse Checkout
+print_header "Step 5: Preparing to clone from GitHub repository..."
 if [ -d ".git" ]; then
   echo "Repository already seems to be cloned. Skipping."
 else
-  # Check if PAT was passed as an argument to the script ($1). If not, prompt for it.
   if [ -n "$1" ]; then
     GIT_PAT_INPUT="$1"
     echo "Using PAT provided by bootstrap..."
@@ -73,25 +78,23 @@ else
   git pull origin "$GIT_BRANCH"
 fi
 
-# 5. Set up the final structure
-print_header "Step 5: Organizing deployed files..."
+# Step 6: Set up the final structure
+print_header "Step 6: Organizing deployed files..."
 sudo mv Mistia-Nexus/* .
 sudo rm -rf Mistia-Nexus
 
-# 6. Set Script Permissions
-print_header "Step 6: Setting permissions for management scripts..."
+# Step 7: Set Script Permissions
+print_header "Step 7: Setting permissions for management scripts..."
 sudo chmod +x start_all.sh stop_all.sh update_all.sh
 
-# 7. Deploy Docker Containers
-print_header "Step 7: Starting all Docker services..."
-./start_all.sh
-
-print_header "Setup Complete!"
+print_header "System Preparation Complete!"
 echo
-echo "Your services are now running."
-echo "-------------------------------------"
-echo "Portainer: https://mistia-nexus.local:9444"
-echo "Duplicati: http://mistia-nexus.local:8200"
-echo "-------------------------------------"
-echo "Remember to perform the post-install steps in the README (e.g., setting up Duplicati jobs)."
+echo "The necessary packages have been installed and your repository has been cloned."
+echo "The final step is to apply your user's new Docker permissions."
+echo
+echo "----------------------------------------------------------------------"
+echo "IMPORTANT: Please log out of this SSH session now."
+echo "  - Type 'exit' and press Enter."
+echo "Then, log back in and follow the final instructions in the README."
+echo "----------------------------------------------------------------------"
 echo
