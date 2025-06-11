@@ -8,7 +8,7 @@ services:
       - '8880:80'
       - '4443:443'
     environment:
-      DB_MYSQL_HOST: 'nginx-proxy_db'
+      DB_MYSQL_HOST: 'nginx-proxy-db'
       DB_MYSQL_PORT: 3306
       DB_MYSQL_USER: 'npm'
       DB_MYSQL_NAME: 'npm'
