@@ -2,19 +2,19 @@
 
 ## Hardware
 
-1. Misita-Nexus | UGreen NASSync DXP4800 Plus
+1. **Misita-Nexus | UGREEN NASync DXP4800 Plus**
 
    - 2x 32GB Crucial DDR5-4800 SODIMM
    - 1x 2TB Samsung 990 Pro M.2 NVME
    - 2x 8TB WD Red Plus HDD
 
-2. TP-LINK TL-SG105-M2 5-port 2.5Gbps Switch
+2. **TP-LINK TL-SG105-M2 5-port 2.5Gbps Switch**
 
 ## Services
 
 | Service                   | URL                                                | Port (Host:Container) | Protocol | Notes                                                                                                                                              |
 | :------------------------ | :------------------------------------------------------------- | :-------------------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **UGreen NASSync** | [`https://mistia-nexus.local:9443`]([https://mistia-nexus.local:9443](https://mistia-nexus.local:9443)) | `9443`       | `https`  | The main management UI for the NAS itself.                                                                                                         |
+| **UGREEN NASync** | [`https://mistia-nexus.local:9443`]([https://mistia-nexus.local:9443](https://mistia-nexus.local:9443)) | `9443`       | `https`  | The main management UI for the NAS itself.                                                                                                         |
 | **Portainer** | [`https://mistia-nexus.local:9444`]([https://mistia-nexus.local:9444](https://mistia-nexus.local:9444)) | `9444:9443`           | `https`  | The primary Docker management UI. Your browser will show a security warning on first visit because it uses a self-signed certificate. This is safe to accept. |
 | **Duplicati** | [`http://mistia-nexus.local:8200`]([http://mistia-nexus.local:8200](http://mistia-nexus.local:8200))   | `8200:8200`           | `http`   | The automated backup solution. Used for configuring all backup jobs.                                                                               |
 
@@ -28,12 +28,12 @@ This document is your standard operating procedure (SOP) for adding any new Dock
 
 Add the new service to your repository and deploy it to [Mistia-Labs GitHub Repo](https://github.com/late4ever/Mistia-Labs/)
 
-1. Create the Service Directory
+1. **Create the Service Directory**
 
    - In your `Mistia-Nexus` folder, create a new directory for your service.
    - **Action:** `mkdir Mistia-Nexus/<SERVICE_NAME>`
 
-2. Create the `docker-compose.yml` File
+2. **Create the `docker-compose.yml` File**
 
    - Inside the new `<SERVICE_NAME>` directory, create a `docker-compose.yml` file.
    - **Action:** Use the generic template below, filling in the placeholders with the information you gathered in Phase 1.
@@ -58,7 +58,7 @@ Add the new service to your repository and deploy it to [Mistia-Labs GitHub Repo
             restart: unless-stopped
       ```
 
-3. Commit and Push the Configuration
+3. **Commit and Push the Configuration**
 
    - **Action:** Add the new directory to Git and push it to your repository.
 
@@ -70,7 +70,7 @@ Add the new service to your repository and deploy it to [Mistia-Labs GitHub Repo
 
 ### Phase 2: Deploy the Service
 
-1. Pull Changes and Create Secrets (in Mistia-Nexus)
+1. **Pull Changes and Create Secrets**
 
    - **Action:** SSH into your NAS and navigate to your deployment directory.
 
@@ -97,7 +97,7 @@ Add the new service to your repository and deploy it to [Mistia-Labs GitHub Repo
       ./update_all.sh
       ```
 
-2. Deploy the to Mistia-Nexus
+2. **Deploy the to Mistia-Nexus**
 
    - **Action:** Run the `start_all.sh` script. It will automatically find the new service directory and start it for the first time.
 
@@ -111,11 +111,11 @@ Add the new service to your repository and deploy it to [Mistia-Labs GitHub Repo
 
 The service is now be running. The final step is to document it.
 
-1. Test the Service
+1. **Test the Service**
 
    - **Action:** Open your web browser and navigate to the service's URL (e.g., `http://mistia-nexus.local:<HOST_PORT>`) to ensure it's working.
 
-2. Update this `README.md`
+2. **Update this `README.md`**
 
    - **Action:** Open this `README.md` and add a new row to the table with the details for the new service.
 
@@ -123,12 +123,18 @@ The service is now be running. The final step is to document it.
       | :--- | :--- | :--- | :--- | :--- |
       | **`<SERVICE_NAME>`** | [`<SERVICE_URL>`](<SERVICE_URL>) | `<HOST_PORT>:<CONTAINER_PORT>` | `http/https` | *Briefly describe the service.* |
 
-3. Commit Documentation Changes
+3. **Update [Mistia-Nexus README.md](Mistia-Nexus/README.md)**
+
+   - **Action:** Open [Mistia-Nexus README.md](Mistia-Nexus/README.md) and update these sections:
+     - `Section 2`, `Part B`, `Point 2` add a new section on the secret required
+     - `Section 3`, update access url and initial setup to be done
+  
+4. **Commit Documentation Changes**
 
    - **Action:** Commit the updated `README.md` file to the [Mistia-Labs GitHub Repo](https://github.com/late4ever/Mistia-Labs/).
 
       ```bash
-      git add README.md
-      git commit -m "📚 docs: Add <SERVICE_NAME> to services list"
+      git add .
+      git commit -m "📚 docs: Add <SERVICE_NAME> to services list and setup docs"
       git push
       ```
