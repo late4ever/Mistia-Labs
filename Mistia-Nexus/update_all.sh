@@ -25,7 +25,6 @@ echo "======================================================================"
 git fetch origin
 git reset --hard origin/main
 echo "Local repository has been synchronized with GitHub."
-
 echo
 echo "======================================================================"
 echo "=> Step 3: Pulling latest Docker images and restarting services..."
