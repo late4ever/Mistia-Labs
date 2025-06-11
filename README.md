@@ -5,10 +5,12 @@
 1. **Misita-Nexus | UGREEN NASync DXP4800 Plus**
 
    - 2x 32GB Crucial DDR5-4800 SODIMM
-   - 1x 2TB Samsung 990 Pro M.2 NVME
+   - 1x 2TB Samsung 990 Pro M.2 NVMe
    - 2x 8TB WD Red Plus HDD
 
-2. **TP-LINK TL-SG105-M2 5-port 2.5Gbps Switch**
+2. **ASUS ZenWiFi Pro ET12 2-Pack AXE11000 Tri-Band WiFi 6E Router**
+
+3. **TP-LINK TL-SG105-M2 5-port 2.5Gbps Switch**
 
 ## Services
 

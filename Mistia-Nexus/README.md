@@ -9,7 +9,7 @@ This guide uses a secure bootstrap method for initial setup and `.env` files for
 Before you begin, complete these three manual steps on your NAS.
 
 1. **Initial UGREEN NASync Setup:**
-   * `Storage Pool 1` (NVME: Application)
+   * `Storage Pool 1` (NVMe: Application)
       * `Volume 1`
    * `Storage Poo1 2` (HDD: Data)
       * `Volume 2`
