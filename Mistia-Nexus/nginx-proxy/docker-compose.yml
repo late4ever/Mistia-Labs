@@ -8,11 +8,11 @@ services:
       - '80:80'
       - '443:443'
     environment:
-      DB_MYSQL_HOST: '${DB_HOST}'
-      DB_MYSQL_PORT: ${DB_PORT}
-      DB_MYSQL_USER: '${DB_USER}'
+      DB_MYSQL_HOST: 'nginx-proxy_db'
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: 'npm'
+      DB_MYSQL_NAME: 'npm'
       DB_MYSQL_PASSWORD: '${DB_PASSWORD}'
-      DB_MYSQL_NAME: '${DB_NAME}'
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
@@ -23,10 +23,10 @@ services:
     image: 'jc21/mariadb-aria:latest'
     container_name: nginx-proxy_db
     environment:
-      MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD}'
-      MYSQL_DATABASE: '${DB_NAME}'
-      MYSQL_USER: '${DB_USER}'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
       MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD}'
     volumes:
       - ./db_data:/var/lib/mysql
     restart: unless-stopped
