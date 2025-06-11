@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
   db:
     image: 'jc21/mariadb-aria:latest'
-    container_name: nginx-proxy_db
+    container_name: nginx-proxy-db
     environment:
       MYSQL_DATABASE: 'npm'
       MYSQL_USER: 'npm'
