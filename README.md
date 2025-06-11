@@ -16,9 +16,10 @@
 
 | Service                   | URL                                                | Port (Host:Container) | Protocol | Notes                                                                                                                                              |
 | :------------------------ | :------------------------------------------------------------- | :-------------------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **UGREEN NASync** | [`https://mistia-nexus.local:9443`]([https://mistia-nexus.local:9443](https://mistia-nexus.local:9443)) | `9443`       | `https`  | The main management UI for the NAS itself.                                                                                                         |
-| **Portainer** | [`https://mistia-nexus.local:9444`]([https://mistia-nexus.local:9444](https://mistia-nexus.local:9444)) | `9444:9443`           | `https`  | The primary Docker management UI. Your browser will show a security warning on first visit because it uses a self-signed certificate. This is safe to accept. |
-| **Duplicati** | [`http://mistia-nexus.local:8200`]([http://mistia-nexus.local:8200](http://mistia-nexus.local:8200))   | `8200:8200`           | `http`   | The automated backup solution. Used for configuring all backup jobs.                                                                               |
+| **UGREEN NASync** | [`https://nexus.mistia.xyz`](https://nexus.mistia.xyz) | `9443`       | `https`  | The main management UI for the NAS itself.                                                                                                         |
+| **Portainer** | [`https://portainer.mistia.xyz`](https://portainer.mistia.xyz) | `9444:9443`           | `https`  | The primary Docker management UI. Your browser will show a security warning on first visit because it uses a self-signed certificate. This is safe to accept. |
+| **Duplicati** | [`http://duplicati.mistia.xyz`](https://duplicati.mistia.xyz)   | `8200:8200`           | `http`   | The automated backup solution. Used for configuring all backup jobs.                                                                               |
+| **Nginx Proxy Manager** | [`https://npm.mistia.xyz`](https://npm.mistia.xyz) | `81:81`, `8880:80`, `4443:443` | `https` | The reverse proxy and SSL certificate manager for all services. |
 
 ---
 

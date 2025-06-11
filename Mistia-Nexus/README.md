@@ -97,6 +97,25 @@ Before starting the containers, you must create the secret `.env` file for all r
 
     ---
 
+    **Nginx Proxy Manager**
+      * Navigate to the `nginx-proxy` directory:
+
+        ```bash
+        cd /volume2/docker/Mistia-Nexus/duplicati
+        nano .env
+        ```
+
+      * Inside the editor, add the following lines. Replace `YourStrongProxyDBPassword` and `YourStrongDBRootPassword` with the correct value.
+
+        ```txt
+        DB_PASSWORD=YourStrongProxyDBPassword
+        DB_ROOT_PASSWORD=YourStrongDBRootPassword
+        ```
+
+      * Save the file and exit (`Ctrl+X`, `y`, `Enter`).
+
+    ---
+
 ### Part C: Deploy the Containers
 
 1. **Run the Start Script:** Navigate to the main deployment directory and run the `start_all.sh` script to launch your Docker containers for the first time.
@@ -110,8 +129,9 @@ Before starting the containers, you must create the secret `.env` file for all r
 
 ## 3. Post-Installation
 
-* **Portainer:** Access at `https://mistia-nexus.local:9444` to create your admin account and view your Docker environment.
-* **Duplicati:** Access at `http://mistia-nexus.local:8200` to configure your backup jobs.
+* **Portainer:** Access at [`https://mistia-nexus.local:9444`](https://mistia-nexus.local:9444) to create your admin account and view your Docker environment.
+* **Duplicati:** Access at [`http://mistia-nexus.local:8200`](http://mistia-nexus.local:8200) to configure your backup jobs.
+* **Ngnix Proxy Manager:** Access at [`http://mistia-nexus.local:81`](http://mistia-nexus.local:81) to create your admin account and setup proxies.
 
 ## 4. Ongoing Management
 
@@ -119,7 +139,7 @@ For daily management, `cd` into the deployment directory (`/volume2/docker/Misti
 
 * `./start_all.sh`: Starts all services.
 * `./stop_all.sh`: Stops all services.
-* `./update_all.sh`: Pulls the latest Docker images and restarts the services.
+* `./update_all.sh`: Stops all containers, pulls the latest Docker images and restarts the services.
 
 ## 5. Teardown / Clean Up (For Fresh Testing)
 
