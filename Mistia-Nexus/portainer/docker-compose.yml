@@ -3,10 +3,12 @@ services:
   portainer:
     image: portainer/portainer-ce:latest
     container_name: portainer
-    ports:
-      - 9444:9443
-      - 8000:8000
+    environment:
+      - TZ=Asia/Singapore
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./data:/data
+    ports:
+      - 9444:9443
+      - 8000:8000
     restart: unless-stopped
