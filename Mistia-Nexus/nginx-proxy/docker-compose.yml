@@ -1,0 +1,32 @@
+# Mistia-Nexus/nginx-proxy/docker-compose.yml
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx-proxy
+    ports:
+      - '81:81'
+      - '80:80'
+      - '443:443'
+    environment:
+      DB_MYSQL_HOST: '${DB_HOST}'
+      DB_MYSQL_PORT: ${DB_PORT}
+      DB_MYSQL_USER: '${DB_USER}'
+      DB_MYSQL_PASSWORD: '${DB_PASSWORD}'
+      DB_MYSQL_NAME: '${DB_NAME}'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    depends_on:
+      - db
+    restart: unless-stopped
+  db:
+    image: 'jc21/mariadb-aria:latest'
+    container_name: nginx-proxy_db
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD}'
+      MYSQL_DATABASE: '${DB_NAME}'
+      MYSQL_USER: '${DB_USER}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+    volumes:
+      - ./db_data:/var/lib/mysql
+    restart: unless-stopped
