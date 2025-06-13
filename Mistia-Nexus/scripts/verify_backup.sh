@@ -61,17 +61,17 @@ printf "\n"
 print_status "Step 3: Repairing the local database (if necessary)..."
 docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli repair \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
-  --backup-name="${BACKUP_JOB_NAME}" \
-  --server-datafolder=/config
+  --dbpath=/config/Duplicati-server.sqlite
 print_status "Repair operation completed." "success"
 
 # 4. Run the Backup
 print_status "Step 4: Starting backup job..."
+# [FIX] Use the --dbpath flag to ensure the correct database is used.
 docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli backup \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
   "${TEST_FILE_PATH_CONTAINER}" \
   --backup-name="${BACKUP_JOB_NAME}" \
-  --server-datafolder=/config
+  --dbpath=/config/Duplicati-server.sqlite
 
 print_status "Backup job completed." "success"
 
@@ -83,8 +83,8 @@ sudo chown -R "$(id -u)":"$(id -g)" "$HOST_RESTORE_PATH"
 docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli restore \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
   "${TEST_FILE_PATH_CONTAINER}" \
-  --restore-path="${CONTAINER_RESTORE_PATH}" \
-  --server-datafolder=/config \
+  --restore-path="${HOST_RESTORE_PATH}" \
+  --dbpath=/config/Duplicati-server.sqlite \
   --overwrite=true
 
 print_status "Restore operation completed." "success"
