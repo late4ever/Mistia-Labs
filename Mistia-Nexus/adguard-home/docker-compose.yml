@@ -1,0 +1,27 @@
+# Mistia-Nexus/adguardhome/docker-compose.yml
+services:
+  adguardhome:
+    image: adguard/adguardhome:latest
+    container_name: adguardhome
+    networks:
+      adguard_net:
+        # This assigns the dedicated static IP to the container
+        ipv4_address: 192.168.50.251
+    volumes:
+      - ./workdir:/opt/adguardhome/work
+      - ./confdir:/opt/adguardhome/conf
+    # Note: We don't map ports here because macvlan handles it.
+    # AdGuard Home will use ports 53, 80, 443, etc. on its own IP.
+    restart: unless-stopped
+
+networks:
+  adguard_net:
+    driver: macvlan
+    driver_opts:
+      # Use the name of your NAS's link aggregation interface
+      parent: BOND6-1
+    ipam:
+      config:
+        # Configure this to match your router's network settings
+        - subnet: 192.168.50.0/24
+          gateway: 192.168.50.1
