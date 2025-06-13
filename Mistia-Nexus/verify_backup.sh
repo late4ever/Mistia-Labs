@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Duplicati Automated Restore Test Script (v3 - Corrected Logic)
+# Duplicati Automated Restore Test Script (v3)
 # This script verifies the integrity of a Duplicati backup by creating a test file,
 # backing it up, restoring it, and comparing the results.
 #
@@ -8,7 +8,6 @@
 # --- START OF CONFIGURATION ---
 
 # The name of the Duplicati backup job, as seen in the web UI.
-# This is now the primary identifier for the script.
 BACKUP_JOB_NAME="Mistia-Nexus App to Data"
 
 # The path to the backup destination, as seen FROM INSIDE the container.
@@ -30,16 +29,13 @@ TEST_FILE_CONTENT="Backup and Restore successful on $(date)"
 
 # --- END OF CONFIGURATION ---
 
-
-# --- SCRIPT LOGIC (No need to edit below this line) ---
-
 set -e
 
 # Function to print colored status messages
 print_status() {
     COLOR_GREEN='\033[0;32m'
     COLOR_RED='\033[0;31m'
-    COLOR_NC='\033[0m' # No Color
+    COLOR_NC='\033[0m'
     if [ "$2" == "success" ]; then
         printf "${COLOR_GREEN}[SUCCESS]${COLOR_NC} %s\n" "$1"
     elif [ "$2" == "failure" ]; then
@@ -52,7 +48,6 @@ print_status() {
 cleanup() {
     print_status "Running cleanup..."
     sudo rm -f "$TEST_FILE_PATH"
-    # Use the corrected host path for cleanup
     sudo rm -rf "$HOST_RESTORE_PATH"
     print_status "Cleanup complete."
 }
@@ -67,9 +62,14 @@ print_status "Step 1: Creating test file at ${TEST_FILE_PATH}..."
 echo "${TEST_FILE_CONTENT}" | sudo tee "$TEST_FILE_PATH" > /dev/null
 print_status "Test file created." "success"
 
+# Securely prompt for the passphrase once at the start
+print_status "Step 2: Preparing to run test..."
+read -sp 'Please enter the Duplicati ENCRYPTION PASSPHRASE for this backup: ' DUP_PASSPHRASE
+printf "\n"
+
 # 2. Run the Backup
-print_status "Step 2: Starting backup job..."
-docker exec duplicati /app/duplicati/duplicati-cli backup \
+print_status "Step 3: Starting backup job..."
+docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli backup \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
   "${TEST_FILE_PATH}" \
   --backup-name="${BACKUP_JOB_NAME}" \
@@ -78,15 +78,12 @@ docker exec duplicati /app/duplicati/duplicati-cli backup \
 print_status "Backup job completed." "success"
 
 # 3. Restore the file
-print_status "Step 3: Restoring test file to a writable location..."
-# Securely prompt for the passphrase and pass it as an environment variable
-read -sp 'Please enter the Duplicati ENCRYPTION PASSPHRASE for this backup: ' DUP_PASSPHRASE
-printf "\n"
-
+print_status "Step 4: Restoring test file to a writable location..."
 # Use the corrected host path to create the directory
 sudo mkdir -p "$HOST_RESTORE_PATH"
 sudo chown -R "$(id -u)":"$(id -g)" "$HOST_RESTORE_PATH" # Ensure we have permissions
 
+# Use the passphrase already stored in the DUP_PASSPHRASE variable
 docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli restore \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
   "${TEST_FILE_PATH}" \
@@ -96,7 +93,7 @@ docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-c
 print_status "Restore operation completed." "success"
 
 # 4. Verify the restored file
-print_status "Step 4: Verifying restored file..."
+print_status "Step 5: Verifying restored file..."
 # Use the corrected host path to verify the file
 RESTORED_FILE_PATH="${HOST_RESTORE_PATH}${TEST_FILE_PATH}" # Duplicati keeps the full path
 
@@ -116,5 +113,4 @@ else
     exit 1
 fi
 
-# Cleanup is handled automatically by the 'trap' at the start
 exit 0
