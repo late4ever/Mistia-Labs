@@ -5,18 +5,14 @@
 # backing it up, restoring it, and comparing the results.
 #
 
-# Navigate to the script's directory's parent (the Mistia-Nexus root)
-# This makes the script runnable from anywhere, including from a cron job.
-cd "$(dirname "$0")/.."
-
 # --- START OF CONFIGURATION ---
 
 BACKUP_JOB_NAME="Mistia-Nexus App to Data"
 BACKUP_DEST_URL_CONTAINER="/nasroot/volume2/Backups/NAS-Apps"
 TEST_FILE_PATH_HOST="/volume1/duplicati_canary_file.txt"
 TEST_FILE_PATH_CONTAINER="/nasroot/volume1/duplicati_canary_file.txt"
-CONTAINER_RESTORE_PATH="./duplicati/config/temp_restore_test"
-HOST_RESTORE_PATH="./duplicati/config/temp_restore_test"
+CONTAINER_RESTORE_PATH="/config/temp_restore_test"
+HOST_RESTORE_PATH="/volume2/docker/Mistia-Nexus/duplicati/config/temp_restore_test"
 TEST_FILE_CONTENT="Backup and Restore successful on $(date)"
 
 # --- END OF CONFIGURATION ---
@@ -43,7 +39,6 @@ cleanup() {
     print_status "Cleanup complete."
 }
 
-# Trap script exit to ensure cleanup runs even if errors occur
 trap cleanup EXIT
 
 # --- SCRIPT EXECUTION ---
