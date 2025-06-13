@@ -167,3 +167,68 @@ If you need to completely reset your NAS to test the setup process from scratch,
     ```
 
 This gives you a safe and repeatable way to both set up and tear down your homelab environment.
+
+## 6. Automated Restore Testing
+
+This document explains how to use the `verify_backup.sh` script to automatically test the integrity of your Duplicati backups.
+
+### Purpose
+
+A backup is useless if it can't be restored. This script provides an automated way to answer the question: "Can I decrypt and restore a file from my backup?"
+
+The script performs the following actions:
+
+1. Creates a temporary "canary" file with unique content inside your backup source directory.
+2. Triggers the specified Duplicati backup job to run.
+3. Restores only that single canary file to a temporary location.
+4. Compares the restored file's content with the original content.
+5. Reports **SUCCESS** or **FAILURE**.
+6. Automatically cleans up all temporary files and folders, regardless of the outcome.
+
+### How to Use the Script
+
+1. **Place the Script:** Ensure `verify_backup.sh` is in your `Mistia-Nexus` deployment directory alongside your other management scripts.
+
+2. **Make it Executable:** If you haven't already, run this command from your deployment directory:
+
+    ```bash
+    chmod +x verify_backup.sh
+    ```
+
+3. **Run the Test:** Execute the script. It will securely prompt you for the Duplicati encryption passphrase for the backup job you are testing.
+
+    ```bash
+    ./verify_backup.sh
+    ```
+
+### Automating with Cron (Advanced)
+
+Running this script manually is great, but automating it provides continuous assurance. You can create a `cron` job to run this test weekly.
+
+**Warning:** This method requires storing your Duplicati passphrase in a protected file on the NAS.
+
+1. **Create a Passphrase File:**
+    * Create a file that is only readable by you:
+
+        ```bash
+        echo "YourDuplicatiEncryptionPassword" > ~/.duplicati_pass
+        chmod 600 ~/.duplicati_pass
+        ```
+
+2. **Modify the Script:**
+    * Comment out the interactive `read` command in `verify_backup.sh` and add a line to read the password from your file:
+
+        ```bash
+        # read -sp 'Please enter the Duplicati ENCRYPTION PASSPHRASE for this backup: ' DUP_PASSPHRASE
+        DUP_PASSPHRASE=$(cat ~/.duplicati_pass)
+        ```
+
+3. **Create the Cron Job:**
+    * Open the cron table: `sudo crontab -e`
+    * Add a line to run the script, for example, every Sunday at 6:00 AM. Make sure to redirect the output to a log file to review the results.
+
+        ```bash
+        0 6 * * 0    /volume2/docker/Mistia-Nexus/verify_backup.sh > /volume2/docker/Mistia-Nexus/verify_backup.log 2>&1
+        ```
+
+This creates a fully automated, hands-off system for continuously verifying the integrity of your most critical backups.
