@@ -1,14 +1,11 @@
 #!/bin/bash
 #
-# This script updates all services by orchestrating the stop, git sync,
-# image pull, and start scripts/commands.
-# It should be run from the 'scripts' directory.
+# This script updates all services by first stopping them, resetting any
+# local changes, pulling all updates from Git and Docker Hub, and then
+# restarting them with the new configurations.
 #
 
-# --- SCRIPT LOGIC ---
-
-# Navigate to the parent directory (Mistia-Nexus root)
-# This is where the service folders (duplicati, portainer, etc.) live.
+# Navigate to the script's directory's parent (the Mistia-Nexus root)
 cd "$(dirname "$0")/.."
 
 echo "======================================================================"
@@ -27,6 +24,8 @@ git fetch origin
 # Reset the local branch to match the remote, discarding any local changes
 git reset --hard origin/main
 echo "Local repository has been synchronized with GitHub."
+chmod +x ./scripts/*.sh
+echo "Management scripts are now executable."
 
 echo
 echo "======================================================================"
@@ -35,7 +34,6 @@ echo "======================================================================"
 
 # Loop through each service directory to pull its specific image
 for d in */ ; do
-    # Ensure it's a directory and contains a docker-compose.yml file
     if [ -d "$d" ] && [ -f "$d/docker-compose.yml" ]; then
         echo "--- Pulling image for service in $d ---"
         (cd "$d" && docker compose pull)
@@ -49,3 +47,6 @@ echo "=> Step 4: Starting all Docker services with new configs/images..."
 echo "======================================================================"
 # Call the existing start script
 ./scripts/start_all.sh
+
+echo
+echo "All services have been updated and restarted."
