@@ -5,17 +5,14 @@
 # backing it up, restoring it, and comparing the results.
 #
 
-# Navigate to the script's directory's parent (the Mistia-Nexus root)
-cd "$(dirname "$0")/.."
-
 # --- START OF CONFIGURATION ---
 
 BACKUP_JOB_NAME="Mistia-Nexus App to Data"
 BACKUP_DEST_URL_CONTAINER="/nasroot/volume2/Backups/NAS-Apps"
 TEST_FILE_PATH_HOST="/volume1/duplicati_canary_file.txt"
 TEST_FILE_PATH_CONTAINER="/nasroot/volume1/duplicati_canary_file.txt"
-CONTAINER_RESTORE_PATH="./duplicati/config/temp_restore_test"
-HOST_RESTORE_PATH="./duplicati/config/temp_restore_test"
+CONTAINER_RESTORE_PATH="/config/temp_restore_test"
+HOST_RESTORE_PATH="/volume2/docker/Mistia-Nexus/duplicati/config/temp_restore_test"
 TEST_FILE_CONTENT="Backup and Restore successful on $(date)"
 
 # --- END OF CONFIGURATION ---
@@ -42,7 +39,6 @@ cleanup() {
     print_status "Cleanup complete."
 }
 
-# Trap script exit to ensure cleanup runs even if errors occur
 trap cleanup EXIT
 
 # --- SCRIPT EXECUTION ---
@@ -59,19 +55,17 @@ printf "\n"
 
 # 3. Repair the backup database to ensure consistency
 print_status "Step 3: Repairing the local database (if necessary)..."
-docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli repair \
+docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli repair \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
-  --dbpath=/config/Duplicati-server.sqlite
+  --backup-name="${BACKUP_JOB_NAME}"
 print_status "Repair operation completed." "success"
 
 # 4. Run the Backup
 print_status "Step 4: Starting backup job..."
-# [FIX] Use the --dbpath flag to ensure the correct database is used.
-docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli backup \
+docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli backup \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
   "${TEST_FILE_PATH_CONTAINER}" \
-  --backup-name="${BACKUP_JOB_NAME}" \
-  --dbpath=/config/Duplicati-server.sqlite
+  --backup-name="${BACKUP_JOB_NAME}"
 
 print_status "Backup job completed." "success"
 
@@ -80,11 +74,10 @@ print_status "Step 5: Restoring test file to a writable location..."
 sudo mkdir -p "$HOST_RESTORE_PATH"
 sudo chown -R "$(id -u)":"$(id -g)" "$HOST_RESTORE_PATH" 
 
-docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli restore \
+docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli restore \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
   "${TEST_FILE_PATH_CONTAINER}" \
-  --restore-path="${HOST_RESTORE_PATH}" \
-  --dbpath=/config/Duplicati-server.sqlite \
+  --restore-path="${CONTAINER_RESTORE_PATH}" \
   --overwrite=true
 
 print_status "Restore operation completed." "success"
