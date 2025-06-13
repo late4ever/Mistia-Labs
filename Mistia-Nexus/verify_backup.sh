@@ -1,32 +1,18 @@
 #!/bin/bash
 #
-# Duplicati Automated Restore Test Script (v4 - Corrected Paths)
-# This script verifies the integrity of a Duplicati backup by creating a test file,
-# backing it up, restoring it, and comparing the results.
+# Duplicati Automated Restore Test Script (v5 - With Repair Step)
+# This script verifies the integrity of a Duplicati backup by repairing the
+# database, creating a test file, backing it up, restoring it, and comparing.
 #
 
 # --- START OF CONFIGURATION ---
 
-# The name of the Duplicati backup job, as seen in the web UI.
 BACKUP_JOB_NAME="Mistia-Nexus App to Data"
-
-# The path to the backup destination, as seen FROM INSIDE the container.
 BACKUP_DEST_URL_CONTAINER="/nasroot/volume2/Backups/NAS-Apps"
-
-# --- [FIXED] Paths for the test file ---
-# The path where the test file is created on the NAS (Host).
 TEST_FILE_PATH_HOST="/volume1/duplicati_canary_file.txt"
-# The path to the same test file as seen from INSIDE the container.
 TEST_FILE_PATH_CONTAINER="/nasroot/volume1/duplicati_canary_file.txt"
-
-
-# --- Paths for restore test ---
-# The path INSIDE the container's writable /config volume where the test file will be restored.
 CONTAINER_RESTORE_PATH="/config/temp_restore_test"
-# The corresponding path on the NAS HOST used for creating/verifying the folder.
 HOST_RESTORE_PATH="/volume2/docker/Mistia-Nexus/duplicati/config/temp_restore_test"
-
-# The unique content to write to the test file.
 TEST_FILE_CONTENT="Backup and Restore successful on $(date)"
 
 # --- END OF CONFIGURATION ---
@@ -36,7 +22,7 @@ set -e
 print_status() {
     COLOR_GREEN='\033[0;32m'
     COLOR_RED='\033[0;31m'
-    COLOR_NC='\033[0m'
+    COLOR_NC='\033[0m' 
     if [ "$2" == "success" ]; then
         printf "${COLOR_GREEN}[SUCCESS]${COLOR_NC} %s\n" "$1"
     elif [ "$2" == "failure" ]; then
@@ -62,12 +48,20 @@ print_status "Step 1: Creating test file at ${TEST_FILE_PATH_HOST}..."
 echo "${TEST_FILE_CONTENT}" | sudo tee "$TEST_FILE_PATH_HOST" > /dev/null
 print_status "Test file created." "success"
 
+# 2. Securely prompt for the passphrase once at the start
 print_status "Step 2: Preparing to run test..."
 read -sp 'Please enter the Duplicati ENCRYPTION PASSPHRASE for this backup: ' DUP_PASSPHRASE
 printf "\n"
 
-# 2. Run the Backup
-print_status "Step 3: Starting backup job..."
+# 3. Repair the backup database to ensure consistency
+print_status "Step 3: Repairing the local database (if necessary)..."
+docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli repair \
+  "file://${BACKUP_DEST_URL_CONTAINER}" \
+  --backup-name="${BACKUP_JOB_NAME}"
+print_status "Repair operation completed." "success"
+
+# 4. Run the Backup
+print_status "Step 4: Starting backup job..."
 docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli backup \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
   "${TEST_FILE_PATH_CONTAINER}" \
@@ -76,8 +70,8 @@ docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-c
 
 print_status "Backup job completed." "success"
 
-# 3. Restore the file
-print_status "Step 4: Restoring test file to a writable location..."
+# 5. Restore the file
+print_status "Step 5: Restoring test file to a writable location..."
 sudo mkdir -p "$HOST_RESTORE_PATH"
 sudo chown -R "$(id -u)":"$(id -g)" "$HOST_RESTORE_PATH" 
 
@@ -89,8 +83,8 @@ docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-c
 
 print_status "Restore operation completed." "success"
 
-# 4. Verify the restored file
-print_status "Step 5: Verifying restored file..."
+# 6. Verify the restored file
+print_status "Step 6: Verifying restored file..."
 RESTORED_FILE_PATH="${HOST_RESTORE_PATH}${TEST_FILE_PATH_CONTAINER}" 
 
 if [ ! -f "$RESTORED_FILE_PATH" ]; then
