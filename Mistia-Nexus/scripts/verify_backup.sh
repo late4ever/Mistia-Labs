@@ -5,6 +5,9 @@
 # backing it up, restoring it, and comparing the results.
 #
 
+# Navigate to the script's directory's parent (the Mistia-Nexus root)
+cd "$(dirname "$0")/.."
+
 # --- START OF CONFIGURATION ---
 
 BACKUP_JOB_NAME="Mistia-Nexus App to Data"
