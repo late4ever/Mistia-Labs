@@ -78,7 +78,6 @@ docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-c
   "file://${BACKUP_DEST_URL_CONTAINER}" \
   "${TEST_FILE_PATH_CONTAINER}" \
   --restore-path="${CONTAINER_RESTORE_PATH}" \
-  --no-local-path=true \
   --overwrite=true
 
 print_status "Restore operation completed." "success"
