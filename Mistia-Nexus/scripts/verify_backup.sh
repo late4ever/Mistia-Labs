@@ -55,17 +55,17 @@ printf "\n"
 
 # 3. Repair the backup database to ensure consistency
 print_status "Step 3: Repairing the local database (if necessary)..."
-docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli repair \
+(cd ../duplicati && docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli repair \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
-  --backup-name="${BACKUP_JOB_NAME}"
+  --backup-name="${BACKUP_JOB_NAME}")
 print_status "Repair operation completed." "success"
 
 # 4. Run the Backup
 print_status "Step 4: Starting backup job..."
-docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli backup \
+(cd ../duplicati && docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli backup \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
   "${TEST_FILE_PATH_CONTAINER}" \
-  --backup-name="${BACKUP_JOB_NAME}"
+  --backup-name="${BACKUP_JOB_NAME}")
 
 print_status "Backup job completed." "success"
 
@@ -74,11 +74,11 @@ print_status "Step 5: Restoring test file to a writable location..."
 sudo mkdir -p "$HOST_RESTORE_PATH"
 sudo chown -R "$(id -u)":"$(id -g)" "$HOST_RESTORE_PATH" 
 
-docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli restore \
+(cd ../duplicati && docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli restore \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
   "${TEST_FILE_PATH_CONTAINER}" \
   --restore-path="${CONTAINER_RESTORE_PATH}" \
-  --overwrite=true
+  --overwrite=true)
 
 print_status "Restore operation completed." "success"
 
