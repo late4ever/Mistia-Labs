@@ -89,7 +89,7 @@ fi
 # Step 6: Set Script Permissions
 print_header "Step 6: Setting permissions for management scripts..."
 cd "$DEPLOY_DIR"/Mistia-Nexus
-sudo chmod +x ./scripts/*.sh
+sudo chmod +x scripts/*.sh
 
 print_header "System Preparation Complete!"
 echo
