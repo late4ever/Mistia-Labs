@@ -18,8 +18,8 @@ networks:
   adguard_net:
     driver: macvlan
     driver_opts:
-      # Use the name of your NAS's link aggregation interface
-      parent: BOND6-1
+      # Use a physical interface name (e.g., eth0) instead of the bond name.
+      parent: eth0
     ipam:
       config:
         # Configure this to match your router's network settings

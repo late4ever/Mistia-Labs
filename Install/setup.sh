@@ -35,7 +35,7 @@ print_header "Starting Mistia-Nexus Homelab Setup"
 # Step 1: Install System Dependencies
 print_header "Step 1: Installing Git, Docker, and Docker Compose..."
 sudo apt-get update
-sudo apt-get install -y git docker.io docker-compose
+sudo apt-get install -y git docker.io
 
 # Step 2: Start and Enable Docker Service
 print_header "Step 2: Starting and enabling Docker service..."
@@ -89,7 +89,7 @@ fi
 # Step 6: Set Script Permissions
 print_header "Step 6: Setting permissions for management scripts..."
 cd "$DEPLOY_DIR"/Mistia-Nexus
-sudo chmod +x start_all.sh stop_all.sh update_all.sh
+sudo chmod +x ./scripts/*.sh
 
 print_header "System Preparation Complete!"
 echo

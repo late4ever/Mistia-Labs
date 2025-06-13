@@ -1,9 +1,13 @@
 #!/bin/bash
 #
-# Duplicati Automated Restore Test Script (v5 - With Repair Step)
-# This script verifies the integrity of a Duplicati backup by repairing the
-# database, creating a test file, backing it up, restoring it, and comparing.
+# Duplicati Automated Restore Test Script
+# This script verifies the integrity of a Duplicati backup by creating a test file,
+# backing it up, restoring it, and comparing the results.
 #
+
+# Navigate to the script's directory's parent (the Mistia-Nexus root)
+# This makes the script runnable from anywhere, including from a cron job.
+cd "$(dirname "$0")/.."
 
 # --- START OF CONFIGURATION ---
 
@@ -11,8 +15,8 @@ BACKUP_JOB_NAME="Mistia-Nexus App to Data"
 BACKUP_DEST_URL_CONTAINER="/nasroot/volume2/Backups/NAS-Apps"
 TEST_FILE_PATH_HOST="/volume1/duplicati_canary_file.txt"
 TEST_FILE_PATH_CONTAINER="/nasroot/volume1/duplicati_canary_file.txt"
-CONTAINER_RESTORE_PATH="/config/temp_restore_test"
-HOST_RESTORE_PATH="/volume2/docker/Mistia-Nexus/duplicati/config/temp_restore_test"
+CONTAINER_RESTORE_PATH="./duplicati/config/temp_restore_test"
+HOST_RESTORE_PATH="./duplicati/config/temp_restore_test"
 TEST_FILE_CONTENT="Backup and Restore successful on $(date)"
 
 # --- END OF CONFIGURATION ---
@@ -39,6 +43,7 @@ cleanup() {
     print_status "Cleanup complete."
 }
 
+# Trap script exit to ensure cleanup runs even if errors occur
 trap cleanup EXIT
 
 # --- SCRIPT EXECUTION ---
@@ -55,14 +60,14 @@ printf "\n"
 
 # 3. Repair the backup database to ensure consistency
 print_status "Step 3: Repairing the local database (if necessary)..."
-docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli repair \
+docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli repair \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
   --backup-name="${BACKUP_JOB_NAME}"
 print_status "Repair operation completed." "success"
 
 # 4. Run the Backup
 print_status "Step 4: Starting backup job..."
-docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli backup \
+docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli backup \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
   "${TEST_FILE_PATH_CONTAINER}" \
   --backup-name="${BACKUP_JOB_NAME}"
@@ -74,7 +79,7 @@ print_status "Step 5: Restoring test file to a writable location..."
 sudo mkdir -p "$HOST_RESTORE_PATH"
 sudo chown -R "$(id -u)":"$(id -g)" "$HOST_RESTORE_PATH" 
 
-docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli restore \
+docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli restore \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
   "${TEST_FILE_PATH_CONTAINER}" \
   --restore-path="${CONTAINER_RESTORE_PATH}" \
