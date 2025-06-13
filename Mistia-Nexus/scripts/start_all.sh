@@ -4,10 +4,6 @@
 # Navigate to the script's directory's parent (the Mistia-Nexus root)
 cd "$(dirname "$0")/.."
 
-echo "--- Starting shared network resources... ---"
-# First, ensure the shared network is up and running.
-docker compose up -d
-
 echo "Starting all Docker services..."
 
 for d in */ ; do

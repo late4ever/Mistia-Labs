@@ -13,8 +13,4 @@ for d in */ ; do
     fi
 done
 
-echo "--- Stopping shared network resources... ---"
-# Finally, bring down the shared network.
-docker compose down
-
 echo "All services stopped."

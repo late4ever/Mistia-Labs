@@ -1,4 +1,4 @@
-# docker-compose.yml for AdGuard Home
+# Mistia-Nexus/adguardhome/docker-compose.yml
 services:
   adguardhome:
     image: adguard/adguardhome:latest
@@ -24,8 +24,8 @@ services:
     environment:
       - TZ=Asia/Singapore
     networks:
-      mistia_lan:
-        # Assign a specific IP from the shared network's ip_range
+      adguard_net:
+        # This assigns the dedicated static IP to the container
         ipv4_address: 192.168.50.251
     volumes:
       - ./workdir:/opt/adguardhome/work
@@ -33,5 +33,11 @@ services:
     restart: unless-stopped
 
 networks:
-  mistia_lan:
-    external: true
+  adguard_net:
+    driver: macvlan
+    driver_opts:
+      parent: eth1
+    ipam:
+      config:
+        - subnet: 192.168.50.0/24
+          gateway: 192.168.50.1
