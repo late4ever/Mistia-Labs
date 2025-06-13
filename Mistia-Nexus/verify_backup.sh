@@ -65,8 +65,7 @@ print_status "Step 4: Starting backup job..."
 docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli backup \
   "file://${BACKUP_DEST_URL_CONTAINER}" \
   "${TEST_FILE_PATH_CONTAINER}" \
-  --backup-name="${BACKUP_JOB_NAME}" \
-  --skip-files-that-match-filter=true
+  --backup-name="${BACKUP_JOB_NAME}"
 
 print_status "Backup job completed." "success"
 
