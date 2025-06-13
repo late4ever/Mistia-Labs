@@ -29,5 +29,5 @@ portainer:
     - portainer_net
 
 networks:
-portainer_net:
-  name: portainer_net
+  portainer_net:
+    name: portainer_net

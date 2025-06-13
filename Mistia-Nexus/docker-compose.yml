@@ -1,0 +1,22 @@
+# docker-compose.yml for shared resources in Mistia-Nexus
+services:
+  # This is a dummy service that does nothing. Its only purpose is to
+  # allow docker-compose to manage the shared network.
+  shared-resources:
+    image: alpine:latest
+    container_name: shared-resources
+    command: 'sleep infinity'
+    restart: unless-stopped
+    networks:
+      - mistia_lan
+
+networks:
+  mistia_lan:
+    driver: macvlan
+    driver_opts:
+      parent: eth0
+    ipam:
+      config:
+        - subnet: 192.168.50.0/24
+          gateway: 192.168.50.1
+          ip_range: 192.168.50.240/28

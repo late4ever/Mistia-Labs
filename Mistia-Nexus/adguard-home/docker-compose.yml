@@ -24,8 +24,8 @@ services:
     environment:
       - TZ=Asia/Singapore
     networks:
-      adguard_net:
-        # This assigns the dedicated static IP to the container
+      mistia_lan:
+        # Assign a specific IP from the shared network's ip_range
         ipv4_address: 192.168.50.251
     volumes:
       - ./workdir:/opt/adguardhome/work
@@ -33,12 +33,5 @@ services:
     restart: unless-stopped
 
 networks:
-  adguard_net:
-    driver: macvlan
-    driver_opts:
-      parent: eth0
-    ipam:
-      config:
-        # Configure this to match your router's network settings
-        - subnet: 192.168.50.0/24
-          gateway: 192.168.50.1
+  mistia_lan:
+    external: true
