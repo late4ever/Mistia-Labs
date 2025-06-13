@@ -78,13 +78,15 @@ docker exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-c
   "file://${BACKUP_DEST_URL_CONTAINER}" \
   "${TEST_FILE_PATH_CONTAINER}" \
   --restore-path="${CONTAINER_RESTORE_PATH}" \
+  --no-local-path=true \
   --overwrite=true
 
 print_status "Restore operation completed." "success"
 
 # 6. Verify the restored file
 print_status "Step 6: Verifying restored file..."
-RESTORED_FILE_PATH="${HOST_RESTORE_PATH}${TEST_FILE_PATH_CONTAINER}" 
+TEST_FILENAME=$(basename "$TEST_FILE_PATH_HOST")
+RESTORED_FILE_PATH="${HOST_RESTORE_PATH}/${TEST_FILENAME}" 
 
 if [ ! -f "$RESTORED_FILE_PATH" ]; then
     print_status "Restored file not found at '${RESTORED_FILE_PATH}'." "failure"
