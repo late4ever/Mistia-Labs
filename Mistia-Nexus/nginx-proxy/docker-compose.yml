@@ -1,32 +1,81 @@
-# Mistia-Nexus/nginx-proxy/docker-compose.yml
+#docker-compose.yml for Nginx Proxy Manager
 services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: nginx-proxy
+    hostname: nginx-proxy
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:81']
+      interval: 5m
+      timeout: 10s
+      retries: 3
+    labels:
+      - 'com.mistia-nexus.service.name=Nginx Proxy Manager'
+      - 'com.mistia-nexus.service.type=Reverse Proxy'
     ports:
       - '81:81'
-      - '8880:80'
-      - '4443:443'
+      - '80:80'
+      - '443:443'
     environment:
-      DB_MYSQL_HOST: 'nginx-proxy-db'
-      DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: 'npm'
-      DB_MYSQL_NAME: 'npm'
-      DB_MYSQL_PASSWORD: '${DB_PASSWORD}'
+      - TZ=Asia/Singapore
+      - DB_MYSQL_HOST=nginx-proxy-db
+      - DB_MYSQL_PORT=3306
+      - DB_MYSQL_USER=npm
+      - DB_MYSQL_NAME=npm
+      - DB_MYSQL_PASSWORD=${DB_PASSWORD}
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
     depends_on:
       - db
     restart: unless-stopped
+    networks:
+      - nginx-proxy_net
+
   db:
     image: 'jc21/mariadb-aria:latest'
     container_name: nginx-proxy-db
+    hostname: nginx-proxy-db
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'mysqladmin',
+          'ping',
+          '-h',
+          'localhost',
+          '-u',
+          'npm',
+          '-p${DB_PASSWORD}'
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    labels:
+      - 'com.mistia-nexus.service.name=Nginx Proxy Manager Database'
+      - 'com.mistia-nexus.service.type=Database'
     environment:
-      MYSQL_DATABASE: 'npm'
-      MYSQL_USER: 'npm'
-      MYSQL_PASSWORD: '${DB_PASSWORD}'
-      MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD}'
+      - TZ=Asia/Singapore
+      - MYSQL_DATABASE=npm
+      - MYSQL_USER=npm
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
     volumes:
       - ./db_data:/var/lib/mysql
     restart: unless-stopped
+    networks:
+      - nginx-proxy_net
+
+networks:
+  nginx-proxy_net:
+    name: nginx-proxy_net

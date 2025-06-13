@@ -1,8 +1,28 @@
-# Mistia-Nexus/adguardhome/docker-compose.yml
+# docker-compose.yml for AdGuard Home
 services:
   adguardhome:
     image: adguard/adguardhome:latest
     container_name: adguardhome
+    hostname: adguardhome
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1'
+        ]
+      interval: 5m
+      timeout: 10s
+      retries: 3
+    labels:
+      - 'com.mistia-nexus.service.name=AdGuard Home'
+      - 'com.mistia-nexus.service.type=Network Security'
+    environment:
+      - TZ=Asia/Singapore
     networks:
       adguard_net:
         # This assigns the dedicated static IP to the container
@@ -10,15 +30,12 @@ services:
     volumes:
       - ./workdir:/opt/adguardhome/work
       - ./confdir:/opt/adguardhome/conf
-    # Note: We don't map ports here because macvlan handles it.
-    # AdGuard Home will use ports 53, 80, 443, etc. on its own IP.
     restart: unless-stopped
 
 networks:
   adguard_net:
     driver: macvlan
     driver_opts:
-      # Use a physical interface name (e.g., eth0) instead of the bond name.
       parent: eth0
     ipam:
       config:

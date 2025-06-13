@@ -3,6 +3,20 @@ services:
   duplicati:
     image: lscr.io/linuxserver/duplicati:latest
     container_name: duplicati
+    hostname: duplicati
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8200']
+      interval: 5m
+      timeout: 10s
+      retries: 3
+    labels:
+      - 'com.mistia-nexus.service.name=Duplicati'
+      - 'com.mistia-nexus.service.type=Backup'
     environment:
       - PUID=1000
       - PGID=10
@@ -15,3 +29,9 @@ services:
     ports:
       - 8200:8200
     restart: unless-stopped
+    networks:
+      - duplicati_net
+
+networks:
+  duplicati_net:
+    name: duplicati_net
