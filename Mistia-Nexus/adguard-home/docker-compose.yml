@@ -36,7 +36,7 @@ networks:
   adguard_net:
     driver: macvlan
     driver_opts:
-      parent: eth1
+      parent: bridge0
     ipam:
       config:
         - subnet: 192.168.50.0/24
