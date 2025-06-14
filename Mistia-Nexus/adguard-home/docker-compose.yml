@@ -2,8 +2,8 @@
 services:
   adguardhome:
     image: adguard/adguardhome:latest
-    container_name: adguardhome
-    hostname: adguardhome
+    container_name: adguard-home
+    hostname: adguard-home
     logging:
       driver: 'json-file'
       options:
