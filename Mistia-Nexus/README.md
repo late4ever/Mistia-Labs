@@ -122,7 +122,7 @@ Before starting the containers, you must create the secret `.env` file for all r
 
     ```bash
     cd /volume2/docker/Mistia-Nexus
-    ./start_all.sh
+    .scripts/start_all.sh
     ```
 
     Your containers will now start up correctly.
@@ -132,14 +132,17 @@ Before starting the containers, you must create the secret `.env` file for all r
 * **Portainer:** Access at [`https://mistia-nexus.local:9444`](https://mistia-nexus.local:9444) to create your admin account and view your Docker environment.
 * **Duplicati:** Access at [`http://mistia-nexus.local:8200`](http://mistia-nexus.local:8200) to configure your backup jobs.
 * **Ngnix Proxy Manager:** Access at [`http://mistia-nexus.local:81`](http://mistia-nexus.local:81) to create your admin account and setup proxies.
+* **AdGuard Home** Access at [`http://192.168.50.251:3000`](http://192.168.50.251:3000) to create your admin account and setup the configurations.
 
 ## 4. Ongoing Management
 
-For daily management, `cd` into the deployment directory (`/volume2/docker/Mistia-Nexus`) and use the provided scripts:
+For daily management, `cd` into the deployment directory (`/volume2/docker/Mistia-Nexus/scripts`) and use the provided scripts:
 
 * `./start_all.sh`: Starts all services.
 * `./stop_all.sh`: Stops all services.
 * `./update_all.sh`: Stops all containers, pulls the latest Docker images and restarts the services.
+* `./update.sh <container_name>`: Stop the container, pulls the latest Docker image and restart the service.
+* `./verify_backup.sh`: Run a backup and restore test of all backup jobs available. 
 
 ## 5. Teardown / Clean Up (For Fresh Testing)
 

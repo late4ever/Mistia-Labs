@@ -18,8 +18,9 @@
 | :------------------------ | :------------------------------------------------------------- | :-------------------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **UGREEN NASync** | [`https://nexus.mistia.xyz`](https://nexus.mistia.xyz) | `9443`       | `https`  | The main management UI for the NAS itself.                                                                                                         |
 | **Portainer** | [`https://portainer.mistia.xyz`](https://portainer.mistia.xyz) | `9444:9443`           | `https`  | The primary Docker management UI. Your browser will show a security warning on first visit because it uses a self-signed certificate. This is safe to accept. |
-| **Duplicati** | [`http://duplicati.mistia.xyz`](https://duplicati.mistia.xyz)   | `8200:8200`           | `http`   | The automated backup solution. Used for configuring all backup jobs.                                                                               |
-| **Nginx Proxy Manager** | [`https://npm.mistia.xyz`](https://npm.mistia.xyz) | `81:81`, `8880:80`, `4443:443` | `https` | The reverse proxy and SSL certificate manager for all services. |
+| **Duplicati** | [`http://duplicati.mistia.xyz`](https://duplicati.mistia.xyz)   | `8100:8100`           | `http`   | The automated backup solution. Used for configuring all backup jobs.                                                                               |
+| **Nginx Proxy Manager** | [`https://proxy.mistia.xyz`](https://proxy.mistia.xyz) | `81:81`, `8880:80`, `4443:443` | `https` | The reverse proxy and SSL certificate manager for all services. |
+| **AdGuard Home** | [`https://adguard.mistia.local`](https://adguard.mistia.local) | `192.168.50.251` | `http` | Network-wide ad blocker. Uses a static `macvlan` IP. |
 
 ---
 
@@ -42,23 +43,39 @@ Add the new service to your repository and deploy it to [Mistia-Labs GitHub Repo
    - **Action:** Use the generic template below, filling in the placeholders with the information you gathered in Phase 1.
 
       ```yaml
-      # docker-compose.yml for <SERVICE_NAME>
+      # docker-compose.yml for Duplicati
       services:
-         <SERVICE_NAME>:
-            image: <DOCKER_IMAGE>
-            container_name: <SERVICE_NAME>
-            environment:
-               - TZ=Asia/Singapore
-               # Add other environment variables here.
-               # If a secret is needed, use this format:
-               - <YOUR_ENV_VAR>=${<YOUR_SECRET_NAME>}
-            volumes:
-               # Map the persistent data volume.
-               - ./config:/config
-            ports:
-               # Map the required ports.
-               - <HOST_PORT>:<CONTAINER_PORT>/tcp
-            restart: unless-stopped
+      duplicati:
+         image: <SERVICE_IMAGE>
+         container_name: <SERVICE_NAME>
+         hostname: <SERVICE_NAME>
+         logging:
+            driver: 'json-file'
+            options:
+            max-size: '10m'
+            max-file: '3'
+         healthcheck:
+            test: ['CMD', 'curl', '-f', '<<SERVICE_LOCAL_URL>>']
+            interval: 5m
+            timeout: 10s
+            retries: 3
+         labels:
+            - 'com.mistia-nexus.service.name=<SERVICE_NAME>'
+            - 'com.mistia-nexus.service.type=<SERVICE_TYPE>'
+         environment:
+            - TZ=Asia/Singapore
+            - <REQUIRE_ENV_SETTINGS>
+         volumes:
+            - <REQUIRED_VOLUME>
+         ports:
+            - <PORT_MAPPING>
+         restart: unless-stopped
+         networks:
+            - <SERVICE_NAME>_net
+
+      networks:
+         <SERVICE_NAME>_net:
+            name: <SERVICE_NAME>_net
       ```
 
 3. **Commit and Push the Configuration**
@@ -70,6 +87,8 @@ Add the new service to your repository and deploy it to [Mistia-Labs GitHub Repo
       git commit -m "✨ feat: Add <SERVICE_NAME> service"
       git push
       ```
+
+---
 
 ### Phase 2: Deploy the Service
 
@@ -110,13 +129,21 @@ Add the new service to your repository and deploy it to [Mistia-Labs GitHub Repo
 
 ---
 
-### Phase 2: Finalize and Document
+### Phase 3: Setup Reverse Proxy
+
+1. Go to [`https://proxy.mistia.xyz`](https://proxy.mistia.xyz)
+
+2. Add a new Proxy Host for the new service
+
+---
+
+### Phase 4: Finalize and Document
 
 The service is now be running. The final step is to document it.
 
 1. **Test the Service**
 
-   - **Action:** Open your web browser and navigate to the service's URL (e.g., `http://mistia-nexus.local:<HOST_PORT>`) to ensure it's working.
+   - **Action:** Open your web browser and navigate to the service's URL (e.g., `https://<proxyhost>.mistia.xyz`) to ensure it's working.
 
 2. **Update this `README.md`**
 

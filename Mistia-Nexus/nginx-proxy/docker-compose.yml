@@ -10,7 +10,7 @@ services:
         max-size: '10m'
         max-file: '3'
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:81']
+      test: ['CMD', '/usr/bin/check-health']
       interval: 5m
       timeout: 10s
       retries: 3
