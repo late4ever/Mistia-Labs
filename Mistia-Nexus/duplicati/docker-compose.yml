@@ -27,7 +27,7 @@ services:
       - ./config:/config
       - /:/nasroot:ro
     ports:
-      - 8200:8200
+      - 8100:8200
     restart: unless-stopped
     networks:
       - duplicati_net
