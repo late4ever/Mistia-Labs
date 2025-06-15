@@ -1,61 +1,65 @@
 # --- Global Options ---
 {
-  email {env.CADDY_EMAIL}
-  acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+	email {env.CADDY_EMAIL}
+	acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
 }
 
 (security_headers) {
-  header {
-    Strict-Transport-Security "max-age=31536000;"
-    X-Frame-Options "SAMEORIGIN"
-    X-Content-Type-Options "nosniff"
-    Referrer-Policy "strict-origin-when-cross-origin"
-  }
+	header {
+		Strict-Transport-Security "max-age=31536000;"
+		X-Frame-Options "SAMEORIGIN"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
 }
 
 # --- Main Site Block with Wildcard Certificate ---
 *.mistia.xyz {
-  import security_headers
-  encode zstd br gzip
+	import security_headers
+	encode zstd br gzip
 
-  # --- Service Routing ---
+	# --- Service Routing ---
 
-  @adguard host adguard.mistia.xyz
-  handle @adguard {
-    reverse_proxy http://192.168.50.251:80 {
-      health_uri /
-      health_interval 1m
-    }
-  }
+	@adguard host adguard.mistia.xyz
+	handle @adguard {
+		reverse_proxy http://192.168.50.251:80 {
+			health_uri /
+			health_interval 1m
+			health_status 2xx 3xx
+		}
+	}
 
-  @duplicati host duplicati.mistia.xyz
-  handle @duplicati {
-    reverse_proxy http://duplicati:8200 {
-      health_uri /
-      health_interval 1m
-    }
-  }
+	@duplicati host duplicati.mistia.xyz
+	handle @duplicati {
+		reverse_proxy http://duplicati:8200 {
+			health_uri /
+			health_interval 1m
+			health_status 2xx 3xx
+		}
+	}
 
-  @nexus host nexus.mistia.xyz
-  handle @nexus {
-    reverse_proxy http://192.168.50.150:9999 {
-      health_uri /
-      health_interval 1m
-    }
-  }
+	@nexus host nexus.mistia.xyz
+	handle @nexus {
+		reverse_proxy http://192.168.50.150:9999 {
+			health_uri /
+			health_interval 1m
+			health_status 2xx 3xx
+		}
+	}
 
-  @portainer host portainer.mistia.xyz
-  handle @portainer {
-    reverse_proxy http://portainer:9000 {
-      health_uri /
-      health_interval 1m
-    }
-  }
+	@portainer host portainer.mistia.xyz
+	handle @portainer {
+		reverse_proxy http://portainer:9000 {
+			health_uri /
+			health_interval 1m
+			health_status 2xx 3xx
+		}
+	}
 
-  # Fallback for any other subdomain
-  handle {
-    root * /srv/www
-    rewrite * /404.html
-    file_server
-  }
+	# Fallback for any other subdomain
+	handle {
+		root * /srv/www
+		rewrite * /404.html
+		file_server
+	}
 }
