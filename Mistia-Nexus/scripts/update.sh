@@ -26,10 +26,10 @@ chmod +x ./scripts/*.sh
 print_status "success" "Repository synced."
 
 print_status "info" "Pulling latest Docker image for '$SERVICE_NAME'..."
-(cd "$SERVICE_NAME" && docker compose pull) || { print_status "error" "Failed to pull Docker image for '$SERVICE_NAME'."; exit 1; }
+(cd "$SERVICE_NAME" && docker compose --env-file ../.env pull) || { print_status "error" "Failed to pull Docker image for '$SERVICE_NAME'."; exit 1; }
 
 print_status "info" "Recreating container for '$SERVICE_NAME'..."
-(cd "$SERVICE_NAME" && docker compose up -d --force-recreate --remove-orphans) || { print_status "error" "Failed to recreate container for '$SERVICE_NAME'."; exit 1; }
+(cd "$SERVICE_NAME" && docker compose --env-file ../.env up -d --force-recreate --remove-orphans) || { print_status "error" "Failed to recreate container for '$SERVICE_NAME'."; exit 1; }
 
 print_status "success" "Service '$SERVICE_NAME' has been updated and restarted."
 echo
