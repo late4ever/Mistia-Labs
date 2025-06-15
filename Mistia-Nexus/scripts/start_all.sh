@@ -5,12 +5,13 @@ source "$(dirname "$0")/functions.sh"
 cd "$(dirname "$0")/.."
 
 if [ -z "$1" ]; then
-  print_status "error" "No profile name provided. Please specify 'caddy' or 'nginx-proxy'."
-  echo "Usage: $0 <profile_name>"
+  print_status "error" "No profile name provided."
+  echo "Usage: $0 <profile_name> (e.g., 'caddy' or 'nginx-proxy')"
   exit 1
 fi
 
 PROFILE_NAME=$1
+
 print_status "header" "Starting All Services with Profile: '$PROFILE_NAME'"
 
 COMPOSE_FILES=()
@@ -28,7 +29,7 @@ if [ ${#COMPOSE_FILES[@]} -eq 0 ]; then
 fi
 
 print_status "info" "Bringing up the stack..."
-docker compose --env-file .env "${COMPOSE_FILES[@]}" --profile "$PROFILE_NAME" up -d --remove-orphans || exit 1
+docker compose --env-file .env "${COMPOSE_FILES[@]}" --profile "$PROFILE_NAME" up -d --remove-orphans || { print_status "error" "Failed to start the stack."; exit 1; }
 
 print_status "success" "All services for profile '$PROFILE_NAME' have been started."
 echo

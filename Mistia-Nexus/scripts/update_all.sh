@@ -1,13 +1,11 @@
 #!/bin/bash
-#
-# This script updates all non-ignored services for a given profile.
-#
+# Updates all non-ignored services for a given profile.
 
 source "$(dirname "$0")/functions.sh"
 
 if [ -z "$1" ]; then
-  print_status "error" "No profile name provided. Please specify 'caddy' or 'nginx-proxy'."
-  echo "Usage: $0 <profile_name>"
+  print_status "error" "No profile name provided."
+  echo "Usage: $0 <profile_name> (e.g., 'caddy' or 'nginx-proxy')"
   exit 1
 fi
 
@@ -30,7 +28,7 @@ for d in */ ; do
     if [ -d "$d" ] && [ -f "$d/docker-compose.yml" ]; then
         if [ ! -f "$d/.ignore" ]; then
             print_status "info" "Pulling image for '$d'..."
-            (cd "$d" && docker compose pull)
+            (cd "$d" && docker compose --env-file ../.env pull)
         fi
     fi
 done

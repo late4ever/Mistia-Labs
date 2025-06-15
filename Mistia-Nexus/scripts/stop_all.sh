@@ -8,9 +8,10 @@ print_status "header" "Stopping All Non-Ignored Docker Services"
 
 for d in */ ; do
     if [ -d "$d" ] && [ -f "$d/docker-compose.yml" ]; then
+        # The .ignore file is a convention to protect critical infrastructure services.
         if [ ! -f "$d/.ignore" ]; then
             print_status "info" "Stopping service in '$d'..."
-            (cd "$d" && docker compose down)
+            (cd "$d" && docker compose --env-file ../.env down)
         else
             print_status "info" "Skipping ignored service in '$d'."
         fi
