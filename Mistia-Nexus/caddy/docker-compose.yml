@@ -3,7 +3,6 @@ services:
     image: caddy:latest
     container_name: caddy
     hostname: caddy
-    profiles: ['caddy']
     logging:
       driver: 'json-file'
       options:
