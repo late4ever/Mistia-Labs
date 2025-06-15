@@ -1,6 +1,6 @@
 services:
   caddy:
-    image: caddy:latest
+    build: .
     container_name: caddy
     hostname: caddy
     logging:
