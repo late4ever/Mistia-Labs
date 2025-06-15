@@ -1,6 +1,6 @@
 # Nginx Proxy Manager Setup Guide
 
-**Note:** The default and recommended reverse proxy for this project is Caddy. This guide is for reference only, should you choose to run the `npm` profile instead. The setup process for Caddy is fully automated.
+**Note:** The default and recommended reverse proxy for this project is Caddy. This guide is for use when Nginx Proxy Manager is the active reverse proxy.
 
 This document details the step-by-step process for configuring Nginx Proxy Manager (NPM) after it has been deployed via Docker.
 
@@ -75,12 +75,14 @@ With a valid certificate, you can now create secure routes to your services.
     * Click on **Hosts** > **"Proxy Hosts"**.
 
 2. **Add a New Host (Example: Portainer):**
+   This uses the container name as Forward Hostname. Use `http` when possible. The port is `http` port of the container. Ports are no longer expose to the host.
+
     * Click the **"Add Proxy Host"** button.
     * **Details Tab:**
         * Domain Names: `portainer.mistia.xyz`
-        * Scheme: `https`
-        * Forward Hostname / IP: `mistia-nexus.local`
-        * Forward Port: `9444`
+        * Scheme: `http`
+        * Forward Hostname / IP: `portainer`
+        * Forward Port: `9000`
         * Enable **"Block Common Exploits"**.
     * **SSL Tab:**
         * SSL Certificate: Select your `*.mistia.xyz` certificate from the dropdown list.
@@ -90,19 +92,3 @@ With a valid certificate, you can now create secure routes to your services.
     * **Click Save.**
 
 Repeat this process for all your other services (like Duplicati), adjusting the domain name, scheme, and forward port as needed.
-
----
-
-## 4. Configure Local DNS
-
-The final step is to tell your home network devices where to find these new subdomains.
-
-1. **Log into your router's administration page.**
-2. Find the **LAN DNS** or "Static DNS" settings.
-3. Add new records that point your subdomains to your NAS's static IP address:
-    * `portainer.mistia.xyz` -> `192.168.50.150`
-    * `duplicati.mistia.xyz` -> `192.168.50.150`
-    * *Add a new entry for every proxy host you create.*
-4. Save the changes on your router.
-
-After these DNS changes take effect, you will be able to access all your services via their secure `https://` URLs.

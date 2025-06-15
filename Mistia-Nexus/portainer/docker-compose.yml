@@ -1,6 +1,6 @@
 services:
   portainer:
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer-ce:alpine
     container_name: portainer
     hostname: portainer
     logging:
@@ -8,6 +8,12 @@ services:
       options:
         max-size: '10m'
         max-file: '3'
+    healthcheck:
+      test: ['CMD-SHELL', 'nc -z -v localhost 9000 || exit 1']
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     labels:
       - 'com.mistia-nexus.service.name=Portainer'
       - 'com.mistia-nexus.service.type=Management'

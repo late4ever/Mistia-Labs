@@ -10,9 +10,10 @@ services:
         max-file: '3'
     healthcheck:
       test: ['CMD', '/usr/bin/check-health']
-      interval: 5m
+      interval: 1m
       timeout: 10s
       retries: 3
+      start_period: 60s
     labels:
       - 'com.mistia-nexus.service.name=Nginx Proxy Manager'
       - 'com.mistia-nexus.service.type=Reverse Proxy'

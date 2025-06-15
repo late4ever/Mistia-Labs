@@ -31,7 +31,7 @@ Before starting, ensure you have completed the following on your Ugreen NAS:
         ./scripts/update.sh adguard-home
         ```
 
-### **Phase 2B: Enable Host-to-Container Communication (Critical)**
+### Phase 2B: Enable Host-to-Container Communication (Critical)
 
 By default, the NAS host cannot directly communicate with a container on a `macvlan` network. This will cause problems, such as the `docker pull` command timing out if the NAS is trying to use AdGuard for DNS.
 
@@ -55,7 +55,7 @@ The following commands create a virtual network interface on the host to bridge 
 
 > **Note:** These commands are temporary and the network configuration will be lost when you reboot your NAS. For a permanent solution, see the advanced guide below.
 
-#### **Making the Fix Permanent (Advanced)**
+#### Making the Fix Permanent (Advanced)
 
 To ensure the virtual network bridge is recreated automatically on boot, you can create a simple startup script. The exact method can vary between Linux systems, but creating a `systemd` service is a robust approach.
 
@@ -129,7 +129,7 @@ AdGuard Home has a one-time setup wizard that you must complete.
     * **Step 4 (Authentication):** Create a strong username and password for your AdGuard Home admin panel. Save these in your password manager.
     * **Step 5 (Done):** Finish the setup. You will be automatically redirected to your new dashboard.
 
-### **Phase 4: Configure Your Network**
+### Phase 4: Configure Your Network
 
 The final step is to tell all the devices on your network to use AdGuard Home as their DNS server.
 
@@ -139,3 +139,7 @@ The final step is to tell all the devices on your network to use AdGuard Home as
 4. **Action:** Enter the static IP address of your AdGuard Home container: `192.168.50.251`.
 5. **Important:** Ensure `Advertise router's IP in addition to user-specified DNS` is set to **No**.
 6. Click **"Apply"**.
+
+### Phase 5: Configure Adguard Home
+
+Follow this [`Github Repo`]("https://github.com/celenityy/adguard-home-settings?tab=readme-ov-file")

@@ -14,9 +14,10 @@ services:
           'CMD-SHELL',
           'wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1'
         ]
-      interval: 5m
+      interval: 1m
       timeout: 10s
       retries: 3
+      start_period: 60s
     labels:
       - 'com.mistia-nexus.service.name=AdGuard Home'
       - 'com.mistia-nexus.service.type=Network Security'

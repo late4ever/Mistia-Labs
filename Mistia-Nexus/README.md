@@ -7,7 +7,6 @@ This guide contains the complete instructions for deploying and managing all Doc
 Understanding these concepts is key to managing this homelab effectively.
 
 * **Shared Proxy Network:** All primary application containers are attached to a single Docker bridge network called `mistia-proxy-net`. This allows the reverse proxy to communicate with services securely and efficiently without exposing their ports on the host machine.
-* **Reverse Proxy Profiles:** The reverse proxy is managed using Docker Compose `profiles`. This allows you to choose which proxy to run (`caddy` or `npm`) by passing a profile name to the management scripts. Caddy is the default and recommended choice.
 * **Secrets Management:** All secrets (passwords, API tokens) are managed using `.env` files, which are specific to each service directory and are excluded from Git. This ensures no sensitive data is ever stored in the repository.
 * **Critical Service Isolation:** Core infrastructure like AdGuard Home is intentionally isolated from mass operations. By placing an empty `.ignore` file in its directory, the `update_all.sh` and `stop_all.sh` scripts will skip it, preventing network-wide outages during application updates.
 
@@ -158,7 +157,7 @@ cd /volume2/docker/Mistia-Nexus
 | `stop_all.sh`| `./scripts/stop_all.sh` | Stops all non-ignored services. |
 | `update_all.sh`| `./scripts/update_all.sh` | Performs a full stack update: stops services, syncs Git, pulls all images, and restarts the stack. |
 | `update.sh` | `./scripts/update.sh <service>` | Updates a single, specific service (e.g., `portainer`). |
-| `add_service.sh`| `./scripts/add_service.sh <new>`| Adds a new service (e.g., `jellyfin`) to the running stack without a full restart. |
+| `add_service.sh`| `./scripts/add_service.sh <new_service_name>`| Adds a new service (e.g., `jellyfin`) to the running stack without a full restart. |
 | `verify_backup.sh`| `./scripts/verify_backup.sh` | Runs an automated backup and restore test for Duplicati. |
 
 ---
