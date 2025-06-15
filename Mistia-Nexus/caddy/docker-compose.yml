@@ -8,12 +8,6 @@ services:
       options:
         max-size: '10m'
         max-file: '3'
-    healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost']
-      interval: 1m
-      timeout: 10s
-      retries: 3
-      start_period: 60s
     labels:
       - 'com.mistia-nexus.service.name=Caddy'
       - 'com.mistia-nexus.service.type=Reverse Proxy'

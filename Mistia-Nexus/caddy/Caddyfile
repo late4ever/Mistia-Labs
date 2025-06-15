@@ -32,7 +32,7 @@
 
 	@nexus host nexus.mistia.xyz
 	handle @nexus {
-		reverse_proxy http://192.168.50.150:9999
+		reverse_proxy https://192.168.50.150:9443
 	}
 
 	@portainer host portainer.mistia.xyz
