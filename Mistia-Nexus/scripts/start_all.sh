@@ -5,7 +5,7 @@ source "$(dirname "$0")/functions.sh"
 cd "$(dirname "$0")/.."
 
 if [ -z "$1" ]; then
-  print_status "error" "No profile name provided. Please specify 'caddy' or 'npm'."
+  print_status "error" "No profile name provided. Please specify 'caddy' or 'nginx-proxy'."
   echo "Usage: $0 <profile_name>"
   exit 1
 fi
