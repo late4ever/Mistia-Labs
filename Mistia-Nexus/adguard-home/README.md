@@ -31,6 +31,90 @@ Before starting, ensure you have completed the following on your Ugreen NAS:
         ./scripts/update.sh adguard-home
         ```
 
+### **Phase 2B: Enable Host-to-Container Communication (Critical)**
+
+By default, the NAS host cannot directly communicate with a container on a `macvlan` network. This will cause problems, such as the `docker pull` command timing out if the NAS is trying to use AdGuard for DNS.
+
+The following commands create a virtual network interface on the host to bridge this communication gap, allowing the NAS to talk to the AdGuard container.
+
+1. **Action:** After the AdGuard container is running, run the following commands on your NAS via SSH.
+
+    ```bash
+    # Create a new virtual network interface linked to your main bridge
+    sudo ip link add macvlan-host link br0 type macvlan mode bridge
+
+    # Assign a new, unused static IP from your LAN to this new interface
+    sudo ip addr add 192.168.50.151/24 dev macvlan-host
+
+    # Turn the new interface on
+    sudo ip link set macvlan-host up
+
+    # Add a specific route for the AdGuard container's IP through the new interface
+    sudo ip route add 192.168.50.251/32 dev macvlan-host
+    ```
+
+> **Note:** These commands are temporary and the network configuration will be lost when you reboot your NAS. For a permanent solution, see the advanced guide below.
+
+#### **Making the Fix Permanent (Advanced)**
+
+To ensure the virtual network bridge is recreated automatically on boot, you can create a simple startup script. The exact method can vary between Linux systems, but creating a `systemd` service is a robust approach.
+
+1. **Create a script file for the commands:**
+
+    ```bash
+    # Create the script file
+    sudo nano /usr/local/bin/macvlan-setup.sh
+    ```
+
+    Paste the following into the file, then save and exit (`Ctrl+X`, `Y`, `Enter`):
+
+    ```bash
+    #!/bin/bash
+    ip link add macvlan-host link br0 type macvlan mode bridge
+    ip addr add 192.168.50.151/24 dev macvlan-host
+    ip link set macvlan-host up
+    ip route add 192.168.50.251/32 dev macvlan-host
+    ```
+
+2. **Make the script executable:**
+
+    ```bash
+    sudo chmod +x /usr/local/bin/macvlan-setup.sh
+    ```
+
+3. **Create a `systemd` service to run the script on boot:**
+
+    ```bash
+    # Create the service file
+    sudo nano /etc/systemd/system/macvlan-host.service
+    ```
+
+    Paste the following service definition into the file:
+
+    ```ini
+    [Unit]
+    Description=Create macvlan host interface for Docker containers
+    Wants=network.target
+    After=network.target
+
+    [Service]
+    Type=oneshot
+    ExecStart=/usr/local/bin/macvlan-setup.sh
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+4. **Enable the new service:**
+
+    ```bash
+    # Tell systemd to load the new service and start it on every boot
+    sudo systemctl enable macvlan-host.service
+    sudo systemctl start macvlan-host.service
+    ```
+
+This configuration will now persist permanently across reboots.
+
 ### Phase 3: First-Time Setup of AdGuard Home
 
 AdGuard Home has a one-time setup wizard that you must complete.
