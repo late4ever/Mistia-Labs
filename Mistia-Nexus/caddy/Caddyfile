@@ -1,56 +1,56 @@
 # --- Global Options ---
 {
-	# Replace with your actual email address for Let's Encrypt notifications
-	email {env.CADDY_EMAIL}
+  # Replace with your actual email address for Let's Encrypt notifications
+  email {env.CADDY_EMAIL}
 
-	# Use the Cloudflare DNS challenge for all sites
-	acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+  # Use the Cloudflare DNS challenge for all sites
+  acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
 }
 
 # --- Reusable Snippets ---
 (security_headers) {
-	header {
-		Strict-Transport-Security "max-age=31536000;"
-		X-Frame-Options "SAMEORIGIN"
-		X-Content-Type-Options "nosniff"
-		Referrer-Policy "strict-origin-when-cross-origin"
-	}
+  header {
+    Strict-Transport-Security "max-age=31536000;"
+    X-Frame-Options "SAMEORIGIN"
+    X-Content-Type-Options "nosniff"
+    Referrer-Policy "strict-origin-when-cross-origin"
+  }
 }
 
 # --- Main Site Block with Wildcard Certificate ---
 *.mistia.xyz {
-	# Import security headers and enable compression for all sites
-	import security_headers
-	encode zstd br gzip
+  # Import security headers and enable compression for all sites
+  import security_headers
+  encode zstd br gzip
 
-	# --- Service Routing ---
+  # --- Service Routing ---
 
-	handle @adguard host adguard.mistia.xyz {
-		reverse_proxy http://192.168.50.251:80
-	}
+  handle host adguard.mistia.xyz {
+    reverse_proxy http://192.168.50.251:80
+  }
 
-	handle @duplicati host duplicati.mistia.xyz {
-		reverse_proxy http://duplicati:8200 {
-			health_uri /
-			health_interval 1m
-		}
-	}
+  handle host duplicati.mistia.xyz {
+    reverse_proxy http://duplicati:8200 {
+      health_uri /
+      health_interval 1m
+    }
+  }
 
-	handle @nexus host nexus.mistia.xyz {
-		reverse_proxy http://192.168.50.150:9999
-	}
+  handle host nexus.mistia.xyz {
+    reverse_proxy http://192.168.50.150:9999
+  }
 
-	handle @portainer host portainer.mistia.xyz {
-		reverse_proxy http://portainer:9000 {
-			health_uri /
-			health_interval 1m
-		}
-	}
+  handle host portainer.mistia.xyz {
+    reverse_proxy http://portainer:9000 {
+      health_uri /
+      health_interval 1m
+    }
+  }
 
-	# Fallback for any other subdomain: Serve the 404 page from your 'www' directory.
-	handle {
-		root * /srv/www
-		rewrite * /404.html
-		file_server
-	}
+  # Fallback for any other subdomain: Serve the 404 page from your 'www' directory.
+  handle {
+    root * /srv/www
+    rewrite * /404.html
+    file_server
+  }
 }
