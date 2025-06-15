@@ -1,13 +1,9 @@
 # --- Global Options ---
 {
-  # Replace with your actual email address for Let's Encrypt notifications
   email {env.CADDY_EMAIL}
-
-  # Use the Cloudflare DNS challenge for all sites
   acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
 }
 
-# --- Reusable Snippets ---
 (security_headers) {
   header {
     Strict-Transport-Security "max-age=31536000;"
@@ -19,43 +15,44 @@
 
 # --- Main Site Block with Wildcard Certificate ---
 *.mistia.xyz {
-  # Import security headers and enable compression for all sites
   import security_headers
   encode zstd br gzip
 
   # --- Service Routing ---
 
-  handle host adguard.mistia.xyz {
+  @adguard host adguard.mistia.xyz
+  handle @adguard {
     reverse_proxy http://192.168.50.251:80 {
-      # Added Caddy health check for AdGuard Home
       health_uri /
       health_interval 1m
     }
   }
 
-  handle host duplicati.mistia.xyz {
+  @duplicati host duplicati.mistia.xyz
+  handle @duplicati {
     reverse_proxy http://duplicati:8200 {
       health_uri /
       health_interval 1m
     }
   }
 
-  handle host nexus.mistia.xyz {
+  @nexus host nexus.mistia.xyz
+  handle @nexus {
     reverse_proxy http://192.168.50.150:9999 {
-      # Added Caddy health check for NAS UI (Nexus)
       health_uri /
       health_interval 1m
     }
   }
 
-  handle host portainer.mistia.xyz {
+  @portainer host portainer.mistia.xyz
+  handle @portainer {
     reverse_proxy http://portainer:9000 {
       health_uri /
       health_interval 1m
     }
   }
 
-  # Fallback for any other subdomain: Serve the 404 page from your 'www' directory.
+  # Fallback for any other subdomain
   handle {
     root * /srv/www
     rewrite * /404.html
