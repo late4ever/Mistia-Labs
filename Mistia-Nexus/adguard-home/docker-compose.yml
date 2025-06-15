@@ -23,7 +23,7 @@ services:
     environment:
       - TZ=Asia/Singapore
     networks:
-      adguard_net:
+      adguard-net:
         # This assigns the dedicated static IP to the container
         ipv4_address: 192.168.50.251
     volumes:
@@ -32,7 +32,7 @@ services:
     restart: unless-stopped
 
 networks:
-  adguard_net:
+  adguard-net:
     driver: macvlan
     driver_opts:
       parent: bridge0

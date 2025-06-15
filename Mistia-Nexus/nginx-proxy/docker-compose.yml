@@ -37,7 +37,7 @@ services:
       - db
     restart: unless-stopped
     networks:
-      - nginx-proxy_net
+      - nginx-proxy-net
       - mistia-proxy-net
 
   db:
@@ -84,7 +84,7 @@ services:
 
 networks:
   nginx-proxy_net:
-    name: nginx-proxy_net
+    name: nginx-proxy-net
   mistia-proxy-net:
     name: mistia-proxy-net
     driver: bridge
