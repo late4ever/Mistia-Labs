@@ -81,46 +81,55 @@ Before you begin, complete these three manual steps on your NAS.
 
 ### Part C: Create Application Secrets
 
-1. **Create the central `.env` file:**
+1. **Navigate to Deployment Directory:**
 
-    * Navigate to the root of your deployment directory:
+    ```bash
+    cd /volume2/docker/Mistia-Nexus
+    ```
 
-        ```bash
-        cd /volume2/docker/Mistia-Nexus
-        ```
+2. **Create `.env` files** for each service that requires secrets.
 
-    * Create and open the new `.env` file:
+    **For Caddy:**
 
-        ```bash
-        nano .env
-        ```
+    ```bash
+    cd caddy
+    nano .env
+    # Add your Cloudflare Token
+    # CLOUDFLARE_API_TOKEN=YourSecretCloudflareToken
+    # Save the file and exit (`Ctrl+X`, `y`, `Enter`)
+    cd ..
+    ```
 
-    * Inside the editor, paste the following block. Replace all placeholder values with your actual secrets.
+    **For Nginx Proxy Manager:**
 
-        ```ini
-        # This is the central secrets file for the Mistia-Nexus Services.
+    ```bash
+    cd nginx-proxy
+    nano .env
+    # Add your Cloudflare Token
+    # CLOUDFLARE_API_TOKEN=YourSecretCloudflareToken
+    # Save the file and exit (`Ctrl+X`, `y`, `Enter`)
+    cd ..
+    ```
 
-        # --- Caddy Secrets ---
-        CLOUDFLARE_API_TOKEN=YourSecretCloudflareToken
+    **For Duplicati:**
 
-        # --- Duplicati Secrets ---
-        DUPLICATI_SETTINGS_KEY=YourSuperSecretKeyHere
-        DUPLICATI_UI_PASSWORD=YourChosenUIPassword
-
-        # --- Nginx Proxy Manager Secrets ---
-        DB_PASSWORD=YourStrongProxyDBPassword
-        DB_ROOT_PASSWORD=YourStrongDBRootPassword
-        ```
-
-    * Save the file and exit (`Ctrl+X`, `Y`, `Enter`).
+    ```bash
+    cd duplicati
+    nano .env
+    # Add your Nginx credentials
+    # DB_PASSWORD=YourStrongProxyDBPassword
+    # DB_ROOT_PASSWORD=YourStrongDBRootPassword
+    # Save the file and exit (`Ctrl+X`, `y`, `Enter`)
+    cd ..
+    ```
 
 ### Part D: Deploy the Stack
 
-1. **Run the Start Script:** From the `Mistia-Nexus` root, run the `start_all.sh` script, specifying your desired reverse proxy profile.
+1. **Run the Start Script:** From the `Mistia-Nexus` root, run the `start_all.sh` script.
 
     ```bash
-    # This will start all core services and the Caddy reverse proxy.
-    ./scripts/start_all.sh caddy
+    # This will start all core services.
+    ./scripts/start_all.sh
     ```
 
     Your homelab is now online.
@@ -145,11 +154,11 @@ cd /volume2/docker/Mistia-Nexus
 
 | Script | Usage | Purpose |
 | :--- | :--- | :--- |
-| `start_all.sh` | `./scripts/start_all.sh <profile>` | Starts the entire application stack for a given profile (e.g., `caddy`). |
+| `start_all.sh` | `./scripts/start_all.sh` | Starts the entire application stack. |
 | `stop_all.sh`| `./scripts/stop_all.sh` | Stops all non-ignored services. |
-| `update_all.sh`| `./scripts/update_all.sh <profile>` | Performs a full stack update: stops services, syncs Git, pulls all images, and restarts the stack. |
+| `update_all.sh`| `./scripts/update_all.sh` | Performs a full stack update: stops services, syncs Git, pulls all images, and restarts the stack. |
 | `update.sh` | `./scripts/update.sh <service>` | Updates a single, specific service (e.g., `portainer`). |
-| `add_service.sh`| `./scripts/add_service.sh <new> <proxy>`| Adds a new service (e.g., `jellyfin`) to the running stack without a full restart. |
+| `add_service.sh`| `./scripts/add_service.sh <new>`| Adds a new service (e.g., `jellyfin`) to the running stack without a full restart. |
 | `verify_backup.sh`| `./scripts/verify_backup.sh` | Runs an automated backup and restore test for Duplicati. |
 
 ---
@@ -171,7 +180,7 @@ This procedure uses the `add_service.sh` script for a zero-downtime deployment.
 
         ```bash
         # This syncs git, updates caddy, and starts jellyfin.
-        ./scripts/add_service.sh jellyfin caddy
+        ./scripts/add_service.sh jellyfin
         ```
 
 #### Updating the Documentation
