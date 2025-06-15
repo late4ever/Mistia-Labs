@@ -25,8 +25,8 @@ git reset --hard origin/main > /dev/null 2>&1
 chmod +x ./scripts/*.sh
 print_status "success" "Repository synced."
 
-if grep -q "build:" "$SERVICE_NAME/docker-compose.yml"; then
-    print_status "info" "Building Docker image for '$SERVICE_NAME' with --no-cache "
+if grep -Eiq '^\s*build:' "$SERVICE_NAME/docker-compose.yml"; then
+    print_status "info" "Building Docker image for '$SERVICE_NAME' with --no-cache"
     (cd "$SERVICE_NAME" && docker compose build --no-cache) || { print_status "error" "Failed to build Docker image for '$SERVICE_NAME'."; exit 1; }
     print_status "success" "Image build completed for '$SERVICE_NAME'."
 else
