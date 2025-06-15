@@ -25,7 +25,7 @@
 		reverse_proxy http://192.168.50.251:80 {
 			health_uri /
 			health_interval 1m
-			health_status 2xx 3xx
+			health_status 200-399
 		}
 	}
 
@@ -34,7 +34,7 @@
 		reverse_proxy http://duplicati:8200 {
 			health_uri /
 			health_interval 1m
-			health_status 2xx 3xx
+			health_status 200-399
 		}
 	}
 
@@ -43,7 +43,7 @@
 		reverse_proxy http://192.168.50.150:9999 {
 			health_uri /
 			health_interval 1m
-			health_status 2xx 3xx
+			health_status 200-399
 		}
 	}
 
@@ -52,7 +52,7 @@
 		reverse_proxy http://portainer:9000 {
 			health_uri /
 			health_interval 1m
-			health_status 2xx 3xx
+			health_status 200-399
 		}
 	}
 
