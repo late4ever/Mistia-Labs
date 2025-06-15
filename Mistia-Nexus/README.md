@@ -95,6 +95,7 @@ Before you begin, complete these three manual steps on your NAS.
     nano .env
     # Add your Cloudflare Token
     # CLOUDFLARE_API_TOKEN=YourSecretCloudflareToken
+    # CADDY_EMAIL=email@domain.com
     # Save the file and exit (`Ctrl+X`, `y`, `Enter`)
     cd ..
     ```

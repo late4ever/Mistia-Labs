@@ -1,11 +1,13 @@
-# --- Global Options & Reusable Snippets ---
+# --- Global Options ---
 {
-	tls {
-		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-	}
+	# Replace with your actual email address for Let's Encrypt notifications
+	email {env.CADDY_EMAIL}
+
+	# Use the Cloudflare DNS challenge for all sites
+	acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
 }
 
-# Best-practice security headers to protect against common attacks.
+# --- Reusable Snippets ---
 (security_headers) {
 	header {
 		Strict-Transport-Security "max-age=31536000;"
@@ -15,45 +17,40 @@
 	}
 }
 
-# --- Service Proxies ---
-
-# AdGuard Home (accessible via its static IP)
-adguard.mistia.xyz {
+# --- Main Site Block with Wildcard Certificate ---
+*.mistia.xyz {
+	# Import security headers and enable compression for all sites
 	import security_headers
 	encode zstd br gzip
-	reverse_proxy http://192.168.50.251:80
-}
 
-# Duplicati (on the shared Docker network)
-duplicati.mistia.xyz {
-	import security_headers
-	encode zstd br gzip
-	reverse_proxy http://duplicati:8200
-}
+	# --- Service Routing ---
 
-# NAS Web Interface (accessible via its static IP)
-nexus.mistia.xyz {
-	import security_headers
-	encode zstd br gzip
-	# This proxies to the HTTPS port of your NAS UI.
-	reverse_proxy http://192.168.50.150:9999
-}
+	handle @adguard host adguard.mistia.xyz {
+		reverse_proxy http://192.168.50.251:80
+	}
 
-# Portainer (on the shared Docker network)
-portainer.mistia.xyz {
-	import security_headers
-	encode zstd br gzip
-	reverse_proxy http://portainer:9000
-}
+	handle @duplicati host duplicati.mistia.xyz {
+		reverse_proxy http://duplicati:8200 {
+			health_uri /
+			health_interval 1m
+		}
+	}
 
-# --- Default Host / Catch-All ---
-:443 {
-	root * /srv/www
+	handle @nexus host nexus.mistia.xyz {
+		reverse_proxy http://192.168.50.150:9999
+	}
 
-	handle_errors {
+	handle @portainer host portainer.mistia.xyz {
+		reverse_proxy http://portainer:9000 {
+			health_uri /
+			health_interval 1m
+		}
+	}
+
+	# Fallback for any other subdomain: Serve the 404 page from your 'www' directory.
+	handle {
+		root * /srv/www
 		rewrite * /404.html
 		file_server
 	}
-
-	error "Not Found" 404
 }
