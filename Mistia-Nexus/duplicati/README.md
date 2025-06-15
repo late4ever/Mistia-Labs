@@ -35,7 +35,7 @@ There are two primary scenarios for restoring data from this backup.
 
 This process is safe and does not overwrite any existing data. It is the same process used to test your backups.
 
-1. **Access Duplicati:** Log into the Duplicati web UI at `http://mistia-nexus.local:8200`.
+1. **Access Duplicati:** Log into the Duplicati web UI at `https://duplicati.mistia.xyz`.
 2. **Start Restore:** Click **"Restore"** > **"Direct restore from backup files"**.
 3. **Connect to Backup:**
     * **Storage Type:** `Local folder or drive`

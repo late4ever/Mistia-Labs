@@ -1,5 +1,7 @@
 # Nginx Proxy Manager Setup Guide
 
+**Note:** The default and recommended reverse proxy for this project is Caddy. This guide is for reference only, should you choose to run the `npm` profile instead. The setup process for Caddy is fully automated.
+
 This document details the step-by-step process for configuring Nginx Proxy Manager (NPM) after it has been deployed via Docker.
 
 The primary goal is to obtain a valid wildcard SSL certificate and use it to create secure, user-friendly URLs for your other homelab services.
@@ -56,7 +58,7 @@ Now, use the API token to request the certificate from Let's Encrypt.
     * **DNS Provider:** Select **"Cloudflare"** from the dropdown list.
     * **Credentials File Content:** In the text box, paste the following, replacing `<YOUR_CLOUDFLARE_API_TOKEN>` with the token you copied from Cloudflare:
 
-        ```
+        ```txt
         dns_cloudflare_api_token = <YOUR_CLOUDFLARE_API_TOKEN>
         ```
 
