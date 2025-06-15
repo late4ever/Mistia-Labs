@@ -3,7 +3,7 @@
 
 source "$(dirname "$0")/functions.sh"
 
-print_status "info" "Syncing with Git repository..."
+print_status "header" "Syncing with Git repository..."
 git fetch origin > /dev/null 2>&1
 git reset --hard origin/main > /dev/null 2>&1
 chmod +x ./scripts/*.sh
