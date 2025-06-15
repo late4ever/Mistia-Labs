@@ -81,47 +81,38 @@ Before you begin, complete these three manual steps on your NAS.
 
 ### Part C: Create Application Secrets
 
-1. **Navigate to Deployment Directory:**
+1. **Create the central `.env` file:**
 
-    ```bash
-    cd /volume2/docker/Mistia-Nexus
-    ```
+    * Navigate to the root of your deployment directory:
 
-2. **Create `.env` files** for each service that requires secrets.
+        ```bash
+        cd /volume2/docker/Mistia-Nexus
+        ```
 
-    **For Caddy:**
+    * Create and open the new `.env` file:
 
-    ```bash
-    cd caddy
-    nano .env
-    # Add your Cloudflare Token
-    # CLOUDFLARE_API_TOKEN=YourSecretCloudflareToken
-    # Save the file and exit (`Ctrl+X`, `y`, `Enter`)
-    cd ..
-    ```
+        ```bash
+        nano .env
+        ```
 
-    **For Nginx Proxy Manager:**
+    * Inside the editor, paste the following block. Replace all placeholder values with your actual secrets.
 
-    ```bash
-    cd nginx-proxy
-    nano .env
-    # Add your Cloudflare Token
-    # CLOUDFLARE_API_TOKEN=YourSecretCloudflareToken
-    # Save the file and exit (`Ctrl+X`, `y`, `Enter`)
-    cd ..
-    ```
+        ```ini
+        # This is the central secrets file for the Mistia-Nexus project.
 
-    **For Duplicati:**
+        # --- Caddy Secrets ---
+        CLOUDFLARE_API_TOKEN=YourSecretCloudflareToken
 
-    ```bash
-    cd duplicati
-    nano .env
-    # Add your Nginx credentials
-    # DB_PASSWORD=YourStrongProxyDBPassword
-    # DB_ROOT_PASSWORD=YourStrongDBRootPassword
-    # Save the file and exit (`Ctrl+X`, `y`, `Enter`)
-    cd ..
-    ```
+        # --- Duplicati Secrets ---
+        DUPLICATI_SETTINGS_KEY=YourSuperSecretKeyHere
+        DUPLICATI_UI_PASSWORD=YourChosenUIPassword
+
+        # --- Nginx Proxy Manager Secrets ---
+        DB_PASSWORD=YourStrongProxyDBPassword
+        DB_ROOT_PASSWORD=YourStrongDBRootPassword
+        ```
+
+    * Save the file and exit (`Ctrl+X`, `Y`, `Enter`).
 
 ### Part D: Deploy the Stack
 
