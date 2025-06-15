@@ -28,7 +28,7 @@ if [ ${#COMPOSE_FILES[@]} -eq 0 ]; then
 fi
 
 print_status "info" "Bringing up the stack..."
-docker compose "${COMPOSE_FILES[@]}" --profile "$PROFILE_NAME" up -d --remove-orphans || exit 1
+docker compose --env-file .env "${COMPOSE_FILES[@]}" --profile "$PROFILE_NAME" up -d --remove-orphans || exit 1
 
 print_status "success" "All services for profile '$PROFILE_NAME' have been started."
 echo

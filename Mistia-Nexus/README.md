@@ -98,7 +98,7 @@ Before you begin, complete these three manual steps on your NAS.
     * Inside the editor, paste the following block. Replace all placeholder values with your actual secrets.
 
         ```ini
-        # This is the central secrets file for the Mistia-Nexus project.
+        # This is the central secrets file for the Mistia-Nexus Services.
 
         # --- Caddy Secrets ---
         CLOUDFLARE_API_TOKEN=YourSecretCloudflareToken
