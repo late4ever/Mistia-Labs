@@ -1,9 +1,9 @@
-#docker-compose.yml for Nginx Proxy Manager
 services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: nginx-proxy
     hostname: nginx-proxy
+    profiles: ['nginx-proxy']
     logging:
       driver: 'json-file'
       options:
@@ -31,16 +31,20 @@ services:
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
+    dns:
+      - 192.168.50.251 # AdGuard Home IP
     depends_on:
       - db
     restart: unless-stopped
     networks:
       - nginx-proxy_net
+      - mistia-proxy-net
 
   db:
     image: 'jc21/mariadb-aria:latest'
     container_name: nginx-proxy-db
     hostname: nginx-proxy-db
+    profiles: ['nginx-proxy']
     logging:
       driver: 'json-file'
       options:
@@ -72,6 +76,8 @@ services:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
     volumes:
       - ./db_data:/var/lib/mysql
+    dns:
+      - 192.168.50.251 # AdGuard Home IP
     restart: unless-stopped
     networks:
       - nginx-proxy_net
@@ -79,3 +85,6 @@ services:
 networks:
   nginx-proxy_net:
     name: nginx-proxy_net
+  mistia-proxy-net:
+    name: mistia-proxy-net
+    driver: bridge
