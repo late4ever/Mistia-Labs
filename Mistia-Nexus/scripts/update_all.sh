@@ -1,52 +1,40 @@
 #!/bin/bash
-#
-# This script updates all services by first stopping them, resetting any
-# local changes, pulling all updates from Git and Docker Hub, and then
-# restarting them with the new configurations.
-#
+# Updates all non-ignored services for a given profile.
 
-# Navigate to the script's directory's parent (the Mistia-Nexus root)
+source "$(dirname "$0")/functions.sh"
+
+if [ -z "$1" ]; then
+  print_status "error" "No profile name provided. Please specify 'caddy' or 'npm'."
+  echo "Usage: $0 <profile_name>"
+  exit 1
+fi
+
+PROFILE_NAME=$1
 cd "$(dirname "$0")/.."
 
-echo "======================================================================"
-echo "=> Step 1: Stopping all current Docker services..."
-echo "======================================================================"
-# Call the existing stop script
+print_status "header" "Updating All Services for Profile: '$PROFILE_NAME'"
+
+print_status "info" "Step 1: Stopping all non-ignored services..."
 ./scripts/stop_all.sh
 
-echo
-echo "======================================================================"
-echo "=> Step 2: Forcibly syncing with the Git repository..."
-echo "======================================================================"
-# Fetch the latest state from the remote repository
-git fetch origin
-
-# Reset the local branch to match the remote, discarding any local changes
-git reset --hard origin/main
-echo "Local repository has been synchronized with GitHub."
+print_status "info" "Step 2: Syncing with Git repository..."
+git fetch origin > /dev/null 2>&1
+git reset --hard origin/main > /dev/null 2>&1
 chmod +x ./scripts/*.sh
-echo "Management scripts are now executable."
+print_status "success" "Repository synced."
 
-echo
-echo "======================================================================"
-echo "=> Step 3: Pulling latest Docker images for all services..."
-echo "======================================================================"
-
-# Loop through each service directory to pull its specific image
+print_status "info" "Step 3: Pulling images for all non-ignored services..."
 for d in */ ; do
     if [ -d "$d" ] && [ -f "$d/docker-compose.yml" ]; then
-        echo "--- Pulling image for service in $d ---"
-        (cd "$d" && docker compose pull)
+        if [ ! -f "$d/.ignore" ]; then
+            print_status "info" "Pulling image for service in '$d'..."
+            (cd "$d" && docker compose pull)
+        fi
     fi
 done
-echo "All images have been updated."
+print_status "success" "All images updated."
 
-echo
-echo "======================================================================"
-echo "=> Step 4: Starting all Docker services with new configs/images..."
-echo "======================================================================"
-# Call the existing start script
-./scripts/start_all.sh
+print_status "info" "Step 4: Starting all services with profile '$PROFILE_NAME'..."
+./scripts/start_all.sh "$PROFILE_NAME"
 
-echo
-echo "All services have been updated and restarted."
+print_status "success" "Full stack update complete."

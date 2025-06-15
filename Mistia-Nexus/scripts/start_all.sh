@@ -1,21 +1,37 @@
 #!/bin/bash
-# This script starts all Docker services defined in subdirectories.
+# Starts all non-ignored services using a specified profile.
 
-# Navigate to the script's directory's parent (the Mistia-Nexus root)
+source "$(dirname "$0")/functions.sh"
 cd "$(dirname "$0")/.."
 
-echo "Starting all Docker services..."
+if [ -z "$1" ]; then
+  print_status "error" "No profile name provided. Please specify 'caddy' or 'npm'."
+  echo "Usage: $0 <profile_name>"
+  exit 1
+fi
 
+PROFILE_NAME=$1
+print_status "header" "Starting All Services with Profile: '$PROFILE_NAME'"
+
+COMPOSE_FILES=()
 for d in */ ; do
-    # Ensure it's a directory and contains a docker-compose.yml file
     if [ -d "$d" ] && [ -f "$d/docker-compose.yml" ]; then
-        echo "--- Starting service in $d ---"
-        (cd "$d" && docker compose up -d --remove-orphans)
+        if [ ! -f "$d/.ignore" ]; then
+             COMPOSE_FILES+=("-f" "$d/docker-compose.yml")
+        fi
     fi
 done
 
+if [ ${#COMPOSE_FILES[@]} -eq 0 ]; then
+    print_status "error" "No non-ignored docker-compose.yml files found. Exiting."
+    exit 1
+fi
+
+print_status "info" "Bringing up the stack..."
+# This single command starts all services, including the correct profiled proxy.
+docker compose "${COMPOSE_FILES[@]}" --profile "$PROFILE_NAME" up -d --remove-orphans
+
+print_status "success" "All services for profile '$PROFILE_NAME' have been started."
 echo
-echo "All services started."
-echo "------------------------------------"
-echo "Current container status:"
+print_status "info" "Current container status:"
 docker ps

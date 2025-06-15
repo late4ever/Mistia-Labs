@@ -1,15 +1,10 @@
 #!/bin/bash
-#
-# Duplicati Automated Restore Test Script
-# This script verifies the integrity of a Duplicati backup by creating a test file,
-# backing it up, restoring it, and comparing the results.
-#
+# Verifies the integrity of a Duplicati backup.
 
-# Navigate to the script's directory's parent (the Mistia-Nexus root)
+source "$(dirname "$0")/functions.sh"
 cd "$(dirname "$0")/.."
 
 # --- START OF CONFIGURATION ---
-
 BACKUP_JOB_NAME="Mistia-Nexus App to Data"
 BACKUP_DEST_URL_CONTAINER="/nasroot/volume2/Backups/NAS-Apps"
 TEST_FILE_PATH_HOST="/volume1/duplicati_canary_file.txt"
@@ -17,90 +12,59 @@ TEST_FILE_PATH_CONTAINER="/nasroot/volume1/duplicati_canary_file.txt"
 CONTAINER_RESTORE_PATH="/config/temp_restore_test"
 HOST_RESTORE_PATH="/volume2/docker/Mistia-Nexus/duplicati/config/temp_restore_test"
 TEST_FILE_CONTENT="Backup and Restore successful on $(date)"
-
 # --- END OF CONFIGURATION ---
 
-set -e
-
-print_status() {
-    COLOR_GREEN='\033[0;32m'
-    COLOR_RED='\033[0;31m'
-    COLOR_NC='\033[0m' 
-    if [ "$2" == "success" ]; then
-        printf "${COLOR_GREEN}[SUCCESS]${COLOR_NC} %s\n" "$1"
-    elif [ "$2" == "failure" ]; then
-        printf "${COLOR_RED}[FAILURE]${COLOR_NC} %s\n" "$1"
-    else
-        printf "=> %s\n" "$1"
-    fi
-}
+set -e # Exit immediately if a command exits with a non-zero status.
 
 cleanup() {
-    print_status "Running cleanup..."
+    print_status "info" "Running cleanup..."
     sudo rm -f "$TEST_FILE_PATH_HOST"
     sudo rm -rf "$HOST_RESTORE_PATH"
-    print_status "Cleanup complete."
+    print_status "info" "Cleanup complete."
 }
+trap cleanup EXIT # This ensures cleanup runs even if the script fails.
 
-trap cleanup EXIT
+print_status "header" "Verifying Duplicati Backup Integrity"
 
-# --- SCRIPT EXECUTION ---
-
-# 1. Create the canary test file
-print_status "Step 1: Creating test file at ${TEST_FILE_PATH_HOST}..."
+print_status "info" "Step 1: Creating test file..."
 echo "${TEST_FILE_CONTENT}" | sudo tee "$TEST_FILE_PATH_HOST" > /dev/null
-print_status "Test file created." "success"
+print_status "success" "Test file created."
 
-# 2. Securely prompt for the passphrase once at the start
-print_status "Step 2: Preparing to run test..."
+print_status "info" "Step 2: Getting encryption passphrase..."
 read -sp 'Please enter the Duplicati ENCRYPTION PASSPHRASE for this backup: ' DUP_PASSPHRASE
 printf "\n"
 
-# 3. Repair the backup database to ensure consistency
-print_status "Step 3: Repairing the local database (if necessary)..."
+print_status "info" "Step 3: Repairing the local database (if necessary)..."
 (cd duplicati && docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli repair \
-  "file://${BACKUP_DEST_URL_CONTAINER}" \
-  --backup-name="${BACKUP_JOB_NAME}")
-print_status "Repair operation completed." "success"
+  "file://${BACKUP_DEST_URL_CONTAINER}" --backup-name="${BACKUP_JOB_NAME}")
+print_status "success" "Repair operation completed."
 
-# 4. Run the Backup
-print_status "Step 4: Starting backup job..."
+print_status "info" "Step 4: Starting backup job..."
 (cd duplicati && docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli backup \
-  "file://${BACKUP_DEST_URL_CONTAINER}" \
-  "${TEST_FILE_PATH_CONTAINER}" \
-  --backup-name="${BACKUP_JOB_NAME}")
+  "file://${BACKUP_DEST_URL_CONTAINER}" "${TEST_FILE_PATH_CONTAINER}" --backup-name="${BACKUP_JOB_NAME}")
+print_status "success" "Backup job completed."
 
-print_status "Backup job completed." "success"
-
-# 5. Restore the file
-print_status "Step 5: Restoring test file to a writable location..."
+print_status "info" "Step 5: Restoring test file..."
 sudo mkdir -p "$HOST_RESTORE_PATH"
-sudo chown -R "$(id -u)":"$(id -g)" "$HOST_RESTORE_PATH" 
-
+sudo chown -R "$(id -u)":"$(id -g)" "$HOST_RESTORE_PATH"
 (cd duplicati && docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli restore \
-  "file://${BACKUP_DEST_URL_CONTAINER}" \
-  "${TEST_FILE_PATH_CONTAINER}" \
-  --restore-path="${CONTAINER_RESTORE_PATH}" \
-  --overwrite=true)
+  "file://${BACKUP_DEST_URL_CONTAINER}" "${TEST_FILE_PATH_CONTAINER}" --restore-path="${CONTAINER_RESTORE_PATH}" --overwrite=true)
+print_status "success" "Restore operation completed."
 
-print_status "Restore operation completed." "success"
-
-# 6. Verify the restored file
-print_status "Step 6: Verifying restored file..."
+print_status "info" "Step 6: Verifying restored file..."
 TEST_FILENAME=$(basename "$TEST_FILE_PATH_HOST")
-RESTORED_FILE_PATH="${HOST_RESTORE_PATH}/${TEST_FILENAME}" 
+RESTORED_FILE_PATH="${HOST_RESTORE_PATH}/${TEST_FILENAME}"
 
 if [ ! -f "$RESTORED_FILE_PATH" ]; then
-    print_status "Restored file not found at '${RESTORED_FILE_PATH}'." "failure"
+    print_status "error" "Restored file not found at '${RESTORED_FILE_PATH}'."
     exit 1
 fi
 
 RESTORED_CONTENT=$(cat "$RESTORED_FILE_PATH")
-
 if [ "$TEST_FILE_CONTENT" == "$RESTORED_CONTENT" ]; then
-    print_status "File content matches. Backup integrity VERIFIED." "success"
+    print_status "success" "File content matches. Backup integrity VERIFIED."
 else
-    print_status "File content MISMATCH. Backup may be corrupt." "failure"
+    print_status "error" "File content MISMATCH. Backup may be corrupt."
     echo "Expected: ${TEST_FILE_CONTENT}"
     echo "Received: ${RESTORED_CONTENT}"
     exit 1
