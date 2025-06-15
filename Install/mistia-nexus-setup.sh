@@ -71,12 +71,12 @@ else
     echo "Error: No PAT provided. Aborting."
     exit 1
   fi
-
-  echo "Cloning 'Mistia-Nexus' folder..."
+  
+  echo "Cloning 'mistia-nexus' folder..."
   git init
   git remote add -f origin "https://${GIT_PAT_INPUT}@github.com/${GIT_USER}/${GIT_REPO}.git"
   git config core.sparseCheckout true
-  echo "Mistia-Nexus/*" > .git/info/sparse-checkout
+  echo "mistia-nexus/*" > .git/info/sparse-checkout
   git pull origin "$GIT_BRANCH"
 
   # Get the name of the current local branch (likely 'master' or 'main')
@@ -88,7 +88,7 @@ fi
 
 # Step 6: Set Script Permissions
 print_header "Step 6: Setting permissions for management scripts..."
-cd "$DEPLOY_DIR"/Mistia-Nexus
+cd "$DEPLOY_DIR"/mistia-nexus
 sudo chmod +x scripts/*.sh
 
 print_header "System Preparation Complete!"
