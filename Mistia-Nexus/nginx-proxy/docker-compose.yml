@@ -44,7 +44,6 @@ services:
     image: 'jc21/mariadb-aria:latest'
     container_name: nginx-proxy-db
     hostname: nginx-proxy-db
-    profiles: ['nginx-proxy']
     logging:
       driver: 'json-file'
       options:
