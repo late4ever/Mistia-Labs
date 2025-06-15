@@ -1,0 +1,71 @@
+Homelab Hardening & Best Practices Guide
+This guide provides a checklist of recommended configurations to enhance the security, performance, and reliability of your Mistia-Nexus homelab.
+1. UGREEN NAS (UGOS Pro) System Hardening
+These settings apply to the NAS operating system itself.
+Security
+	• Create a Non-Admin Daily User:
+		○ Why: Logging in with the admin account for daily tasks is risky. A mistake could have system-wide consequences.
+		○ Action: In the UGOS Pro Control Panel > User, create a new user account for yourself that is part of the users group but not the administrators group. Use this account for general file access. Only log in as admin when you need to change system settings.
+	• Enable Two-Factor Authentication (2FA):
+		○ Why: This provides a critical second layer of security for your admin account. Even if someone steals your password, they can't log in without your phone.
+		○ Action: In the UGOS Pro Control Panel > User, find the 2FA or security settings for your admin account and enable it using an authenticator app like Google Authenticator or Authy.
+	• Configure the Firewall:
+		○ Why: The built-in firewall allows you to control exactly which devices can access your NAS and on which ports.
+		○ Action: Go to Control Panel > Security > Firewall. Create rules that only allow access from your local subnet (e.g., 192.168.50.0/24). Deny all other traffic by default.
+	• Disable Unused Services:
+		○ Why: Every running service is a potential attack vector. If you don't use it, turn it off.
+		○ Action: In the Control Panel > File Services, disable any protocols you are not actively using (e.g., FTP, NFS, Telnet). It's also a good practice to disable SSH when you are not actively managing the system and re-enable it when needed.
+Performance & Reliability
+	• Set Up System Notifications:
+		○ Why: You want the NAS to tell you when something is wrong (like a drive failure or high CPU usage).
+		○ Action: In the Control Panel > Notification, configure email notifications to be sent to you for critical system events.
+2. Duplicati Backup Job Tuning
+These settings apply within the Duplicati web UI.
+Performance
+	• Adjust Zip Compression Level:
+		○ Why: Duplicati compresses your data before encrypting it. The default level is a good balance, but you can trade CPU usage for backup size.
+		○ Action: In your backup job configuration, go to "5. Options". Add an advanced option: --zip-compression-level. A value of 2 (default is 6) uses less CPU but creates slightly larger backups. A value of 9 is slower but has the best compression. For a powerful NAS like yours, a value of 2 or 3 is a good choice.
+Reliability
+	• Set Up Email Notifications (Highly Recommended):
+		○ Why: A silent backup failure is dangerous. You must be notified if a backup job fails for any reason.
+		○ Action: Go to "Settings" in the main Duplicati menu. Configure the SMTP settings to use your email provider to send you a summary report after every backup run. This is a critical best practice.
+	• Regularly Test Your Restores:
+		○ Why: As we discussed, a backup isn't a backup until you've proven you can restore from it.
+		○ Action: Once a quarter, follow the restore test guide we created to restore a random file to a temporary location.
+3. Nginx Proxy Manager (NPM) Hardening
+These settings apply within the NPM Admin UI at http://mistia-nexus.local:81.
+Security
+	• Create an Access List for Non-Secured Services:
+		○ Why: Some services you might add in the future don't have their own login page. You can use NPM to add a universal username/password prompt in front of them.
+		○ Action: Go to Access Lists > Add Access List. Create a list with one or more authorized users. Then, when creating a Proxy Host for a non-secure service, you can select this list in the "Access List" dropdown to protect it.
+	• Set a Default "404 Not Found" Host:
+		○ Why: Right now, accessing a random subdomain like random-text.mistia.xyz shows the "Congratulations" page. It's better practice to show nothing at all.
+		○ Action: Go to Settings > Default Site. Change the setting from the congratulations page to "HTTP 404" and save. Now, any unconfigured subdomain will result in a clean "Not Found" error.
+	• Add Custom Security Headers:
+		○ Why: You can further harden your services by adding HTTP security headers.
+		○ Action: When editing a Proxy Host, go to the "Advanced" tab. You can add custom Nginx configuration here. A good starting point is adding a Content-Security-Policy header to help prevent cross-site scripting (XSS) attacks. This is an advanced topic but a powerful security measure.
+Reliability
+	• Back Up the NPM Data:
+		○ Why: Your NPM configuration is valuable. If it's lost, you have to recreate all your proxy hosts.
+		○ Action: Ensure your Phase 2 backup job (NAS to External Drive) includes the /volume2/Mistia-Labs/Mistia-Nexus/nginx-proxy/ directory.
+4. Docker Engine & Best Practices
+These settings apply to how you manage the Docker environment itself.
+Security
+	• Use Specific Image Versions (Pinning):
+		○ Why: Using the :latest tag is convenient but can be unpredictable. An update could introduce a breaking change without warning.
+		○ Action: For critical services, consider "pinning" to a specific version (e.g., image: 'portainer/portainer-ce:2.19.4'). This gives you full control over when you update. You would then manually change this version number in your docker-compose.yml file and run ./update_all.sh when you are ready to upgrade. For a homelab, :latest is often fine, but this is a production best practice.
+	• Limit Container Capabilities:
+		○ Why: By default, containers can perform many system-level actions. Limiting capabilities reduces the potential damage if a container is ever compromised.
+		○ Action: For services that don't need special permissions, you can add cap_drop: - ALL to the service definition in docker-compose.yml. For services that need specific permissions (like Pi-hole needing NET_ADMIN), you would add that specific capability back with cap_add:. This is an advanced security measure.
+Reliability & Maintenance
+	• Set Container Restart Policies:
+		○ Why: To ensure your critical services automatically come back online after a NAS reboot or a container crash.
+		○ Action: You have already implemented this correctly by using restart: unless-stopped in all of your docker-compose.yml files. This is a crucial best practice.
+	• Periodically Prune Unused Objects:
+		○ Why: Over time, old images, networks, and orphaned volumes (like the ones you found earlier) can accumulate and use disk space.
+		○ Action: Once a month or so, run the following commands in your SSH session to safely clean up unused objects.
+# Removes all unused images, networks, and build cache
+docker system prune -a
+
+# Removes all unused volumes
+docker volume prune
