@@ -1,0 +1,40 @@
+services:
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    hostname: caddy
+    profiles: ['caddy']
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost']
+      interval: 5m
+      timeout: 10s
+      retries: 3
+    labels:
+      - 'com.mistia-nexus.service.name=Caddy'
+      - 'com.mistia-nexus.service.type=Reverse Proxy'
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    environment:
+      - TZ=Asia/Singapore
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./data:/data
+      - ./www:/srv/www
+    dns:
+      - 192.168.50.251 # AdGuard Home IP
+    restart: unless-stopped
+    networks:
+      - mistia-proxy-net
+
+networks:
+  mistia-proxy-net:
+    name: mistia-proxy-net
+    driver: bridge

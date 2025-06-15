@@ -1,0 +1,59 @@
+# --- Global Options & Reusable Snippets ---
+{
+	tls {
+		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+	}
+}
+
+# Best-practice security headers to protect against common attacks.
+(security_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000;"
+		X-Frame-Options "SAMEORIGIN"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+}
+
+# --- Service Proxies ---
+
+# AdGuard Home (accessible via its static IP)
+adguard.mistia.xyz {
+	import security_headers
+	encode zstd br gzip
+	reverse_proxy http://192.168.50.251:80
+}
+
+# Duplicati (on the shared Docker network)
+duplicati.mistia.xyz {
+	import security_headers
+	encode zstd br gzip
+	reverse_proxy http://duplicati:8200
+}
+
+# NAS Web Interface (accessible via its static IP)
+nexus.mistia.xyz {
+	import security_headers
+	encode zstd br gzip
+	# This proxies to the HTTPS port of your NAS UI.
+	reverse_proxy http://192.168.50.150:9999
+}
+
+# Portainer (on the shared Docker network)
+portainer.mistia.xyz {
+	import security_headers
+	encode zstd br gzip
+	reverse_proxy http://portainer:9000
+}
+
+# --- Default Host / Catch-All ---
+:443 {
+	root * /srv/www
+
+	handle_errors {
+		rewrite * /404.html
+		file_server
+	}
+
+	error "Not Found" 404
+}
