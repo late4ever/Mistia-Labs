@@ -30,8 +30,7 @@ services:
     restart: unless-stopped
     networks:
       - mistia-proxy-net
-
-networks:
-  mistia-proxy-net:
-    name: mistia-proxy-net
-    external: true
+#networks:
+#  mistia-proxy-net:
+#    name: mistia-proxy-net
+#    external: true
