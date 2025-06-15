@@ -26,7 +26,11 @@
   # --- Service Routing ---
 
   handle host adguard.mistia.xyz {
-    reverse_proxy http://192.168.50.251:80
+    reverse_proxy http://192.168.50.251:80 {
+      # Added Caddy health check for AdGuard Home
+      health_uri /
+      health_interval 1m
+    }
   }
 
   handle host duplicati.mistia.xyz {
@@ -37,7 +41,11 @@
   }
 
   handle host nexus.mistia.xyz {
-    reverse_proxy http://192.168.50.150:9999
+    reverse_proxy http://192.168.50.150:9999 {
+      # Added Caddy health check for NAS UI (Nexus)
+      health_uri /
+      health_interval 1m
+    }
   }
 
   handle host portainer.mistia.xyz {
