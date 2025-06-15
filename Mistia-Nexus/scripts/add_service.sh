@@ -1,5 +1,7 @@
 #!/bin/bash
-# Adds a new service to the running stack without a full restart.
+#
+# This script adds a new service to the running stack without a full restart.
+#
 
 source "$(dirname "$0")/functions.sh"
 
@@ -22,7 +24,7 @@ git reset --hard origin/main > /dev/null 2>&1
 chmod +x ./scripts/*.sh
 print_status "success" "Repository synced."
 
-print_status "info" "Step 2: Verifying service directories..."
+print_status "info" "Step 2: Verifying that service directories exist..."
 if [ ! -d "$NEW_SERVICE" ]; then
   print_status "error" "Service directory '$NEW_SERVICE' not found even after syncing."
   exit 1
@@ -34,12 +36,11 @@ fi
 print_status "success" "Directories verified."
 
 print_status "info" "Step 3: Updating reverse proxy '$PROXY_PROFILE'..."
-# We update the proxy first so it knows about the new service.
-./scripts/update.sh "$PROXY_PROFILE"
+./scripts/update.sh "$PROXY_PROFILE" || { print_status "error" "Failed to update the reverse proxy."; exit 1; }
 
 print_status "info" "Step 4: Starting new service '$NEW_SERVICE'..."
-(cd "$NEW_SERVICE" && docker compose pull)
-(cd "$NEW_SERVICE" && docker compose up -d)
+(cd "$NEW_SERVICE" && docker compose pull) || { print_status "error" "Failed to pull image for '$NEW_SERVICE'."; exit 1; }
+(cd "$NEW_SERVICE" && docker compose up -d) || { print_status "error" "Failed to start container for '$NEW_SERVICE'."; exit 1; }
 print_status "success" "Service '$NEW_SERVICE' started."
 
 echo

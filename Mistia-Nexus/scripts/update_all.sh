@@ -1,5 +1,7 @@
 #!/bin/bash
-# Updates all non-ignored services for a given profile.
+#
+# This script updates all non-ignored services for a given profile.
+#
 
 source "$(dirname "$0")/functions.sh"
 
@@ -15,7 +17,7 @@ cd "$(dirname "$0")/.."
 print_status "header" "Updating All Services for Profile: '$PROFILE_NAME'"
 
 print_status "info" "Step 1: Stopping all non-ignored services..."
-./scripts/stop_all.sh
+./scripts/stop_all.sh || { print_status "error" "Failed to stop all services."; exit 1; }
 
 print_status "info" "Step 2: Syncing with Git repository..."
 git fetch origin > /dev/null 2>&1
@@ -27,14 +29,14 @@ print_status "info" "Step 3: Pulling images for all non-ignored services..."
 for d in */ ; do
     if [ -d "$d" ] && [ -f "$d/docker-compose.yml" ]; then
         if [ ! -f "$d/.ignore" ]; then
-            print_status "info" "Pulling image for service in '$d'..."
+            print_status "info" "Pulling image for '$d'..."
             (cd "$d" && docker compose pull)
         fi
     fi
 done
-print_status "success" "All images updated."
+print_status "success" "Image pull attempt finished for all services."
 
 print_status "info" "Step 4: Starting all services with profile '$PROFILE_NAME'..."
-./scripts/start_all.sh "$PROFILE_NAME"
+./scripts/start_all.sh "$PROFILE_NAME" || { print_status "error" "Failed to start the stack."; exit 1; }
 
 print_status "success" "Full stack update complete."

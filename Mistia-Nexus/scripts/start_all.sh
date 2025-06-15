@@ -28,8 +28,7 @@ if [ ${#COMPOSE_FILES[@]} -eq 0 ]; then
 fi
 
 print_status "info" "Bringing up the stack..."
-# This single command starts all services, including the correct profiled proxy.
-docker compose "${COMPOSE_FILES[@]}" --profile "$PROFILE_NAME" up -d --remove-orphans
+docker compose "${COMPOSE_FILES[@]}" --profile "$PROFILE_NAME" up -d --remove-orphans || exit 1
 
 print_status "success" "All services for profile '$PROFILE_NAME' have been started."
 echo
