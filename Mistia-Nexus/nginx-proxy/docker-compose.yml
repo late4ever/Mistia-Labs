@@ -82,7 +82,7 @@ services:
       - nginx-proxy-net
 
 networks:
-  nginx-proxy_net:
+  nginx-proxy-net:
     name: nginx-proxy-net
   mistia-proxy-net:
     name: mistia-proxy-net
