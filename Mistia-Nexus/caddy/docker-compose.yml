@@ -23,6 +23,12 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ./data:/data
       - ./www:/srv/www
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost/healthz']
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     dns:
       - 192.168.50.251 # AdGuard Home IP
     restart: unless-stopped

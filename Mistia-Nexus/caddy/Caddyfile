@@ -4,6 +4,13 @@
 	acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
 }
 
+# --- Health Check Endpoint ---
+:80 {
+	handle /healthz {
+		respond "OK" 200
+	}
+}
+
 (security_headers) {
 	header {
 		Strict-Transport-Security "max-age=31536000;"
@@ -44,10 +51,15 @@
 		reverse_proxy http://portainer:9000
 	}
 
+	@docs host docs.mistia.xyz
+	handle @docs {
+		reverse_proxy http://mkdocs:8000
+	}
+
 	# Fallback for any other subdomain
 	handle {
 		root * /srv/www
-		rewrite * /404.html
+		rewrite * /404..html
 		file_server
 	}
 }
