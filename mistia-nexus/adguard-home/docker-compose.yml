@@ -1,0 +1,43 @@
+services:
+  adguardhome:
+    image: adguard/adguardhome:latest
+    container_name: adguard-home
+    hostname: adguard-home
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1'
+        ]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - 'com.mistia-nexus.service.name=AdGuard Home'
+      - 'com.mistia-nexus.service.type=Network Security'
+    environment:
+      - TZ=Asia/Singapore
+    networks:
+      adguard-net:
+        # This assigns the dedicated static IP to the container
+        ipv4_address: 192.168.50.251
+    volumes:
+      - ./workdir:/opt/adguardhome/work
+      - ./confdir:/opt/adguardhome/conf
+    restart: unless-stopped
+
+networks:
+  adguard-net:
+    driver: macvlan
+    driver_opts:
+      parent: bridge0
+    ipam:
+      config:
+        - subnet: 192.168.50.0/24
+          gateway: 192.168.50.1

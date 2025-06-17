@@ -1,0 +1,65 @@
+# --- Global Options ---
+{
+	email {env.CADDY_EMAIL}
+	acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+}
+
+# --- Health Check Endpoint ---
+:80 {
+	handle /healthz {
+		respond "OK" 200
+	}
+}
+
+(security_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000;"
+		X-Frame-Options "SAMEORIGIN"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+}
+
+# --- Main Site Block with Wildcard Certificate ---
+*.mistia.xyz {
+	import security_headers
+	encode zstd br gzip
+
+	# --- Service Routing ---
+
+	@adguard host adguard.mistia.xyz
+	handle @adguard {
+		reverse_proxy http://192.168.50.251:80
+	}
+
+	@duplicati host duplicati.mistia.xyz
+	handle @duplicati {
+		reverse_proxy http://duplicati:8200
+	}
+
+	@nexus host nexus.mistia.xyz
+	handle @nexus {
+		reverse_proxy https://192.168.50.150:9443 {
+			transport http {
+				tls_insecure_skip_verify
+			}
+		}
+	}
+
+	@portainer host portainer.mistia.xyz
+	handle @portainer {
+		reverse_proxy http://portainer:9000
+	}
+
+	@docs host docs.mistia.xyz
+	handle @docs {
+		reverse_proxy http://mkdocs:8000
+	}
+
+	# Fallback for any other subdomain
+	handle {
+		root * /srv/www
+		rewrite * /404..html
+		file_server
+	}
+}
