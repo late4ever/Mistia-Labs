@@ -40,4 +40,4 @@ print_status "info" "Recreating container for '$SERVICE_NAME'..."
 print_status "success" "Service '$SERVICE_NAME' has been updated and restarted."
 echo
 print_status "info" "Current status for '$SERVICE_NAME':"
-(cd "$SERVICE_NAME" && docker compose ps)
+(cd "$SERVICE_NAME" && docker compose ps --format "table {{.Names}}\\t{{.Status}}\\t{{.Ports}}")

@@ -30,7 +30,7 @@ print_header() {
 
 # --- SCRIPT EXECUTION ---
 
-print_header "Starting Mistia-Nexus Homelab Setup"
+print_header "Starting Mistia-Nexus Setup"
 
 # Step 1: Install System Dependencies
 print_header "Step 1: Installing Git, Docker, and Docker Compose..."
