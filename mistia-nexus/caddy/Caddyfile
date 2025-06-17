@@ -2,7 +2,9 @@
 {
 	email {env.CADDY_EMAIL}
 	acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-	admin localhost:2019
+	admin localhost:2019 {
+		origins caddy.mistia.xyz
+	}
 }
 
 # --- Health Check Endpoint ---
@@ -65,7 +67,7 @@
 	# Fallback for any other subdomain
 	handle {
 		root * /srv/www
-		rewrite * /404..html
+		rewrite * /404.html
 		file_server
 	}
 }
