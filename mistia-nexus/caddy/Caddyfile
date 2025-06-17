@@ -2,7 +2,7 @@
 {
 	email {env.CADDY_EMAIL}
 	acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-}
+	admin localhost:2019
 
 # --- Health Check Endpoint ---
 :80 {
@@ -26,6 +26,11 @@
 	encode zstd br gzip
 
 	# --- Service Routing ---
+
+	@caddyadmin host caddy.mistia.xyz
+	handle @caddyadmin {
+		reverse_proxy http://localhost:2019
+	}
 
 	@adguard host adguard.mistia.xyz
 	handle @adguard {
