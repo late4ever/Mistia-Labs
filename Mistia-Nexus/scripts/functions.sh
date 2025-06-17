@@ -7,6 +7,7 @@
 COLOR_GREEN='\033[0;32m'
 COLOR_RED='\033[0;31m'
 COLOR_BLUE='\033[0;34m'
+COLOR_YELLOW='\033[0;33m'
 COLOR_NC='\033[0m' # No Color
 
 # ---
@@ -33,7 +34,7 @@ print_status() {
             printf "${COLOR_RED}[ERROR]${COLOR_NC} %s\n" "$MESSAGE"
             ;;
         info)
-            printf -- "-> %s\n" "$MESSAGE"
+            printf -- "${COLOR_YELLOW}-> %s${COLOR_NC}\n" "$MESSAGE"
             ;;
         *)
             echo "Unknown message type: $TYPE"
