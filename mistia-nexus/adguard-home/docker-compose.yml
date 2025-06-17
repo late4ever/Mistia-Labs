@@ -26,7 +26,7 @@ services:
     networks:
       adguard-net:
         # This assigns the dedicated static IP to the container
-        ipv4_address: 192.168.50.251
+        ipv4_address: 192.168.50.2
     volumes:
       - ./workdir:/opt/adguardhome/work
       - ./confdir:/opt/adguardhome/conf

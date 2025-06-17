@@ -37,7 +37,7 @@
 
 	@adguard host adguard.mistia.xyz
 	handle @adguard {
-		reverse_proxy http://192.168.50.251:80
+		reverse_proxy http://192.168.50.2:80
 	}
 
 	@duplicati host duplicati.mistia.xyz
@@ -47,7 +47,7 @@
 
 	@nexus host nexus.mistia.xyz
 	handle @nexus {
-		reverse_proxy https://192.168.50.150:9443 {
+		reverse_proxy https://192.168.50.4:9443 {
 			transport http {
 				tls_insecure_skip_verify
 			}
