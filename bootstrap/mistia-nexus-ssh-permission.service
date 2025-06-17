@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Environment="USER=late4ever"
-ExecStart=/usr/local/bin/mistia-nexus-ssh-permissions.sh
+ExecStart=/usr/local/bin/mistia-nexus-ssh-permission.sh
 Restart=always
 User=root
 ExecStartPre=/bin/bash -c 'while ! systemctl is-active ssh || ! [ -d /home/$USER ]; do echo "Waiting for ssh and /home/$USER..."; sleep 5; done'
