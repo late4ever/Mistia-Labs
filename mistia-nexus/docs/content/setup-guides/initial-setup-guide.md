@@ -47,10 +47,10 @@ This guide will help you set up a bare UGREEN NASync into a fully functional hom
     - **Name**: `UGREEN NASync 4800 Plus`
     - **Folder**: `Mistia-Labs`
 2. Open **Windows Terminal** and install `winssh-pageant`
+
    ```powershell
    winget install winssh-pageant
    ```
-
 
 ## 🛠️ Hardware Configuration
 
@@ -261,7 +261,7 @@ This guide will help you set up a bare UGREEN NASync into a fully functional hom
    sudo systemctl status mistia-nexus-macvlan-host.service
    ```
 
-4. Follow this [guide](#dns-server-configuration) to set up network-wide DNS filtering
+4. Follow this [guide](#dns-server) to set up network-wide DNS filtering
 
 ## 🎉 Deployment Complete
 
