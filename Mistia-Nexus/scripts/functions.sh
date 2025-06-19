@@ -41,3 +41,22 @@ print_status() {
             ;;
     esac
 }
+
+# ---
+# Determines the active proxy service by looking for a .active-proxy file.
+#
+# @return The directory name of the active proxy service, or an empty string if not found.
+# ---
+get_active_proxy_dir() {
+    local proxy_file=".active-proxy"
+    if [ -f "$proxy_file" ]; then
+        local proxy_dir=$(cat "$proxy_file")
+        if [ -d "$proxy_dir" ] && [ -f "$proxy_dir/docker-compose.yml" ]; then
+            echo "$proxy_dir"
+        else
+            echo ""
+        fi
+    else
+        echo ""
+    fi
+}

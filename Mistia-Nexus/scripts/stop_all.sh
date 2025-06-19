@@ -7,18 +7,13 @@ cd "$(dirname "$0")/.."
 print_status "header" "Stopping All Non-Ignored Docker Services"
 
 # --- Find the active proxy ---
-PROXY_DIR=""
-if [ -f "caddy/docker-compose.yml" ]; then
-    PROXY_DIR="caddy"
-elif [ -f "nginx-proxy/docker-compose.yml" ]; then
-    PROXY_DIR="nginx-proxy"
-fi
+PROXY_DIR=$(get_active_proxy_dir)
 
 # --- Stop all other services first ---
 print_status "info" "Stopping all non-proxy services..."
 for d in */ ; do
     if [ -d "$d" ] && [ -f "$d/docker-compose.yml" ]; then
-        if [[ "$d" != "$PROXY_DIR/" && ! -f "$d/.ignore" ]]; then
+        if [[ "$d" != "$PROXY_DIR/" && ! -f "$d/.critical" ]]; then
             print_status "info" "Stopping service in '$d'..."
             (cd "$d" && docker compose down)
         fi

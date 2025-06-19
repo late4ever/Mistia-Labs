@@ -28,13 +28,8 @@ if [ ! -f "$NEW_SERVICE/docker-compose.yml" ]; then
 fi
 print_status "success" "Directory verified."
 
-# --- Find the active proxy by checking for a docker-compose.yml file ---
-PROXY_DIR=""
-if [ -f "caddy/docker-compose.yml" ]; then
-    PROXY_DIR="caddy"
-elif [ -f "nginx-proxy/docker-compose.yml" ]; then
-    PROXY_DIR="nginx-proxy"
-fi
+# --- Find the active proxy ---
+PROXY_DIR=$(get_active_proxy_dir)
 
 if [ -n "$PROXY_DIR" ]; then
     print_status "info" "Step 3: Updating Reverse Proxy '$PROXY_DIR' with new configuration..."
