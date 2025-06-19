@@ -5,6 +5,8 @@ status: new
 
 # :simple-caddy:{ .caddy } Caddy
 
+<!-- markdownlint-disable MD033 -->
+
 !!! abstract "Overview"
     Caddy is an automatic HTTPS reverse proxy that handles all external traffic, provides valid certificates, and routes requests to the appropriate internal services. It uses the Cloudflare DNS plugin to complete challenges, ensuring secure and encrypted connections for the homelab.
 
@@ -14,7 +16,6 @@ status: new
 
 :fontawesome-regular-id-badge: caddy &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: caddy:latest
 
-<!-- markdownlint-disable MD033 -->
 | Host Ports | Container Ports | Network | Host Path | Container Path |
 |:----------:|:---------------:|:-------:|:---------:|:--------------:|
 | `80, 443` | `80, 443/tcp, 443/udp` | `mistia-proxy-net` | `caddy/Caddyfile`<br>`caddy/data`<br>`caddy/www` | `/etc/caddy/Caddyfile`<br>`/data`<br>`/srv/www` |

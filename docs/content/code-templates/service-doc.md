@@ -4,6 +4,8 @@ icon: material/application-brackets
 
 # :material-application-brackets: [Service Name]
 
+<!-- markdownlint-disable MD033 -->
+
 !!! abstract "Overview"
     A brief, two-sentence description of the service and its purpose within the homelab.
 
@@ -13,7 +15,6 @@ icon: material/application-brackets
 
 :fontawesome-regular-id-badge: [container-name] &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: [image-name]
 
-<!-- markdownlint-disable MD033 -->
 | Host Ports | Container Ports | Network |  Host Path | Container Path |
 |:----------:|:------------:|:----------:|:----------:|:--------------:|
 | `[host-port]` | `[container-ports]` | `[network]` | `[host volume]` | `[container path]` |

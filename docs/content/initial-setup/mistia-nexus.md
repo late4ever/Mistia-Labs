@@ -4,6 +4,8 @@ icon: material/nas
 
 # 🚀 Initial Setup
 
+<!-- markdownlint-disable MD051 -->
+
 !!! abstract "Overview"
     Complete setup guide to set up a bare UGREEN NASync into a fully functional homelab
 

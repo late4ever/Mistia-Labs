@@ -4,6 +4,8 @@ icon: simple/duplicati
 
 # :simple-duplicati:{ .duplicati } Duplicati
 
+<!-- markdownlint-disable MD033 -->
+
 !!! abstract "Overview"
     Duplicati is a free, open-source backup client that securely stores encrypted, incremental, and compressed backups on various cloud storage services and remote file servers. With features like scheduling, backup verification, and a web-based interface, Duplicati offers a robust solution for protecting the homelab's critical data.
 
@@ -13,7 +15,6 @@ icon: simple/duplicati
 
 :fontawesome-regular-id-badge: duplicati &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: lscr.io/linuxserver/duplicati:latest
 
-<!-- markdownlint-disable MD033 -->
 | Host Ports | Container Ports | Network | Host Path | Container Path |
 |:----------:|:---------------:|:----------------:|:---------------------------:|:--------------:|
 | *proxied* | `8200` | `mistia-proxy-net` | `duplicati/config`<br>`/` | `/config`<br>`/nasroot` |

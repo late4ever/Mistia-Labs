@@ -4,6 +4,8 @@ icon: simple/duplicati
 
 # :simple-duplicati:{ .duplicati } Backup & Restore
 
+<!-- markdownlint-disable MD033 -->
+
 !!! abstract "Overview"
     This document provides comprehensive procedures for backing up and restoring the Mistia-Nexus homelab infrastructure, including configuration files, application data, and complete system recovery.
 
@@ -15,7 +17,6 @@ Create a daily, encrypted backup of the entire 2TB NVMe SSD (`volume1`) onto the
 
 These are the settings configured within the Duplicati web interface for this specific job.
 
-<!-- markdownlint-disable MD033 -->
 | Setting | Configuration |
 |---------|-------------- |
 | **Source Data** | `/nasroot/volume1/` (The entire NVMe drive) |

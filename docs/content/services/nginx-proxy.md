@@ -5,6 +5,8 @@ status: deprecated
 
 # :simple-nginxproxymanager:{ .nginx } Nginx Proxy Manager
 
+<!-- markdownlint-disable MD033 -->
+
 !!! warning "Deprecated"
     This service has been deprecated. Please refer to the documentation for the new [reverse proxy server](../services/caddy.md).
 
@@ -19,7 +21,6 @@ status: deprecated
 
 :fontawesome-regular-id-badge: nginx-proxy-db &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: jc21/mariadb-aria:latest
 
-<!-- markdownlint-disable MD033 -->
 | Host Ports | Container Ports | Network | Host Path | Container Path |
 |:----------:|:---------------:|:-------:|:---------:|:--------------:|
 | `80`, `443`, `81` | `80`, `443`, `81` | `mistia-proxy-net`<br>`nginx-proxy-net` | `nginx-proxy/data`<br>`nginx-proxy/letsencrypt` | `/data`<br>`/etc/letsencrypt` |

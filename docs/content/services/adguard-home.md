@@ -4,6 +4,8 @@ icon: simple/adguard
 
 # :simple-adguard:{ .adguard } AdGuard Home
 
+<!-- markdownlint-disable MD033 -->
+
 !!! abstract "Overview"
     AdGuard Home is a powerful, network-wide ad and tracker blocking DNS server that acts as a centralized shield for your entire network, removing ads, trackers, and malicious domains from all your devices. By routing your network's DNS traffic through AdGuard Home, you gain granular control over what content is accessed, significantly enhancing your privacy and browsing experience.
 
@@ -13,7 +15,6 @@ icon: simple/adguard
 
 :fontawesome-regular-id-badge: adguard-home &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: adguard/adguardhome:latest
 
-<!-- markdownlint-disable MD033 -->
 | Host Ports | Container Ports | Network |  Host Path | Container Path |
 |:----------:|:------------:|:----------:|:----------:|:--------------:|
 | Direct IP | `53/tcp, 53/udp, 80` | `adguard-net` | `adguard-home/confdir`<br>`adguard-home/workdir` | `/opt/adguardhome/conf`<br>`/opt/adguardhome/work` |

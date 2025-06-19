@@ -4,6 +4,8 @@ icon: simple/portainer
 
 # :simple-portainer:{ .portainer } Portainer
 
+<!-- markdownlint-disable MD033 -->
+
 !!! abstract "Overview"
     Portainer is a lightweight management UI that allows you to easily manage your Docker environments by providing a detailed overview of your containers, images, networks, and volumes. This service simplifies the complexity of the command line, making it an essential tool for both beginners and experienced users to visualize and manage their containerized applications.
 
@@ -13,7 +15,6 @@ icon: simple/portainer
 
 :fontawesome-regular-id-badge: portainer &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: portainer/portainer-ce:alpine
 
-<!-- markdownlint-disable MD033 -->
 | Host Ports | Container Ports | Network |  Host Path | Container Path |
 |:----------:|:------------:|:----------:|:----------:|:--------------:|
 | *proxied* | `8000`,`9000`,`9443` | `mistia-proxy-net` | `portainer/data`<br>`/var/run/docker.sock` | `/data`<br>`/var/run/docker.sock` |
