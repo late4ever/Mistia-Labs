@@ -342,6 +342,7 @@ esac
 ### Emergency Procedures
 
 1. **Immediate Isolation**
+
    ```bash
    # Disconnect from networks
    docker network disconnect mistia-network service-name
@@ -351,6 +352,7 @@ esac
    ```
 
 2. **Evidence Preservation**
+
    ```bash
    # Capture container state
    docker commit service-name evidence-snapshot
