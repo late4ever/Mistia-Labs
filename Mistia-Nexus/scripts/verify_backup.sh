@@ -5,7 +5,7 @@ source "$(dirname "$0")/functions.sh"
 cd "$(dirname "$0")/.."
 
 # --- START OF CONFIGURATION ---
-BACKUP_JOB_NAME="Mistia-Nexus App to Data"
+BACKUP_JOB_NAME="Mistia Nexus App Backup"
 BACKUP_DEST_URL_CONTAINER="/nasroot/volume2/Backups/NAS-Apps"
 TEST_FILE_PATH_HOST="/volume1/duplicati_canary_file.txt"
 TEST_FILE_PATH_CONTAINER="/nasroot/volume1/duplicati_canary_file.txt"
@@ -30,9 +30,24 @@ print_status "info" "Step 1: Creating test file..."
 echo "${TEST_FILE_CONTENT}" | sudo tee "$TEST_FILE_PATH_HOST" > /dev/null
 print_status "success" "Test file created."
 
-print_status "info" "Step 2: Getting encryption passphrase..."
-read -sp 'Please enter the Duplicati ENCRYPTION PASSPHRASE for this backup: ' DUP_PASSPHRASE
-printf "\n"
+print_status "info" "Step 2: Reading passphrase from .env file..."
+ENV_FILE="$(dirname "$0")/../duplicati/.env"
+
+if [ ! -f "$ENV_FILE" ]; then
+    print_status "error" "Environment file not found at 'duplicati/.env'."
+    print_status "info" "Please create it and add the line: MISTIA_NEXUS_APP_PASSPHRASE='your_secret_passphrase'"
+    exit 1
+fi
+
+# Source the .env file to get the MISTIA_NEXUS_APP_PASSPHRASE variable
+source "$ENV_FILE"
+
+if [ -z "$MISTIA_NEXUS_APP_PASSPHRASE" ]; then
+    print_status "error" "'MISTIA_NEXUS_APP_PASSPHRASE' variable not set or empty in 'duplicati/.env'."
+    exit 1
+fi
+DUP_PASSPHRASE=$MISTIA_NEXUS_APP_PASSPHRASE
+print_status "success" "Passphrase loaded."
 
 print_status "info" "Step 3: Repairing the local database (if necessary)..."
 (cd duplicati && docker compose exec -e PASSPHRASE="$DUP_PASSPHRASE" duplicati /app/duplicati/duplicati-cli repair \
