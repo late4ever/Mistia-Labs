@@ -8,7 +8,7 @@ Understanding these concepts is key to managing this homelab effectively.
 
 * **Shared Proxy Network:** All primary application containers are attached to a single Docker bridge network called `mistia-proxy-net`. This allows the reverse proxy to communicate with services securely and efficiently without exposing their ports on the host machine.
 * **Secrets Management:** All secrets (passwords, API tokens) are managed using `.env` files, which are specific to each service directory and are excluded from Git. This ensures no sensitive data is ever stored in the repository.
-* **Critical Service Isolation:** Core infrastructure like AdGuard Home is intentionally isolated from mass operations. By placing an empty `.ignore` file in its directory, the `update_all.sh` and `stop_all.sh` scripts will skip it, preventing network-wide outages during application updates.
+* **Critical Service Isolation:** Core infrastructure like AdGuard Home is intentionally isolated from mass operations. By placing an empty `.critical` file in its directory, the `update_all.sh` and `stop_all.sh` scripts will intentionally skip it, preventing network-wide DNS outages during routine application updates. This ensures that even when the entire stack is being refreshed, essential services remain operational.
 
 ---
 
@@ -63,7 +63,7 @@ Before you begin, complete these three manual steps on your NAS.
         read -sp 'Paste your GitHub PAT and press Enter: ' GITHUB_TOKEN
         printf "\n"
         curl -sL -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-        "https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/Install/setup.sh" \
+        "https://raw.githubusercontent.com/late4ever/Mistia-Labs/main/install/mistia-nexus-setup.sh" \
         -o setup.sh
         chmod +x setup.sh
         ./setup.sh "${GITHUB_TOKEN}"
