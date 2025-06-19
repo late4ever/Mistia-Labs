@@ -15,7 +15,7 @@ VERIFICATION_DEST_HOST="/volume2/Backups/NAS-Apps-Verification" # Host path to t
 TEST_FILE_PATH_HOST="/volume1/duplicati_canary_file.txt"
 TEST_FILE_PATH_CONTAINER="/nasroot/volume1/duplicati_canary_file.txt"
 CONTAINER_RESTORE_PATH="/config/temp_restore_test"
-HOST_RESTORE_PATH="/volume2/docker/Mistia-Nexus/duplicati/config/temp_restore_test"
+HOST_RESTORE_PATH="/volume2/docker/mistia-nexus/duplicati/config/temp_restore_test"
 TEST_FILE_CONTENT="Backup and Restore successful on $(date)"
 # --- END OF CONFIGURATION ---
 
