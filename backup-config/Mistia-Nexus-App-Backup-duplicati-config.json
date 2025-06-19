@@ -1,0 +1,111 @@
+{
+  "CreatedByVersion": "2.1.0.5",
+  "Schedule": {
+    "ID": 1,
+    "Tags": [
+      "ID=2"
+    ],
+    "Time": "2025-06-20T19:00:00Z",
+    "Repeat": "1D",
+    "LastRun": "2025-06-19T19:37:01Z",
+    "Rule": "AllowedWeekDays=Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday",
+    "AllowedDays": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ]
+  },
+  "Backup": {
+    "ID": "2",
+    "Name": "Mistia Nexus App Backup",
+    "Description": "NAS NVMe Volume Backup to NAS HDD",
+    "Tags": [],
+    "TargetURL": "file:///nasroot/volume2/Backups/NAS-Apps/",
+    "DBPath": "/config/QIHTZSKEJZ.sqlite",
+    "Sources": [
+      "/nasroot/volume1/"
+    ],
+    "Settings": [
+      {
+        "Filter": "",
+        "Name": "encryption-module",
+        "Value": "aes",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "compression-module",
+        "Value": "zip",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "dblock-size",
+        "Value": "100MB",
+        "Argument": null
+      },
+      {
+        "Filter": "",
+        "Name": "keep-versions",
+        "Value": "30",
+        "Argument": null
+      }
+    ],
+    "Filters": [
+      {
+        "Order": 0,
+        "Include": false,
+        "Expression": "/nasroot/volume1/@docker/"
+      },
+      {
+        "Order": 1,
+        "Include": false,
+        "Expression": "/nasroot/volume1/#recycle/"
+      },
+      {
+        "Order": 2,
+        "Include": false,
+        "Expression": "/nasroot/volume1/lost\u002Bfound/"
+      },
+      {
+        "Order": 3,
+        "Include": false,
+        "Expression": "/nasroot/volume1/@tmp/"
+      },
+      {
+        "Order": 4,
+        "Include": false,
+        "Expression": "/nasroot/volume1/@appstore/"
+      }
+    ],
+    "Metadata": {
+      "LastBackupDate": "20250619T193709Z",
+      "BackupListCount": "1",
+      "TotalQuotaSpace": "7985040457728",
+      "FreeQuotaSpace": "7420943233024",
+      "AssignedQuotaSpace": "-1",
+      "TargetFilesSize": "3399",
+      "TargetFilesCount": "3",
+      "TargetSizeString": "3.319 KB",
+      "SourceFilesSize": "0",
+      "SourceFilesCount": "0",
+      "SourceSizeString": "0 bytes",
+      "LastBackupStarted": "20250619T194954Z",
+      "LastBackupFinished": "20250619T194958Z",
+      "LastBackupDuration": "00:00:03.9138162",
+      "LastCompactDuration": "00:00:00.4787699",
+      "LastCompactStarted": "20250619T194955Z",
+      "LastCompactFinished": "20250619T194956Z",
+      "LastErrorDate": "20250619T194902Z",
+      "LastErrorMessage": "Found 3 remote files that are not recorded in local storage, please run repair"
+    },
+    "IsTemporary": false
+  },
+  "DisplayNames": {
+    "/nasroot/volume1/": "volume1"
+  }
+}

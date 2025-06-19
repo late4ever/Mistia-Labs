@@ -1,0 +1,37 @@
+services:
+  [service-name]:
+    image: [service-image]
+    container_name: [service-name]
+    hostname: [service-name]
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:PORT/ || exit 1']
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - 'com.mistia-nexus.service.name=[service-name]'
+      - 'com.mistia-nexus.service.type=[service-type]'
+    environment:
+      - TZ=Asia/Singapore
+      - PUID=1000                    
+      - PGID=10                   
+    volumes:
+      - host:container
+    dns:
+      - 192.168.50.2 # AdGuard Home IP
+    # ports:
+    #   - 'HOST_PORT:CONTAINER_PORT'  # <-- UNCOMMENT if direct access required
+    restart: unless-stopped
+    networks:
+      - mistia-proxy-net
+
+networks:
+  mistia-proxy-net:
+    name: mistia-proxy-net
+    external: true

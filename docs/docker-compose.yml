@@ -1,0 +1,19 @@
+services:
+  mkdocs:
+    image: squidfunk/mkdocs-material:latest
+    container_name: mkdocs
+    hostname: mkdocs
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    environment:
+      - TZ=Asia/Singapore    
+    volumes:
+      - ../:/docs
+    dns:
+      - 192.168.50.2 # AdGuard Home IP
+    ports:
+      - '8000:8000'
+    restart: unless-stopped

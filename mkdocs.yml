@@ -1,0 +1,123 @@
+site_name: Mistia Lab Documentation
+site_description: Complete Infrastructure as Code documentation for Mistia Labs
+site_author: Mistia Labs
+site_url: https://docs.mistia.xyz
+
+repo_name: Mistia-Labs
+repo_url: https://github.com/late4ever/Mistia-Labs
+edit_uri: edit/main/Mistia-Labs/docs/content
+
+docs_dir: docs/content
+
+theme:
+  name: material
+  logo: images/logo.png
+  favicon: images/logo.png
+  palette:
+    - scheme: slate
+      primary: deep-purple
+      accent: cyan
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: deep-purple
+      accent: cyan
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+  features:
+    - navigation.instant
+    - navigation.indexes
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - search.highlight
+    - search.share
+    - search.suggest
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    admonition:
+      note: octicons/tag-16
+      abstract: octicons/checklist-16
+      info: octicons/info-16
+      tip: octicons/squirrel-16
+      success: octicons/check-16
+      question: octicons/question-16
+      warning: octicons/alert-16
+      failure: octicons/x-circle-16
+      danger: octicons/zap-16
+      bug: octicons/bug-16
+      example: octicons/beaker-16
+      quote: octicons/quote-16
+
+extra_css:
+  - stylesheets/custom.css
+
+plugins:
+  - search:
+      lang: en
+
+markdown_extensions:
+  - admonition
+  - nl2br
+  - def_list
+  - sane_lists
+  - smarty:
+      smart_angled_quotes: true
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+      use_pygments: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      dedent_subsections: true
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Overview:
+      - Service Directory: overview/service-directory.md
+  - Initial Setup:
+      - Mistia Nexus: initial-setup/mistia-nexus.md
+  - Services:
+      - AdGuard Home: services/adguard-home.md
+      - Caddy: services/caddy.md
+      - Portainer: services/portainer.md
+      - Duplicati: services/duplicati.md
+      - Nginx Proxy: services/nginx-proxy.md
+  - Procedures:
+      - Management: procedures/management-commands.md
+      - Backup & Restore: procedures/backup-restore.md
+      - DNS troubleshooting: procedures/dns-troubleshooting.md
+      - Security Hardening: procedures/security-hardening.md
+  - Templates:
+      - Service Documentation: code-templates/service-doc.md
+      - Docker Compose: code-templates/docker-compose.md
