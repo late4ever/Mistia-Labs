@@ -51,7 +51,7 @@ This script starts all non-critical services defined in the `mistia-nexus` direc
 
 #### Stop All Services
 
-This script gracefully stops all non-critical services. It identifies the active proxy and stops it last to prevent connection errors for services that might depend on it. Services with a `.critical` or `.ignore` file in their directory will be skipped.
+This script gracefully stops all non-critical services. It identifies the active proxy and stops it last to prevent connection errors for services that might depend on it. Services with a `.critical` file in their directory will be skipped.
 
 ??? example "stop_all.sh"
     ```bash
