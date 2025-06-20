@@ -67,7 +67,7 @@ Create this `.env` file in the deployment location.
 
 ```bash
 cd /volume2/docker/mistia-nexus/
-./script/git_update.sh
+./script/git-update.sh
 
 cd /volume2/docker/mistia-nexus/duplicati
 sudo nano .env
@@ -84,7 +84,7 @@ DUPLICATI_UI_PASSWORD=[secret-here]
 
 ```bash
 cd /volume2/docker/mistia-nexus/
-./script/add_service.sh duplicati
+./script/add-service.sh duplicati
 ```
 
 ## 🚀 Initial Setup

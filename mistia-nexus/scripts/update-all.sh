@@ -8,7 +8,7 @@ cd "$(dirname "$0")/.."
 print_status "header" "Updating All Services"
 
 print_status "info" "Step 1: Stopping all non-ignored services..."
-./scripts/stop_all.sh || { print_status "error" "Failed to stop all services."; exit 1; }
+./scripts/stop-all.sh || { print_status "error" "Failed to stop all services."; exit 1; }
 
 print_status "info" "Step 2: Syncing with Git repository..."
 git fetch origin > /dev/null 2>&1
@@ -34,6 +34,6 @@ done
 print_status "success" "Image pull/build attempt finished for all services."
 
 print_status "info" "Step 4: Starting all services..."
-./scripts/start_all.sh || { print_status "error" "Failed to start the stack."; exit 1; }
+./scripts/start-all.sh || { print_status "error" "Failed to start the stack."; exit 1; }
 
 print_status "success" "Full stack update complete."

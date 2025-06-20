@@ -229,7 +229,7 @@ icon: material/nas
 6. Start up the containers
 
    ```bash
-   ./scripts/start_all.sh
+   ./scripts/start-all.sh
    ```
 
 ### 🔗 Configure DNS Sinkhole

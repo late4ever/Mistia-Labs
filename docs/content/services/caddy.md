@@ -85,7 +85,7 @@ Create this `.env` file in the deployment location.
 
 ```bash
 cd /volume2/docker/mistia-nexus/
-./script/git_update.sh
+./script/git-update.sh
 
 cd /volume2/docker/mistia-nexus/caddy
 sudo nano .env

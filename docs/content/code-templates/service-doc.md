@@ -73,7 +73,7 @@ Create this `.env` file in the deployment location.
 
 ```bash
 cd /volume2/docker/mistia-nexus/
-./script/git_update.sh
+./script/git-update.sh
 
 cd /volume2/docker/mistia-nexus/[service-name]
 sudo nano .env
@@ -89,7 +89,7 @@ sudo nano .env
 
 ```bash
 cd /volume2/docker/mistia-nexus/
-./script/add_service.sh [service-name]
+./script/add-service.sh [service-name]
 ```
 
 ## ⚙️ Post-Deployment
