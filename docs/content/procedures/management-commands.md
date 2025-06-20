@@ -37,7 +37,7 @@ icon: material/console
 
 #### Start All Services
 
-This script starts all non-critical services defined in the `mistia-nexus` directory. It intelligently detects the active proxy service (Caddy or Nginx-Proxy) and starts it first to ensure proper routing for other services. Services with a `.critical` file in their directory will be skipped.
+This script starts all non-critical services defined in the `mistia-nexus` directory. It intelligently detects the active proxy service (Caddy or Nginx-Proxy) and starts it first to ensure proper routing for other services. Services with a `.critical` or `.ignore` file in their directory will be skipped.
 
 ??? example "start_all.sh"
     ```bash
@@ -51,7 +51,7 @@ This script starts all non-critical services defined in the `mistia-nexus` direc
 
 #### Stop All Services
 
-This script gracefully stops all non-critical services. It identifies the active proxy and stops it last to prevent connection errors for services that might depend on it. Services with a `.critical` file in their directory will be skipped.
+This script gracefully stops all non-critical services. It identifies the active proxy and stops it last to prevent connection errors for services that might depend on it. Services with a `.critical` or `.ignore` file in their directory will be skipped.
 
 ??? example "stop_all.sh"
     ```bash
@@ -65,7 +65,7 @@ This script gracefully stops all non-critical services. It identifies the active
 
 #### Update All Services
 
-This script performs a comprehensive update of the entire stack. It stops all services, syncs with the latest code from the Git repository, pulls or builds the newest Docker images, and then restarts everything.
+This script performs a comprehensive update of the entire stack. It stops all services, syncs with the latest code from the Git repository, pulls or builds the newest Docker images for services that are not ignored (via `.critical` or `.ignore` files), and then restarts everything.
 
 ??? example "update_all.sh"
     ```bash
