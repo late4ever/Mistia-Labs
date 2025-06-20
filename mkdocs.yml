@@ -5,7 +5,7 @@ site_url: https://docs.mistia.xyz
 
 repo_name: Mistia-Labs
 repo_url: https://github.com/late4ever/Mistia-Labs
-edit_uri: edit/main/Mistia-Labs/docs/content
+edit_uri: edit/main/docs/content/
 
 docs_dir: docs/content
 
