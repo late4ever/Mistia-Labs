@@ -107,4 +107,13 @@ cd /volume2/docker/mistia-nexus/
 
 ## 🚀 Initial Setup
 
-Once deployed, Caddy runs automatically. The initial setup consists of ensuring the `Caddyfile` and `.env` are correctly configured before the first deployment. No further interactive setup is required.
+### 📝 DNS Rewrite
+
+1. Navigate to [https://adguard.mistia.xyz](https://adguard.mistia.xyz) >> `Filters` >> `DNS rewrites`
+
+2. Click `Add DNS rewrite`
+      - **Domain**: `caddy.mistia.xyz`
+      - **Answer**: `192.168.50.4`
+      - Click `Save`
+
+3. Navigate to [https://caddy.mistia.xyz](https://caddy.mistia.xyz) to verify

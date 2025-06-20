@@ -98,6 +98,25 @@ cd /volume2/docker/mistia-nexus/
 
 ## 🚀 Initial Setup
 
+### 🪪 Account Setup
+
 1. [Step-by-step instructions for the initial configuration of the service through its web UI or command line.]
 2. [Another step.]
 3. [And so on.]
+
+### ⚙️ [Other Setup Requirements]
+
+1. [Step-by-step instructions for the requirements]
+2. [Another step.]
+3. [And so on.]
+
+### 📝 DNS Rewrite
+
+1. Navigate to [https://adguard.mistia.xyz](https://adguard.mistia.xyz) >> `Filters` >> `DNS rewrites`
+
+2. Click `Add DNS rewrite`
+      - **Domain**: `service.mistia.xyz`
+      - **Answer**: `192.168.50.4`
+      - Click `Save`
+
+3. Navigate to [https://service.mistia.xyz](https://service.mistia.xyz) to verify

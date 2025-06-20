@@ -100,18 +100,32 @@ Follow the instructions at [Configure DNS Sinkhole](../../initial-setup/mistia-n
 
 ## 🚀 Initial Setup
 
+### 🪪 Account Setup
+
 1. Navigate to [http://192.168.50.2:3000](http://192.168.50.2:3000)
 
 2. Complete the setup wizard
 
-      - Step 1: Click "Get Started"
-      - Step 2 (Web Interface): Leave the listen interface as "All interfaces" and the port as 80
-      - Step 3 (DNS Server): Leave the listen interface as "All interfaces" and the port as 53
-      - Step 4 (Authentication): Create a strong username and password for your AdGuard Home admin panel. Save these in your password manager
-      - Step 5 (Done): Finish the setup. You will be automatically redirected to your new dashboard
+      - Click **Get Started**
+      - **Web Interface:**
+        - Leave the listen interface as `All interfaces` and the port as `80`
+      - **DNS Server:**
+        - Leave the listen interface as `All interfaces` and the port as `53`
+      - **Authentication:**
+        - Create username and password for your AdGuard Home admin panel
+      - **Done:** Finish the setup
 
-3. Follow the instructions in this [Github Repo](https://github.com/celenityy/adguard-home-settings/blob/main/README.md) to configure the rest of the settings
+### ⚙️ Configure AdGuard Settings
 
-4. Navigate to `Filters` >> `DNS rewrites`
+Follow the instructions in this [Github Repo](https://github.com/celenityy/adguard-home-settings/blob/main/README.md) to configure the rest of the settings
 
-5. Create a new entry for **Domain**: `*.mistia.xyz` **Answer**: `192.168.50.4`
+### 📝 DNS Rewrite
+
+1. Navigate to [http://192.168.50.2](http://192.168.50.2) >> `Filters` >> `DNS rewrites`
+
+2. Click `Add DNS rewrite`
+      - **Domain**: `adguard.mistia.xyz`
+      - **Answer**: `192.168.50.4`
+      - Click `Save`
+
+3. Logout and navigate to [https://adguard.mistia.xyz](https://adguard.mistia.xyz) to verify
