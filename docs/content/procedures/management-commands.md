@@ -39,42 +39,42 @@ icon: material/console
 
 This script starts all non-critical services defined in the `mistia-nexus` directory. It intelligently detects the active proxy service (Caddy or Nginx-Proxy) and starts it first to ensure proper routing for other services. Services with a `.critical` or `.ignore` file in their directory will be skipped.
 
-??? example "start_all.sh"
+??? example "start-all.sh"
     ```bash
-    --8<-- "mistia-nexus/scripts/start_all.sh"
+    --8<-- "mistia-nexus/scripts/start-all.sh"
     ```
 
 ```bash
 # Start all services
-./scripts/start_all.sh
+./scripts/start-all.sh
 ```
 
 #### Stop All Services
 
 This script gracefully stops all non-critical services. It identifies the active proxy and stops it last to prevent connection errors for services that might depend on it. Services with a `.critical` file in their directory will be skipped.
 
-??? example "stop_all.sh"
+??? example "stop-all.sh"
     ```bash
-    --8<-- "mistia-nexus/scripts/stop_all.sh"
+    --8<-- "mistia-nexus/scripts/stop-all.sh"
     ```
 
 ```bash
 # Stop all services (respects .critical files)
-./scripts/stop_all.sh
+./scripts/stop-all.sh
 ```
 
 #### Update All Services
 
 This script performs a comprehensive update of the entire stack. It stops all services, syncs with the latest code from the Git repository, pulls or builds the newest Docker images for services that are not ignored (via `.critical` or `.ignore` files), and then restarts everything.
 
-??? example "update_all.sh"
+??? example "update-all.sh"
     ```bash
-    --8<-- "mistia-nexus/scripts/update_all.sh"
+    --8<-- "mistia-nexus/scripts/update-all.sh"
     ```
 
 ```bash
-# Update all services (stop_all.sh, git fetch, docker compose pull, start_all.sh)
-./scripts/update_all.sh
+# Update all services (stop-all.sh, git fetch, docker compose pull, start-all.sh)
+./scripts/update-all.sh
 ```
 
 #### Update Single Service
@@ -98,40 +98,40 @@ Use this script to update a specific service without affecting the rest of the s
 
 This script adds a new service to the running stack without requiring a full restart. It fetches the latest configuration from Git, verifies the new service directory, updates the active reverse proxy, and then starts the new service.
 
-??? example "add_service.sh"
+??? example "add-service.sh"
     ```bash
-    --8<-- "mistia-nexus/scripts/add_service.sh"
+    --8<-- "mistia-nexus/scripts/add-service.sh"
     ```
 
 ```bash
 # Add a new service (e.g., jellyfin)
-./scripts/add_service.sh jellyfin
+./scripts/add-service.sh jellyfin
 ```
 
 #### Git Update
 
 This script manually syncs the local deployment with the `main` branch of the Git repository, ensuring all scripts and configurations are up-to-date.
 
-??? example "git_update.sh"
+??? example "git-update.sh"
     ```bash
-    --8<-- "mistia-nexus/scripts/git_update.sh"
+    --8<-- "mistia-nexus/scripts/git-update.sh"
     ```
 
 ```bash
-# Sync with Git
-./scripts/git_update.sh
+# Update the entire stack from Git
+./scripts/git-update.sh
 ```
 
-#### Verify Backup
+#### Verify Backups
 
 This script runs a full backup and restore cycle for a test file to verify the integrity of the Duplicati backup configuration. It requires the encryption passphrase to run.
 
-??? example "verify_backup.sh"
+??? example "verify-backup.sh"
     ```bash
-    --8<-- "mistia-nexus/scripts/verify_backup.sh"
+    --8<-- "mistia-nexus/scripts/verify-backup.sh"
     ```
 
 ```bash
-# Verify backup integrity
-./scripts/verify_backup.sh
+# Verify the latest backup
+./scripts/verify-backup.sh
 ```

@@ -66,7 +66,7 @@ not needed
 
 ```bash
 cd /volume2/docker/mistia-nexus/
-./script/add_service.sh [service-name]
+./script/add-service.sh [service-name]
 ```
 
 ## 🚀 Initial Setup
