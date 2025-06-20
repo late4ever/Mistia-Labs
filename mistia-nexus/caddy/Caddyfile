@@ -81,13 +81,6 @@
 		reverse_proxy http://duplicati:8200
 	}
 	# --8<-- [end:duplicati]
-
-	# --8<-- [start:mkdocs]
-	@docs host docs.mistia.xyz
-	handle @docs {
-		reverse_proxy http://mkdocs:8000
-	}
-	# --8<-- [end:mkdocs]
 	
 	# Fallback for any other subdomain
 	handle {

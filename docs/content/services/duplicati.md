@@ -89,10 +89,13 @@ cd /volume2/docker/mistia-nexus/
 
 ## 🚀 Initial Setup
 
-1. Navigate to [https://duplicati.mistia.xyz](https://duplicati.mistia.xyz) and log in with the password set in the `.env` file.
-2. Add a new backup job.
-3. Configure the backup destination (e.g., cloud storage, local folder, network share).
-4. Set a strong encryption password for the backup data.
-5. Select the source data to back up from the `/nasroot` directory.
-6. Configure the backup schedule.
-7. Save the configuration and run the first backup.
+### 📝 DNS Rewrite
+
+1. Navigate to [https://adguard.mistia.xyz](https://adguard.mistia.xyz) >> `Filters` >> `DNS rewrites`
+
+2. Click `Add DNS rewrite`
+      - **Domain**: `duplicati.mistia.xyz`
+      - **Answer**: `192.168.50.4`
+      - Click `Save`
+
+3. Navigate to [https://duplicati.mistia.xyz](https://duplicati.mistia.xyz) to verify

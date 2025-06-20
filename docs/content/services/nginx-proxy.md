@@ -28,29 +28,7 @@ status: deprecated
 
 ## 📋 Prerequisites
 
-- **Internal DNS rewrite**: AdGuard Home configured to resolve `*.mistia.xyz` to `192.168.50.4`
 - **Cloudflare API Token**: For automatic HTTPS certificate issuance using Let's Encrypt via the DNS-01 challenge.
-
-- Use the Cloudflare API token to request the certificate from Let's Encrypt.
-
-  1. **Log into the NPM Admin UI** with your new credentials.
-
-  2. **Navigate to SSL Certificates:**
-      - Click on the **"SSL Certificates"** tab.
-      - Click **"Add SSL Certificate"** and select **"Let's Encrypt"**.
-
-  3. **Fill out the Certificate Details:**
-      - **Domain Names:** Enter your root domain and a wildcard. Type `mistia.xyz`, press Enter, then type `*.mistia.xyz` and press Enter.
-      - **Use a DNS Challenge:** Toggle this **ON**.
-      - **DNS Provider:** Select **"Cloudflare"** from the dropdown list.
-      - **Credentials File Content:** In the text box, paste the following, replacing `<YOUR_CLOUDFLARE_API_TOKEN>` with the token you copied from Cloudflare:
-
-          ```txt
-          dns_cloudflare_api_token = <YOUR_CLOUDFLARE_API_TOKEN>
-          ```
-
-      - **Agree to Terms:** Check the box to agree to the Let's Encrypt Terms of Service.
-      - **Click Save.** Wait 1-2 minutes. The status should update, and you will have a valid wildcard certificate ready to use.
 
 !!! note "mistia-proxy-net"
     The `mistia-proxy-net` network will be created by this container
@@ -112,6 +90,8 @@ cd /volume2/docker/mistia-nexus/
 
 ## 🚀 Initial Setup
 
+### 🪪 Account Setup
+
 1. Navigate to [http://192.168.50.4:81](http://192.168.50.4:81)
 
 2. Log in with the default administrator account:
@@ -120,20 +100,44 @@ cd /volume2/docker/mistia-nexus/
 
 3. You will be prompted to change your username and password immediately
 
-4. Begin adding your proxy hosts and SSL certificates through the web interface
+### 🎀 Setup SSL Certificate
 
-5. Navigate to `Hosts` >> `Proxy Hosts`
+1. Navigate to `SSL Certificates`
+      - Click on the `SSL Certificates` tab
+      - Click `Add SSL Certificate` and select `Let's Encrypt`
 
-6. Click `Add Proxy Host` (e.g. portainer)
-    - **Details Tab:**
-        - Domain Names: `portainer.mistia.xyz`
-        - Scheme: `http`
-        - Forward Hostname / IP: `portainer`
-        - Forward Port: `9000`
-        - Enable **"Block Common Exploits"**.
-    - **SSL Tab:**
-        - SSL Certificate: Select your `*.mistia.xyz` certificate from the dropdown list.
-        - Enable **"Force SSL"**.
-        - Enable **"HSTS Enabled"**.
-        - Enable **"HTTP/2 Support"**.
-    - **Click Save.**
+2. Fill out the Certificate Details:
+      - **Domain Names:**
+        - Type `mistia.xyz`, press `Enter`
+        - Type `*.mistia.xyz` and press `Enter`
+      - **Use a DNS Challenge:** `ON`
+      - **DNS Provider:** `Cloudflare`
+      - **Credentials File Content:**
+        - Replace `<YOUR_CLOUDFLARE_API_TOKEN>` with the token you copied from Cloudflare
+
+        ```txt
+        dns_cloudflare_api_token = <YOUR_CLOUDFLARE_API_TOKEN>
+        ```
+
+      - Agree to the **Let's Encrypt Terms of Service**
+      - Click `Save`
+
+### ⚙️ Add Proxy Hosts
+
+1. Begin adding your proxy hosts and SSL certificates through the web interface
+
+2. Navigate to `Hosts` >> `Proxy Hosts`
+
+3. Click `Add Proxy Host` (e.g. portainer)
+    - `Details` Tab:
+        - **Domain Names:** `portainer.mistia.xyz`
+        - **Scheme:** `http`
+        - **Forward Hostname / IP:** `portainer`
+        - **Forward Port:** `9000`
+        - Enable `Block Common Exploits`
+    - `SSL` Tab:
+        - **SSL Certificate:** Select your `*.mistia.xyz` certificate from the dropdown list.
+        - Enable `Force SSL`
+        - Enable `HSTS Enabled`
+        - Enable `HTTP/2 Support`
+    - Click `Save`
