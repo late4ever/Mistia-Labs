@@ -19,8 +19,8 @@ print_status "success" "Repository synced."
 print_status "info" "Step 3: Pulling/Building images for all non-ignored services..."
 for d in */ ; do
     if [ -d "$d" ] && [ -f "$d/docker-compose.yml" ]; then
-        if [ ! -f "$d/.critical" ]; then        
-            if grep -Eiq '^\s*build:' "$SERVICE_NAME/docker-compose.yml"; then
+        if [[ ! -f "$d/.critical" && ! -f "$d/.ignore" ]]; then        
+            if grep -Eiq '^\s*build:' "$d/docker-compose.yml"; then
                 print_status "info" "Building Docker image for '$d' with --no-cache"
                 (cd "$d" && docker compose build --no-cache) || { print_status "error" "Failed to build Docker image for '$d'."; exit 1; }
                 print_status "success" "Image build completed for '$d'."

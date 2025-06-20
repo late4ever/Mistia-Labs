@@ -21,7 +21,7 @@ fi
 print_status "info" "Starting all other services..."
 for d in */ ; do
     if [ -d "$d" ] && [ -f "$d/docker-compose.yml" ]; then
-        if [[ "$d" != "$PROXY_DIR/" && ! -f "$d/.critical" ]]; then
+        if [[ "$d" != "$PROXY_DIR/" && ! -f "$d/.critical" && ! -f "$d/.ignore" ]]; then
             print_status "info" "Bringing up service in '$d'..."
             (cd "$d" && docker compose up -d --remove-orphans) || print_status "error" "Failed to start service in '$d'."
         fi
