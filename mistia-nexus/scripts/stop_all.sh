@@ -13,7 +13,7 @@ PROXY_DIR=$(get_active_proxy_dir)
 print_status "info" "Stopping all non-proxy services..."
 for d in */ ; do
     if [ -d "$d" ] && [ -f "$d/docker-compose.yml" ]; then
-        if [[ "$d" != "$PROXY_DIR/" && ! -f "$d/.critical" && ! -f "$d/.ignore" ]]; then
+        if [[ "$d" != "$PROXY_DIR/" && ! -f "$d/.critical" ]]; then
             print_status "info" "Stopping service in '$d'..."
             (cd "$d" && docker compose down)
         fi
