@@ -29,7 +29,6 @@
     header_up Host {http.request.host}
     header_up X-Real-IP {http.request.remote.ip}
     header_up X-Forwarded-For {http.request.remote.ip}
-    header_up X-Forwarded-Proto {http.request.scheme}
 }
 
 # --- Dedicated AdGuard Home Block ---
