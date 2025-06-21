@@ -34,12 +34,14 @@
 
 # --- Dedicated AdGuard Home Block ---
 # This block gets a specific certificate and has all headers explicitly imported.
+# --8<-- [start:adguard]
 adguard.mistia.xyz {
   import security_headers
   reverse_proxy http://192.168.50.2:80 {
     import proxy_headers
   }
 }
+# --8<-- [end:adguard]
 
 # --- Main Site Block with Wildcard Certificate ---
 *.mistia.xyz {
@@ -71,15 +73,6 @@ adguard.mistia.xyz {
 		}
 	}
 	# --8<-- [end:asus_et12]
-
-	# --8<-- [start:adguard]
-	@adguard host adguard.mistia.xyz
-	handle @adguard {
-		reverse_proxy http://192.168.50.2:80 {
-			import proxy_headers
-		}
-	}
-	# --8<-- [end:adguard]
 
 	# --8<-- [start:caddyadmin]
 	@caddyadmin host caddy.mistia.xyz
