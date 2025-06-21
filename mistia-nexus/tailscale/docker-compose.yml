@@ -8,6 +8,19 @@ services:
       options:
         max-size: '10m'
         max-file: '3'
+    security_opt:
+      - no-new-privileges:true
+    cap_add:
+      - net_admin
+      - sys_module
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.10'
+          memory: 64M
     healthcheck:
       test: ["CMD", "tailscale", "status"]
       interval: 1m
@@ -17,8 +30,6 @@ services:
     labels:
       - 'com.mistia-nexus.service.name=Tailscale'
       - 'com.mistia-nexus.service.type=Network Security'
-    security_opt:
-      - no-new-privileges:true
     environment:
       - TZ=Asia/Singapore
       - TS_STATE_DIR=/var/lib/tailscale
@@ -27,8 +38,5 @@ services:
     volumes:
       - ./state:/var/lib/tailscale
       - /dev/net/tun:/dev/net/tun
-    cap_add:
-      - net_admin
-      - sys_module
     network_mode: host
     restart: unless-stopped
