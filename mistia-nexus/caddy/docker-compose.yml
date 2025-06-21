@@ -48,6 +48,7 @@ services:
       - '80:80'
       - '443:443'
       - '443:443/udp'
+      - '853:853'
     restart: unless-stopped
     networks:
       - mistia-proxy-net
