@@ -33,8 +33,6 @@ services:
       - PGID=10                   
     volumes:
       - host:container
-    dns:
-      - 192.168.50.2 # AdGuard Home IP
     # ports:
     #   - 'HOST_PORT:CONTAINER_PORT'  # <-- UNCOMMENT if direct access required
     restart: unless-stopped

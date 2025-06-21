@@ -23,7 +23,7 @@ services:
     hostname: secure-service
     
     # Enhanced security settings
-    user: "1001:1001"               # Non-root user
+    user: "1000:10"               # Non-root user
     read_only: true                 # Read-only filesystem
     
     # Security capabilities
@@ -62,8 +62,6 @@ services:
       - ./config:/config:ro           # Read-only configuration
       - /tmp:/tmp                     # Writable temp directory
     
-    dns:
-      - 192.168.50.251
     restart: unless-stopped
     networks:
       - mistia-proxy-net
