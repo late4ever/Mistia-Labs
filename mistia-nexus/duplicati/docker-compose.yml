@@ -8,6 +8,21 @@ services:
       options:
         max-size: '10m'
         max-file: '3'
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+          memory: 1024M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:8200']
       interval: 1m
@@ -17,8 +32,6 @@ services:
     labels:
       - 'com.mistia-nexus.service.name=Duplicati'
       - 'com.mistia-nexus.service.type=Backup'
-    security_opt:
-      - no-new-privileges:true
     environment:
       - PUID=1000
       - PGID=10

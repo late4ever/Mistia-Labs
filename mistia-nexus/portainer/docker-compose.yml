@@ -8,6 +8,21 @@ services:
       options:
         max-size: '10m'
         max-file: '3'
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
     healthcheck:
       test: ['CMD-SHELL', 'nc -z -v localhost 9000 || exit 1']
       interval: 1m
@@ -17,8 +32,6 @@ services:
     labels:
       - 'com.mistia-nexus.service.name=Portainer'
       - 'com.mistia-nexus.service.type=Management'
-    security_opt:
-      - no-new-privileges:true
     environment:
       - TZ=Asia/Singapore
     volumes:
