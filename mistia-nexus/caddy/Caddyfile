@@ -32,6 +32,16 @@
     header_up X-Forwarded-Proto {http.request.scheme}
 }
 
+adguard.mistia.xyz {    
+    handle {
+        reverse_proxy http://192.168.50.2:80 {
+						import security_headers
+						# import proxy_headers
+						encode zstd br gzip
+        }
+    }
+}
+
 # --- Main Site Block with Wildcard Certificate ---
 *.mistia.xyz {
 	import security_headers
