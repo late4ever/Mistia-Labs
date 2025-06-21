@@ -14,8 +14,6 @@ services:
       - TZ=Asia/Singapore    
     volumes:
       - ../:/docs
-    dns:
-      - 192.168.50.2 # AdGuard Home IP
     ports:
       - '8000:8000'
     restart: unless-stopped

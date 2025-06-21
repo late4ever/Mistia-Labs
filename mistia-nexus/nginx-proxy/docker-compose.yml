@@ -37,8 +37,6 @@ services:
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
-    dns:
-      - adguard-home
     ports:
       - '81:81'
       - '80:80'
@@ -85,8 +83,6 @@ services:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
     volumes:
       - ./db_data:/var/lib/mysql
-    dns:
-      - adguard-home
     restart: unless-stopped
     networks:
       - nginx-proxy-net

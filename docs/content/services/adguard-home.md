@@ -17,7 +17,7 @@ icon: simple/adguard
 
 | Host Ports | Container Ports | Network |  Host Path | Container Path |
 |:----------:|:------------:|:----------:|:----------:|:--------------:|
-| Direct IP | `53/tcp, 53/udp, 80` | `adguard-net` | `adguard-home/confdir`<br>`adguard-home/workdir` | `/opt/adguardhome/conf`<br>`/opt/adguardhome/work` |
+| Direct IP | `53/tcp, 53/udp, 80` | `adguard-net` | `adguard-home/confdir`<br>`adguard-home/workdir`<br>`caddy/data` | `/opt/adguardhome/conf`<br>`/opt/adguardhome/work`<br>`/opt/adguardhome/certs:ro` |
 
 ## 📋 Prerequisites
 

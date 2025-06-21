@@ -36,8 +36,6 @@ services:
     volumes:
       - ./config:/config
       - /:/nasroot:ro
-    dns:
-      - 172.21.0.254
     restart: unless-stopped
     networks:
       - mistia-proxy-net

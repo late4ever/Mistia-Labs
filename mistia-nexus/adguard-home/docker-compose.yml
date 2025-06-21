@@ -36,8 +36,6 @@ services:
     networks:
       adguard-net:
         ipv4_address: 192.168.50.2
-      mistia-proxy-net:
-        ipv4_address: 172.21.0.254
     volumes:
       - ./workdir:/opt/adguardhome/work
       - ./confdir:/opt/adguardhome/conf
@@ -53,6 +51,3 @@ networks:
       config:
         - subnet: 192.168.50.0/24
           gateway: 192.168.50.1
-  mistia-proxy-net:
-    name: mistia-proxy-net
-    external: true

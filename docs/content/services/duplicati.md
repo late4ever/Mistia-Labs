@@ -17,7 +17,7 @@ icon: simple/duplicati
 
 | Host Ports | Container Ports | Network | Host Path | Container Path |
 |:----------:|:---------------:|:----------------:|:---------------------------:|:--------------:|
-| *proxied* | `8200` | `mistia-proxy-net` | `duplicati/config`<br>`/` | `/config`<br>`/nasroot` |
+| *proxied* | `8200` | `mistia-proxy-net` | `duplicati/config`<br>`/` | `/config`<br>`/nasroot:ro` |
 
 ## 📋 Prerequisites
 
