@@ -17,6 +17,8 @@ services:
     labels:
       - 'com.mistia-nexus.service.name=[service-name]'
       - 'com.mistia-nexus.service.type=[service-type]'
+    security_opt:
+      - no-new-privileges:true
     environment:
       - TZ=Asia/Singapore
       - PUID=1000                    

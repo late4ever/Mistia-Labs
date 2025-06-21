@@ -11,10 +11,8 @@ services:
     labels:
       - 'com.mistia-nexus.service.name=Caddy'
       - 'com.mistia-nexus.service.type=Reverse Proxy'
-    ports:
-      - '80:80'
-      - '443:443'
-      - '443:443/udp'
+    security_opt:
+      - no-new-privileges:true
     environment:
       - TZ=Asia/Singapore
       - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
@@ -31,6 +29,10 @@ services:
       start_period: 60s
     dns:
       - 192.168.50.2 # AdGuard Home IP
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
     restart: unless-stopped
     networks:
       - mistia-proxy-net

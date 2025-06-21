@@ -110,6 +110,7 @@ nav:
   - Services:
       - AdGuard Home: services/adguard-home.md
       - Caddy: services/caddy.md
+      - Tailscale: services/tailscale.md
       - Portainer: services/portainer.md
       - Duplicati: services/duplicati.md
       - Nginx Proxy: services/nginx-proxy.md

@@ -21,6 +21,8 @@ services:
     labels:
       - 'com.mistia-nexus.service.name=AdGuard Home'
       - 'com.mistia-nexus.service.type=Network Security'
+    security_opt:
+      - no-new-privileges:true
     environment:
       - TZ=Asia/Singapore
     networks:

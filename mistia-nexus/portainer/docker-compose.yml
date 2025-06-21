@@ -17,6 +17,8 @@ services:
     labels:
       - 'com.mistia-nexus.service.name=Portainer'
       - 'com.mistia-nexus.service.type=Management'
+    security_opt:
+      - no-new-privileges:true
     environment:
       - TZ=Asia/Singapore
     volumes:
