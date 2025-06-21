@@ -5,13 +5,14 @@
 	admin localhost:2019 {
 		origins caddy.mistia.xyz
 	}
-}
-
-# --- Layer 4 DNS-over-TLS Proxy ---
-:853 {
-	route {
-		proxy 192.168.50.2:853 {
-			transparent
+	
+	layer4 {
+		:853 {
+			route {
+				proxy 192.168.50.2:853 {
+					transparent
+				}
+			}
 		}
 	}
 }
