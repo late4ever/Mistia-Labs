@@ -40,6 +40,7 @@ services:
     volumes:
       - ./workdir:/opt/adguardhome/work
       - ./confdir:/opt/adguardhome/conf
+      - ../caddy/data:/opt/adguardhome/certs:ro
     restart: unless-stopped
 
 networks:
