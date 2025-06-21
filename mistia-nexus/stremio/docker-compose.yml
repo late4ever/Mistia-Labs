@@ -1,0 +1,50 @@
+services:
+  stremio:
+    image: stremio/server:latest
+    container_name: stremio
+    hostname: stremio
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+          memory: 2048M
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:11470/stats || exit 1']
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - 'com.mistia-nexus.service.name=Stremio Server'
+      - 'com.mistia-nexus.service.type=Media'
+    environment:
+      - TZ=Asia/Singapore
+      - PUID=1000
+      - PGID=10
+      - STREMIO_CACHE_ROOT=/opt/stremio-cache
+      - STREMIO_SERVER_VERSION=v4.20.8    
+    volumes:
+      - stremio-cache:/opt/stremio-cache
+      - ./config:/root/.stremio-server
+    restart: unless-stopped
+    networks:
+      - mistia-proxy-net
+    
+volumes:
+  stremio-cache:
+    driver: local
+
+networks:
+  mistia-proxy-net:
+    name: mistia-proxy-net
+    external: true
