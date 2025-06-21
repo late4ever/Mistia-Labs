@@ -35,7 +35,7 @@
 # --- Main Site Block with Wildcard Certificate ---
 *.mistia.xyz {
 	import security_headers
-	import proxy_headers
+	#import proxy_headers
 	encode zstd br gzip
 
 	# --- Service Routing ---
