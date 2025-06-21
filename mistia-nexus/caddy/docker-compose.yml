@@ -45,7 +45,7 @@ services:
       retries: 3
       start_period: 60s
     dns:
-      - 192.168.50.2 # AdGuard Home IP
+      - adguard-home
     ports:
       - '80:80'
       - '443:443'
