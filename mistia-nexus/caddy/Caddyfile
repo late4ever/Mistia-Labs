@@ -32,20 +32,9 @@
     header_up X-Forwarded-Proto {http.request.scheme}
 }
 
-adguard.mistia.xyz {    
-    handle {
-        reverse_proxy http://192.168.50.2:80 {
-						import security_headers
-						# import proxy_headers
-						encode zstd br gzip
-        }
-    }
-}
-
 # --- Main Site Block with Wildcard Certificate ---
 *.mistia.xyz {
 	import security_headers
-	#import proxy_headers
 	encode zstd br gzip
 
 	# --- Service Routing ---
@@ -54,6 +43,7 @@ adguard.mistia.xyz {
 	@nexus host nexus.mistia.xyz
 	handle @nexus {
 		reverse_proxy https://192.168.50.4:9443 {
+			import proxy_headers
 			transport http {
 				tls_insecure_skip_verify
 			}
@@ -65,6 +55,7 @@ adguard.mistia.xyz {
 	@asus_et12 host asus-et12.mistia.xyz
 	handle @asus_et12 {
 		reverse_proxy https://192.168.50.1:8443 {
+			import proxy_headers
 			transport http {
 				tls_insecure_skip_verify
 			}
@@ -75,28 +66,36 @@ adguard.mistia.xyz {
 	# --8<-- [start:adguard]
 	@adguard host adguard.mistia.xyz
 	handle @adguard {
-		reverse_proxy http://192.168.50.2:80
+		reverse_proxy http://192.168.50.2:80 {
+			import proxy_headers
+		}
 	}
 	# --8<-- [end:adguard]
 
 	# --8<-- [start:caddyadmin]
 	@caddyadmin host caddy.mistia.xyz
 	handle @caddyadmin {
-		reverse_proxy http://localhost:2019
+		reverse_proxy http://localhost:2019 {
+			import proxy_headers
+		}
 	}
 	# --8<-- [end:caddyadmin]
 
 	# --8<-- [start:portainer]
 	@portainer host portainer.mistia.xyz
 	handle @portainer {
-		reverse_proxy http://portainer:9000
+		reverse_proxy http://portainer:9000 {
+			import proxy_headers
+		}
 	}
 	# --8<-- [end:portainer]
 
 	# --8<-- [start:duplicati]
 	@duplicati host duplicati.mistia.xyz
 	handle @duplicati {
-		reverse_proxy http://duplicati:8200
+		reverse_proxy http://duplicati:8200 {
+			import proxy_headers
+		}
 	}
 	# --8<-- [end:duplicati]
 	
