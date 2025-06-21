@@ -36,13 +36,13 @@ fi
 
 # Step 1: Stop and Remove All Docker Containers
 print_header "Step 1: Stopping and removing all Docker containers..."
-if [ -f "${DEPLOY_DIR}/stop_all.sh" ]; then
+if [ -f "${DEPLOY_DIR}/stop-all.sh" ]; then
     echo "Found stop_all.sh script. Running it now..."
     cd "$DEPLOY_DIR"
     ./stop_all.sh
     cd ~ # Move out of the directory before deleting it
 else
-    echo "stop_all.sh not found. Docker containers may need to be stopped manually."
+    echo "stop-all.sh not found. Docker containers may need to be stopped manually."
 fi
 
 # Step 2: Delete the Deployment Directory

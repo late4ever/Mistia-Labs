@@ -4,6 +4,8 @@
 source "$(dirname "$0")/functions.sh"
 cd "$(dirname "$0")/.."
 
+source "$(dirname "$0")/create-network.sh"
+
 print_status "header" "Starting All Services"
 
 # --- Find and start the proxy first ---
