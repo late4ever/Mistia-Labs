@@ -7,6 +7,14 @@
 	}
 }
 
+# --- DNS-over-TLS Proxy ---
+l4 {
+    server {
+        listen :853
+        proxy 192.168.50.2:853
+    }
+}
+
 # --- Health Check Endpoint ---
 :80 {
 	handle /healthz {
