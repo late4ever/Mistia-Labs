@@ -16,8 +16,14 @@ This is the foundational layer that controls access to your network from both th
 ### **1B. DNS Filtering & Ad-Blocking**
 
 * **What it is:** A network-wide ad and malware blocker that acts as your local DNS server. It prevents your devices from ever connecting to malicious or ad-serving domains.
-* **Recommended Tool: AdGuard Home**
-* **Action:** Deploy AdGuard Home as a Docker container. Configure your router's DHCP settings to assign AdGuard Home as the DNS server for all devices on your network. This enhances both privacy and security.
+* **Recommended Tools: AdGuard Home + Unbound**
+  * **AdGuard Home:** Provides DNS filtering, ad-blocking, and a web interface for management
+  * **Unbound:** A recursive DNS resolver that provides complete DNS privacy by querying authoritative servers directly (no reliance on Google/Cloudflare DNS)
+* **Action:**
+  1. Deploy Unbound as a Docker container to handle recursive DNS resolution
+  2. Deploy AdGuard Home as a Docker container and configure it to use Unbound as its upstream DNS server
+  3. Configure your router's DHCP settings to assign AdGuard Home as the DNS server for all devices on your network
+  4. This setup provides enhanced privacy (no external DNS dependencies), security (DNSSEC validation), and ad-blocking capabilities
 
 #### **1C. Secure Remote Access (VPN)**
 
