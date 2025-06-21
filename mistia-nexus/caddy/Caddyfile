@@ -43,3 +43,68 @@ adguard.mistia.xyz {
 }
 # --8<-- [end:adguard]
 
+# --- Main Site Block with Wildcard Certificate ---
+*.mistia.xyz {
+	import security_headers
+	encode zstd br gzip
+
+	# --- Service Routing ---
+
+	# --8<-- [start:nexus]
+	@nexus host nexus.mistia.xyz
+	handle @nexus {
+		reverse_proxy https://192.168.50.4:9443 {
+			import proxy_headers
+			transport http {
+				tls_insecure_skip_verify
+			}
+		}
+	}
+	# --8<-- [end:nexus]
+
+	# --8<-- [start:asus_et12]
+	@asus_et12 host asus-et12.mistia.xyz
+	handle @asus_et12 {
+		reverse_proxy https://192.168.50.1:8443 {
+			import proxy_headers
+			transport http {
+				tls_insecure_skip_verify
+			}
+		}
+	}
+	# --8<-- [end:asus_et12]
+
+	# --8<-- [start:caddyadmin]
+	@caddyadmin host caddy.mistia.xyz
+	handle @caddyadmin {
+		reverse_proxy http://localhost:2019 {
+			import proxy_headers
+		}
+	}
+	# --8<-- [end:caddyadmin]
+
+	# --8<-- [start:portainer]
+	@portainer host portainer.mistia.xyz
+	handle @portainer {
+		reverse_proxy http://portainer:9000 {
+			import proxy_headers
+		}
+	}
+	# --8<-- [end:portainer]
+
+	# --8<-- [start:duplicati]
+	@duplicati host duplicati.mistia.xyz
+	handle @duplicati {
+		reverse_proxy http://duplicati:8200 {
+			import proxy_headers
+		}
+	}
+	# --8<-- [end:duplicati]
+	
+	# Fallback for any other subdomain
+	handle {
+		root * /srv/www
+		rewrite * /404.html
+		file_server
+	}
+}
