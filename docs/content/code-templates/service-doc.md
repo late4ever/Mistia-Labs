@@ -30,8 +30,8 @@ icon: material/application-brackets
 ```text
 mistia-nexus/
 └── [service-name]/
-    ├── docker-compose.yml
     ├── .env
+    ├── docker-compose.yml
     └── [other_files]/
 ```
 
@@ -84,6 +84,10 @@ sudo nano .env
 ```
 
 ++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
+
+```bash
+chmod 600 .env
+```
 
 ## ✨ Initial Deployment
 

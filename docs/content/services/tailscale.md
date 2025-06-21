@@ -89,6 +89,10 @@ TS_AUTHKEY=[secret-here]
 
 ++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
 
+```bash
+chmod 600 .env
+```
+
 ## ✨ Initial Deployment
 
 ```bash
