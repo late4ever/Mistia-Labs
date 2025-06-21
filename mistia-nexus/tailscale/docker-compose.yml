@@ -2,7 +2,7 @@ services:
   tailscale:
     image: tailscale/tailscale:latest
     container_name: tailscale
-    hostname: mistia-nexus 
+    hostname: mistia-nexus
     logging:
       driver: 'json-file'
       options:
@@ -17,8 +17,11 @@ services:
     labels:
       - 'com.mistia-nexus.service.name=Tailscale'
       - 'com.mistia-nexus.service.type=Network Security'
+    security_opt:
+      - no-new-privileges:true
     environment:
       - TZ=Asia/Singapore
+      - TS_STATE_DIR=/var/lib/tailscale
       - TS_AUTHKEY=${TS_AUTHKEY}
       - TS_EXTRA_ARGS=--advertise-routes=192.168.50.0/24 --advertise-exit-node --accept-dns=false
     volumes:
