@@ -8,9 +8,7 @@
 	layer4 {
 		:853 {
 			route {
-				proxy 192.168.50.2:853 {
-					proxy_protocol v2
-				}
+				proxy 192.168.50.2:853
 			}
 		}
 	}
