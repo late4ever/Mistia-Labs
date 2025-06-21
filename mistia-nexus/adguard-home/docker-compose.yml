@@ -8,6 +8,23 @@ services:
       options:
         max-size: '10m'
         max-file: '3'
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
     healthcheck:
       test:
         [
@@ -21,8 +38,6 @@ services:
     labels:
       - 'com.mistia-nexus.service.name=AdGuard Home'
       - 'com.mistia-nexus.service.type=Network Security'
-    security_opt:
-      - no-new-privileges:true
     environment:
       - TZ=Asia/Singapore
     networks:
