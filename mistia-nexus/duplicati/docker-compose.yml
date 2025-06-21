@@ -17,6 +17,8 @@ services:
     labels:
       - 'com.mistia-nexus.service.name=Duplicati'
       - 'com.mistia-nexus.service.type=Backup'
+    security_opt:
+      - no-new-privileges:true
     environment:
       - PUID=1000
       - PGID=10

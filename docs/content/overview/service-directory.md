@@ -24,6 +24,7 @@ icon: material/clipboard-text
 |---------|-----|---------|---------------|
 | **:simple-adguard:{ .adguard } AdGuard Home** | [https://adguard.mistia.xyz](https://adguard.mistia.xyz)<br>[https://192.168.50.2](https://192.168.50.2) | Network-wide DNS filtering | [View Here](../services/adguard-home.md) |
 | **:simple-caddy:{ .caddy } Caddy**<br>:material-api: Admin API | _Infrastructure_<br>[https://caddy.mistia.xyz](https://caddy.mistia.xyz/config) | Reverse proxy with auto-HTTPS<br>Configuration management | [View Here](../services/caddy.md) |
+| **:simple-tailscale: Tailscale** | [Tailscale Admin Console](https://login.tailscale.com/admin/machines) | Secure remote access VPN | [View Here](../services/tailscale.md) |
 | **:simple-portainer:{ .portainer } Portainer** | [https://portainer.mistia.xyz](https://portainer.mistia.xyz) | Docker management | [View Here](../services/portainer.md) |
 | **:simple-duplicati:{ .duplicati } Duplicati** | [https://duplicati.mistia.xyz](https://duplicati.mistia.xyz) | Encrypted backups | [View Here](../services/duplicati.md) |
 
