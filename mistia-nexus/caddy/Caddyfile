@@ -35,10 +35,24 @@
 # This block gets a specific certificate and has all headers explicitly imported.
 # --8<-- [start:adguard]
 adguard.mistia.xyz {
-  import security_headers
-  reverse_proxy http://192.168.50.2:80 {
-    import proxy_headers
-  }
+	import security_headers
+
+	# DNS-over-HTTPS endpoint
+	handle /dns-query* {
+		reverse_proxy https://192.168.50.2:443 {
+			import proxy_headers
+			transport http {
+				tls
+			}
+		}
+	}
+
+	# AdGuard Home UI
+	handle {
+		reverse_proxy http://192.168.50.2:80 {
+			import proxy_headers
+		}
+	}
 }
 # --8<-- [end:adguard]
 
