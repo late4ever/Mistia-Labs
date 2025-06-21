@@ -5,12 +5,11 @@
 	admin localhost:2019 {
 		origins caddy.mistia.xyz
 	}
-	
 	layer4 {
 		:853 {
 			route {
 				proxy 192.168.50.2:853 {
-					transparent
+					proxy_protocol v2
 				}
 			}
 		}
