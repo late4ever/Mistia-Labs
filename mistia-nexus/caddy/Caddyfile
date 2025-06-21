@@ -111,7 +111,7 @@ adguard.mistia.xyz {
 		}
 	}
 	# --8<-- [end:portainer]
-
+	
 	# --8<-- [start:duplicati]
 	@duplicati host duplicati.mistia.xyz
 	handle @duplicati {
@@ -120,6 +120,15 @@ adguard.mistia.xyz {
 		}
 	}
 	# --8<-- [end:duplicati]
+
+	# --8<-- [start:stremio]
+	@stremio host stremio.mistia.xyz
+	handle @stremio {
+		reverse_proxy http://stremio:11470 {
+			import proxy_headers
+		}
+	}
+	# --8<-- [end:stremio]
 	
 	# Fallback for any other subdomain
 	handle {
