@@ -4,6 +4,7 @@
 source "$(dirname "$0")/functions.sh"
 
 NETWORK_NAME="mistia-proxy-net"
+NETWORK_SUBNET="172.21.0.0/16"
 
 print_status "info" "Checking for '$NETWORK_NAME'..."
 if ! docker network ls | grep -q "$NETWORK_NAME"; then
