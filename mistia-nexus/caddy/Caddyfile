@@ -32,6 +32,15 @@
     header_up X-Forwarded-Proto {http.request.scheme}
 }
 
+# --- Dedicated AdGuard Home Block ---
+# This block gets a specific certificate and has all headers explicitly imported.
+adguard.mistia.xyz {
+  import security_headers
+  reverse_proxy http://192.168.50.2:80 {
+    import proxy_headers
+  }
+}
+
 # --- Main Site Block with Wildcard Certificate ---
 *.mistia.xyz {
 	import security_headers
