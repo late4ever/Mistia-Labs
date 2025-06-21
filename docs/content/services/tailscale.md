@@ -100,25 +100,29 @@ cd /volume2/docker/mistia-nexus/
 
 ### ⚙️ Authorize Node and Routes
 
-After the container starts for the first time, you must authorize its advanced features in the Tailscale admin console.
+1. Navigate to [Tailscale Admin Console >> Machines](https://login.tailscale.com/admin/machines)
 
-1. **Approve the Subnet Route and Exit Node:**
-    - Once the container is running, go to the [Machines tab](https://login.tailscale.com/admin/machines) in the admin console.
-    - You will see your new `mistia-nexus-tailscale` node. It may have a red "Needs approval" badge.
-    - Click the **three-dot** menu **(...)** next to the machine and select **Edit route settings...**.
+2. You will see your new `mistia-nexus` node.
+
+3. Click the **three-dot** menu `...` next to the machine and select `Edit route settings...`
     - Approve the advertised features:
-        - Check the box for your local subnet (`192.168.50.0/24`).
-        - Toggle the **Use as exit node** switch to the on position.
-    - Click **Save**.
+        - Check **192.168.50.0/24**
+        - Check **Use as exit node**
+    - Click `Save`
 
 ### 🔗 Configure Global DNS
 
 To enable network-wide ad-blocking for all your remote devices, configure your tailnet to use your AdGuard Home instance.
 
-1. Navigate to the **DNS** tab in the Tailscale Admin Console.
-2. Under the **Nameservers** section, click **Add nameserver** and select **Custom**.
-3. Enter the local IP address of your AdGuard Home container: `192.168.50.2`.
-4. Toggle on **Override local DNS**. This ensures your remote devices use your AdGuard Home for DNS queries instead of whatever network they are connected to.
+1. Navigate to [Tailscale Admin Console >> DNS](https://login.tailscale.com/admin/dns)
+
+2. Under the `Nameservers` section, click `Add nameserver` and select `Custom`
+
+3. Enter the local IP address of your AdGuard Home container: **192.168.50.2**
+
+4. Click `Save`
+
+5. Toggle on **Override local DNS**. This ensures your remote devices use your AdGuard Home for DNS queries instead of whatever network they are connected to
 
 ### 📱 Connect Client Devices
 

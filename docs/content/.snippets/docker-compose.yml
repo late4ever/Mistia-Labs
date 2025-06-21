@@ -8,6 +8,23 @@ services:
       options:
         max-size: '10m'
         max-file: '3'
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    # cap_add: 
+    #   - REQUIRED_CAPABILITIES # <-- UNCOMMENT if specific capabilities are needed  
+    deploy:
+      resources:
+        limits:
+          cpus: [service-dependent]
+          memory: [service-dependent]
+        reservations:
+          cpus: [service-dependent]
+          memory: [service-dependent]
     healthcheck:
       test: ['CMD-SHELL', 'curl -f http://localhost:PORT/ || exit 1']
       interval: 1m
@@ -17,8 +34,6 @@ services:
     labels:
       - 'com.mistia-nexus.service.name=[service-name]'
       - 'com.mistia-nexus.service.type=[service-type]'
-    security_opt:
-      - no-new-privileges:true
     environment:
       - TZ=Asia/Singapore
       - PUID=1000                    
