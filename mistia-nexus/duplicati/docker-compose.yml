@@ -10,7 +10,6 @@ services:
         max-file: '3'
     security_opt:
       - no-new-privileges:true
-    user: "1000:10"
     read_only: true
     tmpfs:
       - /tmp
