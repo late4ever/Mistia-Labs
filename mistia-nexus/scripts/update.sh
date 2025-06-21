@@ -3,6 +3,8 @@
 
 source "$(dirname "$0")/functions.sh"
 
+source "$(dirname "$0")/create-network.sh"
+
 if [ -z "$1" ]; then
   print_status "error" "No service name provided."
   echo "Usage: $0 <service_name>"

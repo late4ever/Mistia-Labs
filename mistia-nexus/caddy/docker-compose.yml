@@ -57,4 +57,4 @@ services:
 networks:
   mistia-proxy-net:
     name: mistia-proxy-net
-    driver: bridge
+    external: true

@@ -35,8 +35,8 @@ services:
       - TZ=Asia/Singapore
     networks:
       adguard-net:
-        # This assigns the dedicated static IP to the container
         ipv4_address: 192.168.50.2
+      mistia-proxy-net: {}
     volumes:
       - ./workdir:/opt/adguardhome/work
       - ./confdir:/opt/adguardhome/conf
@@ -52,3 +52,6 @@ networks:
       config:
         - subnet: 192.168.50.0/24
           gateway: 192.168.50.1
+  mistia-proxy-net:
+    name: mistia-proxy-net
+    external: true
