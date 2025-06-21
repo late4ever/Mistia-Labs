@@ -17,7 +17,7 @@ icon: simple/adguard
 
 | Host Ports | Container Ports | Network |  Host Path | Container Path |
 |:----------:|:------------:|:----------:|:----------:|:--------------:|
-| Direct IP | `53/tcp, 53/udp, 80` | `adguard-net` | `adguard-home/confdir`<br>`adguard-home/workdir`<br>`caddy/data` | `/opt/adguardhome/conf`<br>`/opt/adguardhome/work`<br>`/opt/adguardhome/certs:ro` |
+| Direct IP | `53/tcp, 53/udp, 80`<br>`443/tcp, 443/udp`<br>`853/tcp, 853/udp` | `adguard-net` | `adguard-home/confdir`<br>`adguard-home/workdir`<br>`caddy/data` | `/opt/adguardhome/conf`<br>`/opt/adguardhome/work`<br>`/opt/adguardhome/certs:ro` |
 
 ## 📋 Prerequisites
 
@@ -118,6 +118,29 @@ Follow the instructions at [Configure DNS Sinkhole](../../initial-setup/mistia-n
 ### ⚙️ Configure AdGuard Settings
 
 Follow the instructions in this [Github Repo](https://github.com/celenityy/adguard-home-settings/blob/main/README.md) to configure the rest of the settings
+
+#### Encryption Settings
+
+1. Navigate to [AdGuard Home >> Settings >> Encryption settings](https://adguard.mistia.xyz/#encryption)
+
+2. Check **Enable Encryption (HTTPS, DNS-over-HTTPS, and DNS-over-TLS)**
+
+3. **Server name:** `adguard.mistia.xyz`
+
+4. Do not check **Redirect to HTTPS automatically**
+
+5. **Certificates:**
+   - Select **Set a certificates files path**
+   - Enter: `/opt/adguardhome/certs/caddy/certificates/acme-v02.api.letsencrypt.org-directory/adguard.mistia.xyz/adguard.mistia.xyz.crt`
+
+6. **Private key**
+   - Select **Set a private key file**
+   - Enter: `/opt/adguardhome/certs/caddy/certificates/acme-v02.api.letsencrypt.org-directory/adguard.mistia.xyz/adguard.mistia.xyz.key`
+
+7. Click `Save configuration`
+
+To use DoH: [https://adguard.mistia.xyz/dns-query](https://adguard.mistia.xyz/dns-query)
+To use Dot: [tls://adguard.mistia.xyz/dns-query](tls://adguard.mistia.xyz/dns-query)
 
 ### 📝 DNS Rewrite
 
