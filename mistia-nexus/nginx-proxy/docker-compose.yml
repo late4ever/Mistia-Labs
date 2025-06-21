@@ -8,6 +8,16 @@ services:
       options:
         max-size: '10m'
         max-file: '3'
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.75'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
     healthcheck:
       test: ['CMD', '/usr/bin/check-health']
       interval: 1m
@@ -17,8 +27,6 @@ services:
     labels:
       - 'com.mistia-nexus.service.name=Nginx Proxy Manager'
       - 'com.mistia-nexus.service.type=Reverse Proxy'
-    security_opt:
-      - no-new-privileges:true
     environment:
       - TZ=Asia/Singapore
       - DB_MYSQL_HOST=nginx-proxy-db
