@@ -8,12 +8,10 @@
 }
 
 # --- Layer 4 DNS-over-TLS Proxy ---
-layer4 {
-	:853 {
-		route {
-			proxy 192.168.50.2:853 {
-				transparent
-			}
+:853 {
+	route {
+		proxy 192.168.50.2:853 {
+			transparent
 		}
 	}
 }
