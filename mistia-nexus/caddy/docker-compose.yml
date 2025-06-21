@@ -37,6 +37,7 @@ services:
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ./data:/data
+      - ./config:/config
       - ./www:/srv/www
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost/healthz']
