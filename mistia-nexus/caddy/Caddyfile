@@ -4,12 +4,15 @@
 	acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
 	admin localhost:2019 {
 		origins caddy.mistia.xyz
-	}	layer4 {
-		:853 {
-			route {
-				proxy 192.168.50.2:853 {
-					transparent
-				}
+	}
+}
+
+# --- Layer 4 DNS-over-TLS Proxy ---
+layer4 {
+	:853 {
+		route {
+			proxy 192.168.50.2:853 {
+				transparent
 			}
 		}
 	}
