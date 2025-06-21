@@ -38,7 +38,7 @@ services:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
     dns:
-      - 192.168.50.251 # AdGuard Home IP
+      - adguard-home
     ports:
       - '81:81'
       - '80:80'
@@ -86,7 +86,7 @@ services:
     volumes:
       - ./db_data:/var/lib/mysql
     dns:
-      - 192.168.50.2 # AdGuard Home IP
+      - adguard-home
     restart: unless-stopped
     networks:
       - nginx-proxy-net

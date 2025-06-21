@@ -37,7 +37,7 @@ services:
       - ./config:/config
       - /:/nasroot:ro
     dns:
-      - 192.168.50.2 # AdGuard Home IP
+      - adguard-home
     restart: unless-stopped
     networks:
       - mistia-proxy-net
