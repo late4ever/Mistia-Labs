@@ -28,7 +28,7 @@ icon: material/clipboard-text
 | **:simple-portainer:{ .portainer } Portainer** | [https://portainer.mistia.xyz](https://portainer.mistia.xyz) | Docker management | [View Here](../services/portainer.md) |
 | **:simple-duplicati:{ .duplicati } Duplicati** | [https://duplicati.mistia.xyz](https://duplicati.mistia.xyz) | Encrypted backups | [View Here](../services/duplicati.md) |
 
-### Cloud Services
+### ☁️ Cloud Services
 
 | Service | URL | Purpose | Documentation |
 |---------|-----|---------|---------------|
