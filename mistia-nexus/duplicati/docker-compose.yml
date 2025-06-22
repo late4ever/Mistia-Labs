@@ -3,6 +3,7 @@ services:
     image: lscr.io/linuxserver/duplicati:latest
     container_name: duplicati
     hostname: duplicati
+    init: true
     logging:
       driver: 'json-file'
       options:

@@ -3,6 +3,7 @@ services:
     image: tailscale/tailscale:latest
     container_name: tailscale
     hostname: mistia-nexus
+    init: true
     logging:
       driver: 'json-file'
       options:
