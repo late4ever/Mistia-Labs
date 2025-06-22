@@ -2,7 +2,7 @@
 {
 	email {env.CADDY_EMAIL}
 	acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-	admin localhost:2019 {
+	admin :2019 {
 		origins caddy.mistia.xyz
 	}
 
