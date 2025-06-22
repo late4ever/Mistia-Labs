@@ -159,9 +159,29 @@ services:
 
 volumes:
   nextcloud_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /volume1/docker/nextcloud/data
   nextcloud_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /volume1/docker/nextcloud/config
   nextcloud_db_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /volume1/docker/nextcloud/db
   nextcloud_redis_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /volume1/docker/nextcloud/redis
 
 networks:
   nextcloud-net:
