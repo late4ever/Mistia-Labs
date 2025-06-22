@@ -7,13 +7,13 @@
 	}
 
 	# --- DNS over TLS ---
-	layer4 {
-		:853 {
-			route {
-				proxy 192.168.50.2:853
-			}
-		}
-	}
+	#layer4 {
+	#	:853 {
+	#		route {
+	#			proxy 192.168.50.2:853
+	#		}
+	#	}
+	#}
 }
 
 # --- Health Check Endpoint ---
@@ -47,14 +47,14 @@ adguard.mistia.xyz {
 	import security_headers
 
 	# DNS-over-HTTPS endpoint
-	handle /dns-query* {
-		reverse_proxy https://192.168.50.2:443 {
-			import proxy_headers
-			transport http {
-				tls
-			}
-		}
-	}
+	#handle /dns-query* {
+	#	reverse_proxy https://192.168.50.2:443 {
+	#		import proxy_headers
+	#		transport http {
+	#			tls
+	#		}
+	#	}
+	#}
 
 	# AdGuard Home UI
 	handle {
