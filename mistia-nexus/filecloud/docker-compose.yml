@@ -101,7 +101,7 @@ services:
 
   solr:
     # --8<-- [start:filecloud-solr-image]
-    image: filecloud/solr:8.11    
+    image: filecloud/filecloud-solr:8.11.2-22.04  
     # --8<-- [end:filecloud-solr-image]
     # --8<-- [start:filecloud-solr-container]
     container_name: filecloud-solr
