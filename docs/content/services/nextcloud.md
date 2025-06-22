@@ -15,15 +15,18 @@ icon: simple/nextcloud
 
 :fontawesome-regular-id-badge: nextcloud &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: nextcloud:apache
 
+:fontawesome-regular-id-badge: nextcloud-cron &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: nextcloud:apache
+
 :fontawesome-regular-id-badge: nextcloud-db &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: mariadb:latest
 
 :fontawesome-regular-id-badge: nextcloud-redis &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: redis:alpine
 
-| Host Ports | Container Ports | Network | Host Path / Docker Volume | Container Path |
-|:----------:|:---------------:|:-------:|:-------------------------:|:--------------:|
-| *proxied* | `80` | `nextcloud-net`<br>`mistia-proxy-net` | `/volume1/docker/nextcloud/data`<br>`/volume1/docker/nextcloud/config`<br>`/volume2/Mistia`<br>`/home` | `/var/www/html`<br>`/var/www/html/config`<br>`/mnt/shared`<br>`/mnt/homes` |
-| `N/A` | `3306` | `nextcloud-net` | `/volume1/docker/nextcloud/db` | `/var/lib/mysql` |
-| `N/A` | `6379` | `nextcloud-net` | `/volume1/docker/nextcloud/redis` | `/data` |
+| Container | Host Ports | Container Ports | Network | Host Path / Docker Volume | Container Path |
+|:---------:|:----------:|:---------------:|:-------:|:-------------------------:|:--------------:|
+| nextcloud | *proxied* | `80` | `nextcloud-net`<br>`mistia-proxy-net` | `/volume1/docker/nextcloud/data`<br>`/volume1/docker/nextcloud/config` | `/var/www/html`<br>`/var/www/html/config` |
+| nextcloud-cron | `N/A` | `80` | `nextcloud-net` | `/volume1/docker/nextcloud/data`<br>`/volume1/docker/nextcloud/config` | `/var/www/html`<br>`/var/www/html/config`|
+| nextcloud-db | `N/A` | `3306` | `nextcloud-net` | `/volume1/docker/nextcloud/db` | `/var/lib/mysql` |
+| nextcloud-redis | `N/A` | `6379` | `nextcloud-net` | `/volume1/docker/nextcloud/redis` | `/data` |
 
 ## 📋 Prerequisites
 
@@ -31,10 +34,25 @@ icon: simple/nextcloud
 
 The `mistia-proxy-net` network must be available.
 
-### 📁 External Storage Requirements
+### 🗃️ External Storage Requirements
 
-- **Shared folders**: `/volume2/Mistia/` with subdirectories for Videos, Photos, Documents etc
-- **User folders**: `/home/` with user-specific subdirectories (`/home/late4ever/`, `/home/mistsoya/`)
+- **NAS Shared folders**: `/volume2/Mistia/` with subdirectories for Videos, Photos, Documents etc
+- **NAS User folders**: `/home/` with user-specific subdirectories (`/home/late4ever/`, `/home/mistsoya/`)
+
+### 🗂️ NVMe Storage
+
+SSH into the NAS to create the NVMe volume
+
+```bash
+--8<-- "docs/content/.snippets/ssh.sh:ssh"
+```
+
+```bash
+sudo mkdir -p /volume1/docker/nextcloud/data
+sudo mkdir -p /volume1/docker/nextcloud/config
+sudo mkdir -p /volume1/docker/nextcloud/db
+sudo mkdir -p /volume1/docker/nextcloud/redis
+```
 
 ## 🔧 Configuration
 
@@ -47,35 +65,35 @@ The `mistia-proxy-net` network must be available.
 ├── db/        # MariaDB database files
 └── redis/     # Redis cache
 
-/volume2/Mistia/        # Shared folders
-/home/                  # Personal user folders
-
 mistia-nexus/
 └── nextcloud/
     ├── .env                # Application secrets
     └── docker-compose.yml  # Defines the Nextcloud service, network, and volumes
-
-
 ```
 
-### 📁 Container Paths
+### 📁 Container Directory
 
-#### Nextcloud
+#### nextcloud
 
 ```text
 /var/www/html/          # Application files
 /var/www/html/config/   # Configuration and cache
-/mnt/shared/            # Shared folders
-/mnt/homes/             # Personal user folders
 ```
 
-#### Nextcloud-Db
+#### nextcloud-cron
+
+```text
+/var/www/html/          # Application files
+/var/www/html/config/   # Configuration and cache
+```
+
+#### nextcloud-db
 
 ```text
 /var/lib/mysql/         # Database files
 ```
 
-#### Nextcloud-Redis
+#### nextcloud-redis
 
 ```text
 /data/                  # Cache and session data
@@ -85,6 +103,12 @@ mistia-nexus/
 
 ```yaml title="docker-compose.yml"
 --8<-- "mistia-nexus/nextcloud/docker-compose.yml"
+```
+
+### 🐋 Dockerfile
+
+```Dockerfile title="Dockerfile"
+--8<-- "mistia-nexus/nextcloud/Dockerfile"
 ```
 
 ### 🔀 Reverse Proxy
@@ -125,16 +149,6 @@ cd /volume2/docker/mistia-nexus/
 
 ## 🚀 Initial Setup
 
-### 🪪 Account Setup
-
-1. Navigate to [https://nextcloud.mistia.xyz](https://nextcloud.mistia.xyz)
-
-2. The admin account will be automatically created using the credentials from `.env`
-
-3. Create additional user accounts for family members:
-   - Navigate to `Users` settings
-   - Add user accounts for each family member
-
 ### 📝 DNS Rewrite
 
 1. Navigate to [https://adguard.mistia.xyz](https://adguard.mistia.xyz) >> `Filters` >> `DNS rewrites`
@@ -146,11 +160,73 @@ cd /volume2/docker/mistia-nexus/
 
 3. Navigate to [https://nextcloud.mistia.xyz](https://nextcloud.mistia.xyz) to verify
 
+### 🪪 Account Setup
+
+1. Navigate to [https://nextcloud.mistia.xyz](https://nextcloud.mistia.xyz)
+
+2. The admin account will be automatically created using the credentials from `.env`
+
+3. Create additional user accounts for family members:
+   - Navigate to `Users` settings
+   - Add user accounts for each family member
+
+### 🪖 System Configuration
+
+#### Server Maintenance Window
+
+```bash
+--8<-- "docs/content/.snippets/ssh.sh:ssh"
+```
+
+Set maintenance window to be 1 to 3am
+
+```bash
+docker exec nextcloud php occ config:system:set maintenance_window_start --type=integer --value=1
+docker exec nextcloud php occ config:system:set maintenance_window_end --type=integer --value=3
+```
+
+1. Navigate to [Nextcloud >> Administration Settings >> Basic Settings](https://nextcloud.mistia.xyz/settings/admin)
+
+2. **Set Background Jobs** to `Cron`
+
+#### Run Maintenance Tasks
+
+```bash
+docker exec nextcloud php occ maintenance:repair --include-expensive
+```
+
+#### Set Default Phone Region
+
+```bash
+docker exec nextcloud php occ config:system:set default_phone_region --value="SG"
+```
+
+#### Email Configuration
+
+1. Navigate to [Nextcloud >> Personal settings >> Personal Info](https://nextcloud.mistia.xyz/settings/user)
+
+2. Set **Email** field
+
+3. Navigate to [Nextcloud >> Administration Settings >> Basic Settings](https://nextcloud.mistia.xyz/settings/admin)
+
+4. **Email Server**
+    - **Send mode:** `SMTP`
+    - **Encryption:** `SSL`
+    - **From address:** `[username]+nextcloud` @ `[domain.com]`
+    - **Server address:** `smtp.[domain.com]` @ [465]
+    - Check **Authentication required**
+    - **Credential:** `[username]@[domain.com]` `[app password]`
+    - Click `Save`
+
 ### 🗂️ External Storage Configuration
 
-1. Navigate to `Settings` >> `Administration` >> `External storage`
+1. Navigate to [Nextcloud >> Apps >> Dsiabled apps](https://nextcloud.mistia.xyz/settings/apps/disabled)
 
-2. Add **Personal Folders** storage:
+2. Click `Enable` for ***External storage support*
+
+3. Navigate to [Nextcloud >> Administration settings >> External storage](https://nextcloud.mistia.xyz/settings/admin/externalstorages)
+
+4. Add **Personal Folders** storage:
    - **Folder name**: `Personal Files`
    - **External storage**: `Local`
    - **Configuration**: `/mnt/homes/$user`
@@ -158,7 +234,7 @@ cd /volume2/docker/mistia-nexus/
    - **Enable User Variables**: ✓
    - **Allow sharing**: ✗ (keeps personal files private)
 
-3. Add **Shared Folders** storages:
+5. Add **Shared Folders** storages:
    - **Folder name**: `Shared Videos`
    - **External storage**: `Local`
    - **Configuration**: `/mnt/shared/Videos`
