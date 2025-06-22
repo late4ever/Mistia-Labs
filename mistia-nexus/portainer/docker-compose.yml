@@ -3,6 +3,7 @@ services:
     image: portainer/portainer-ce:alpine
     container_name: portainer
     hostname: portainer
+    init: true
     logging:
       driver: 'json-file'
       options:
