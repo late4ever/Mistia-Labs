@@ -58,7 +58,6 @@ services:
     networks:
       - nextcloud-net
       - mistia-proxy-net
-
   db:
     image: mariadb:latest
     container_name: nextcloud-db
@@ -83,13 +82,9 @@ services:
       test:
         [
           'CMD',
-          'mysqladmin',
-          'ping',
-          '-h',
-          'localhost',
-          '-u',
-          'nextcloud',
-          '-p${DB_PASSWORD}'
+          'healthcheck.sh',
+          '--connect',
+          '--innodb_initialized'
         ]
       interval: 1m
       timeout: 10s
