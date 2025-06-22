@@ -1,6 +1,6 @@
 services:
   nextcloud:
-    image: nextcloud:apache
+    image: nextcloud:31-apache
     container_name: nextcloud
     hostname: nextcloud
     init: true
@@ -63,9 +63,8 @@ services:
     networks:
       - nextcloud-net
       - mistia-proxy-net
-
   db:
-    image: mariadb:latest
+    image: mariadb:11.4
     container_name: nextcloud-db
     hostname: nextcloud-db
     init: true
@@ -118,9 +117,8 @@ services:
     restart: unless-stopped
     networks:
       - nextcloud-net
-
   redis:
-    image: redis:alpine
+    image: redis:7-alpine
     container_name: nextcloud-redis
     hostname: nextcloud-redis
     init: true
