@@ -121,6 +121,15 @@ adguard.mistia.xyz {
 	}
 	# --8<-- [end:duplicati]
 	
+	# --8<-- [start:nextcloud]
+	@nextcloud host nextcloud.mistia.xyz
+	handle @nextcloud {
+		reverse_proxy http://nextcloud:80 {
+			import proxy_headers
+		}
+	}
+	# --8<-- [end:nextcloud]
+	
 	# Fallback for any other subdomain
 	handle {
 		root * /srv/www

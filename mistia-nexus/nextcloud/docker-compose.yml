@@ -1,0 +1,173 @@
+services:
+  nextcloud:
+    image: nextcloud:apache
+    container_name: nextcloud
+    hostname: nextcloud
+    init: true
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    security_opt:
+      - no-new-privileges:true
+    user: "33:100"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.50'
+          memory: 2048M
+        reservations:
+          cpus: '0.50'
+          memory: 512M
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost/status.php']
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - 'com.mistia-nexus.service.name=Nextcloud'
+      - 'com.mistia-nexus.service.type=Cloud Storage'
+    environment:
+      - TZ=Asia/Singapore
+      - MYSQL_HOST=nextcloud-db
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - NEXTCLOUD_ADMIN_USER=${ADMIN_USER}
+      - NEXTCLOUD_ADMIN_PASSWORD=${ADMIN_PASSWORD}      
+      - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.mistia.xyz 192.168.50.4      
+      - REDIS_HOST=nextcloud-redis
+      - REDIS_HOST_PORT=6379      
+      - PHP_MEMORY_LIMIT=1024M
+      - PHP_UPLOAD_LIMIT=2048M
+      - APACHE_DISABLE_REWRITE_IP=1
+      - NEXTCLOUD_INIT_HTACCESS=true    
+    volumes:
+      - nextcloud_data:/var/www/html
+      - nextcloud_config:/var/www/html/config
+      - /volume2/Mistia:/mnt/shared
+      - /home:/mnt/homes
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - nextcloud-net
+      - mistia-proxy-net
+
+  db:
+    image: mariadb:latest
+    container_name: nextcloud-db
+    hostname: nextcloud-db
+    init: true
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'mysqladmin',
+          'ping',
+          '-h',
+          'localhost',
+          '-u',
+          'nextcloud',
+          '-p${DB_PASSWORD}'
+        ]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - 'com.mistia-nexus.service.name=Nextcloud Database'
+      - 'com.mistia-nexus.service.type=Database'
+    environment:
+      - TZ=Asia/Singapore
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}      
+      - MYSQL_INNODB_BUFFER_POOL_SIZE=256M
+      - MYSQL_INNODB_LOG_FILE_SIZE=64M
+      - MYSQL_INNODB_FLUSH_LOG_AT_TRX_COMMIT=2
+      - MYSQL_INNODB_FLUSH_METHOD=O_DIRECT
+      - MYSQL_QUERY_CACHE_SIZE=32M
+      - MYSQL_QUERY_CACHE_TYPE=1
+      - MYSQL_KEY_BUFFER_SIZE=32M
+      - MYSQL_MAX_CONNECTIONS=151
+    volumes:
+      - nextcloud_db_data:/var/lib/mysql    
+    restart: unless-stopped
+    networks:
+      - nextcloud-net
+
+  redis:
+    image: redis:alpine
+    container_name: nextcloud-redis
+    hostname: nextcloud-redis
+    init: true
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.10'
+          memory: 64M
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - 'com.mistia-nexus.service.name=Nextcloud Redis Cache'
+      - 'com.mistia-nexus.service.type=Cache'
+    environment:
+      - TZ=Asia/Singapore
+    tmpfs:
+      - /tmp:noexec,nosuid,size=100m
+    volumes:
+      - nextcloud_redis_data:/data
+    command: redis-server --maxmemory 200mb --maxmemory-policy allkeys-lru --save ""
+    restart: unless-stopped
+    networks:
+      - nextcloud-net
+
+volumes:
+  nextcloud_data:
+  nextcloud_config:
+  nextcloud_db_data:
+  nextcloud_redis_data:
+
+networks:
+  nextcloud-net:
+    name: nextcloud-net
+  mistia-proxy-net:
+    name: mistia-proxy-net
+    external: true
+
