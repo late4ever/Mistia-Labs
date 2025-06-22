@@ -5,6 +5,8 @@
 	admin localhost:2019 {
 		origins caddy.mistia.xyz
 	}
+
+	# --- DNS over TLS ---
 	layer4 {
 		:853 {
 			route {

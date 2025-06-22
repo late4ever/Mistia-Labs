@@ -71,14 +71,6 @@ cd /volume2/docker/mistia-nexus/
 
 ## 🚀 Initial Setup
 
-### 🪪 Account Setup
-
-1. Navigate to [https://portainer.mistia.xyz](https://portainer.mistia.xyz)
-
-2. Create an administrator account
-
-3. Select the `Local` environment and click `Connect` to manage the local Docker instance
-
 ### 📝 DNS Rewrite
 
 1. Navigate to [https://adguard.mistia.xyz](https://adguard.mistia.xyz) >> `Filters` >> `DNS rewrites`
@@ -89,3 +81,12 @@ cd /volume2/docker/mistia-nexus/
       - Click `Save`
 
 3. Navigate to [https://portainer.mistia.xyz](https://portainer.mistia.xyz) to verify
+
+### 🪪 Account Setup
+
+1. Navigate to [https://portainer.mistia.xyz](https://portainer.mistia.xyz)
+
+2. Create an administrator account
+
+3. Select the `Local` environment and click `Connect` to manage the local Docker instance
+4. 
