@@ -27,7 +27,6 @@ icon: material/clipboard-text
 | **:simple-tailscale: Tailscale** | [Tailscale Admin Console](https://login.tailscale.com/admin/machines) | Secure remote access VPN | [View Here](../services/tailscale.md) |
 | **:simple-portainer:{ .portainer } Portainer** | [https://portainer.mistia.xyz](https://portainer.mistia.xyz) | Docker management | [View Here](../services/portainer.md) |
 | **:simple-duplicati:{ .duplicati } Duplicati** | [https://duplicati.mistia.xyz](https://duplicati.mistia.xyz) | Encrypted backups | [View Here](../services/duplicati.md) |
-| **:simple-stremio:{ .stremio } Stremio** | [https://stremio.mistia.xyz](https://stremio.mistia.xyz) | Media streaming server | [View Here](../services/stremio.md) |
 
 ## 🌐 Network Configuration
 
