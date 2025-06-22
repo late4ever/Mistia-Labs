@@ -28,6 +28,12 @@ icon: material/clipboard-text
 | **:simple-portainer:{ .portainer } Portainer** | [https://portainer.mistia.xyz](https://portainer.mistia.xyz) | Docker management | [View Here](../services/portainer.md) |
 | **:simple-duplicati:{ .duplicati } Duplicati** | [https://duplicati.mistia.xyz](https://duplicati.mistia.xyz) | Encrypted backups | [View Here](../services/duplicati.md) |
 
+### Cloud Services
+
+| Service | URL | Purpose | Documentation |
+|---------|-----|---------|---------------|
+| **:simple-nextcloud:{ .nextcloud } Nextcloud** | [https://nextcloud.mistia.xyz](https://nextcloud.mistia.xyz) | Self-hosted file sync and collaboration | [View Here](../services/nextcloud.md) |
+
 ## 🌐 Network Configuration
 
 ### :material-ip: IP Address Allocation
