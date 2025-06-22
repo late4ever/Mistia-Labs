@@ -21,9 +21,9 @@ icon: simple/nextcloud
 
 | Host Ports | Container Ports | Network | Host Path / Docker Volume | Container Path |
 |:----------:|:---------------:|:-------:|:-------------------------:|:--------------:|
-| *proxied* | `80` | `nextcloud-net`<br>`mistia-proxy-net` | `nextcloud_data`<br>`nextcloud_config`<br>`/volume2/Mistia`<br>`/home` | `/var/www/html`<br>`/var/www/html/config`<br>`/mnt/shared`<br>`/mnt/homes` |
-| `N/A` | `3306` | `nextcloud-net` | `nextcloud_db_data` | `/var/lib/mysql` |
-| `N/A` | `6379` | `nextcloud-net` | `nextcloud_redis_data` | `/data` |
+| *proxied* | `80` | `nextcloud-net`<br>`mistia-proxy-net` | `/volume1/docker/nextcloud/data`<br>`/volume1/docker/nextcloud/config`<br>`/volume2/Mistia`<br>`/home` | `/var/www/html`<br>`/var/www/html/config`<br>`/mnt/shared`<br>`/mnt/homes` |
+| `N/A` | `3306` | `nextcloud-net` | `/volume1/docker/nextcloud/db` | `/var/lib/mysql` |
+| `N/A` | `6379` | `nextcloud-net` | `/volume1/docker/nextcloud/redis` | `/data` |
 
 ## 📋 Prerequisites
 
@@ -41,15 +41,14 @@ The `mistia-proxy-net` network must be available.
 ### 📂 Host Directory
 
 ```text
-/volume1/docker
-├── nextcloud_data          # Application files and cache
-├── nextcloud_config        # Configuration and session data
-├── nextcloud_db_data       # MariaDB database files
-└── nextcloud_redis_data    # Redis cache and sessions
+/volume1/docker/nextcloud/
+├── data/      # Application files
+├── config/    # Configuration files
+├── db/        # MariaDB database files
+└── redis/     # Redis cache
 
-/
-├── /volume2/Mistia/        # Shared folders
-└── /home/                  # Personal user folders
+/volume2/Mistia/        # Shared folders
+/home/                  # Personal user folders
 
 mistia-nexus/
 └── nextcloud/
