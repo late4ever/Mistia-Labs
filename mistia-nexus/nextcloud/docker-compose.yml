@@ -18,7 +18,7 @@ services:
           memory: 2048M
         reservations:
           cpus: '0.50'
-          memory: 512M
+          memory: 512M    
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost/status.php']
       interval: 1m
@@ -30,6 +30,7 @@ services:
       - 'com.mistia-nexus.service.type=Cloud Storage'
     environment:
       - TZ=Asia/Singapore
+      - DEFAULT_PHONE_REGION=SG
       - MYSQL_HOST=nextcloud-db
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
@@ -39,10 +40,15 @@ services:
       - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.mistia.xyz 192.168.50.4      
       - REDIS_HOST=nextcloud-redis
       - REDIS_HOST_PORT=6379      
+      - TRUSTED_PROXIES=192.168.0.0/16 172.16.0.0/12 10.0.0.0/8
+      - OVERWRITEPROTOCOL=https
+      - OVERWRITEHOST=nextcloud.mistia.xyz
       - PHP_MEMORY_LIMIT=1024M
-      - PHP_UPLOAD_LIMIT=2048M
+      - PHP_UPLOAD_LIMIT=2048M      
       - APACHE_DISABLE_REWRITE_IP=1
+      - OVERWRITECLIURL=https://nextcloud.mistia.xyz      
       - NEXTCLOUD_INIT_HTACCESS=true
+      - APACHE_BODY_LIMIT=1073741824
     volumes:
       - nextcloud_data:/var/www/html
       - nextcloud_config:/var/www/html/config
