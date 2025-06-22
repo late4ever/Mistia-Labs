@@ -23,6 +23,20 @@ icon: material/application-brackets
 
 [Add any prerequisites here.]
 
+### 🗂️ NVMe Storage
+
+SSH into the NAS to create the NVMe volume
+
+```bash
+--8<-- "docs/content/.snippets/ssh.sh:ssh"
+```
+
+Create the required folders
+
+```bash
+sudo mkdir -p /volume1/docker/[service-name]/[folder-name]
+```
+
 ## 🔧 Configuration
 
 ### 📂 Host Directory
