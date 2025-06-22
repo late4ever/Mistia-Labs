@@ -145,3 +145,14 @@ cd /volume2/docker/mistia-nexus/
         - Enable `HSTS Enabled`
         - Enable `HTTP/2 Support`
     - Click `Save`
+
+### 📝 DNS Rewrite
+
+1. Navigate to [https://adguard.mistia.xyz](https://adguard.mistia.xyz) >> `Filters` >> `DNS rewrites`
+
+2. Click `Add DNS rewrite`
+      - **Domain**: `proxy.mistia.xyz`
+      - **Answer**: `192.168.50.4`
+      - Click `Save`
+
+3. Navigate to [https://proxy.mistia.xyz](https://proxy.mistia.xyz) to verify

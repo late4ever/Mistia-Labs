@@ -18,7 +18,7 @@ status: new
 
 | Host Ports | Container Ports | Network | Host Path | Container Path |
 |:----------:|:---------------:|:-------:|:---------:|:--------------:|
-| `80, 443` | `80, 443/tcp, 443/udp` | `mistia-proxy-net` | `caddy/Caddyfile`<br>`caddy/config`<br>`caddy/data`<br>`caddy/www` | `/etc/caddy/Caddyfile`<br>`/config`<br>`/data`<br>`/srv/www` |
+| `80, 443, 853` | `80, 443/tcp, 443/udp, 853` | `mistia-proxy-net` | `caddy/Caddyfile`<br>`caddy/config`<br>`caddy/data`<br>`caddy/www` | `/etc/caddy/Caddyfile`<br>`/config`<br>`/data`<br>`/srv/www` |
 
 ## 📋 Prerequisites
 
