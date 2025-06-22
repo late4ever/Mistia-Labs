@@ -32,8 +32,13 @@ print_status "success" "Directory verified."
 PROXY_DIR=$(get_active_proxy_dir)
 
 if [ -n "$PROXY_DIR" ]; then
-    print_status "info" "Step 3: Updating Reverse Proxy '$PROXY_DIR' with new configuration..."
-    ./scripts/update.sh "$PROXY_DIR" || { print_status "error" "Failed to update the reverse proxy."; exit 1; }
+    # Assuming the proxy is Caddy and its container name is 'caddy'
+    PROXY_CONTAINER_NAME="caddy" 
+    print_status "info" "Step 3: Reloading reverse proxy '$PROXY_CONTAINER_NAME' with new configuration..."
+    docker exec "$PROXY_CONTAINER_NAME" caddy reload --config /etc/caddy/Caddyfile || { print_status "error" "Failed to reload the reverse proxy."; exit 1; }
+    print_status "success" "Proxy reloaded successfully."
+else
+    print_status "info" "No active proxy service found, skipping proxy reload."
 fi
 
 print_status "info" "Step 4: Starting new service '$NEW_SERVICE'..."
