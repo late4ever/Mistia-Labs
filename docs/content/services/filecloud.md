@@ -93,11 +93,9 @@ sudo nano .env
 Add the following content to the `.env` file. Replace `[secret-here]` with strong, unique passwords.
 
 ```text title=".env"
-# MongoDB Credentials
+#--- FileCloud Secrets ---
 MONGO_INITDB_ROOT_USERNAME=filecloud
 MONGO_INITDB_ROOT_PASSWORD=[secret-here]
-
-# FileCloud Admin Credentials
 FILECLOUD_ADMIN_USER=admin
 FILECLOUD_ADMIN_PASSWORD=[secret-here]
 ```

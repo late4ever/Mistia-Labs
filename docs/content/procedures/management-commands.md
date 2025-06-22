@@ -77,6 +77,34 @@ This script performs a comprehensive update of the entire stack. It stops all se
 ./scripts/update-all.sh
 ```
 
+#### Start Single Service
+
+Use this script to start a specific service by name.
+
+??? example "start.sh"
+    ```bash
+    --8<-- "mistia-nexus/scripts/start.sh"
+    ```
+
+```bash
+# Start a single service (e.g., filecloud)
+./scripts/start.sh filecloud
+```
+
+#### Stop Single Service
+
+Use this script to stop a specific service by name.
+
+??? example "stop.sh"
+    ```bash
+    --8<-- "mistia-nexus/scripts/stop.sh"
+    ```
+
+```bash
+# Stop a single service (e.g., filecloud)
+./scripts/stop.sh filecloud
+```
+
 #### Update Single Service
 
 Use this script to update a specific service without affecting the rest of the stack. It's useful for targeted updates or when a service's configuration has changed.
@@ -90,8 +118,8 @@ Use this script to update a specific service without affecting the rest of the s
     ```
 
 ```bash
-# Update single service (e.g., jellyfin)
-./scripts/update.sh jellyfin
+# Update single service (e.g., caddy)
+./scripts/update.sh caddy
 ```
 
 #### Add New Service
