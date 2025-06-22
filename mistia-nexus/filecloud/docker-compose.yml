@@ -1,7 +1,11 @@
 services:
   filecloud-server:
+    # --8<-- [start:filecloud-image]
     image: filecloud/fileclouddocker:24.1
+    # --8<-- [end:filecloud-image]
+    # --8<-- [start:filecloud-container]
     container_name: filecloud
+    # --8<-- [end:filecloud-container]
     hostname: filecloud
     init: true
     logging:
@@ -53,8 +57,12 @@ services:
       - mistia-proxy-net
 
   db:
+    # --8<-- [start:filecloud-db-image]
     image: mongo:6.0
+    # --8<-- [end:filecloud-db-image]
+    # --8<-- [start:filecloud-db-container]
     container_name: filecloud-db
+    # --8<-- [end:filecloud-db-container]
     hostname: filecloud-db
     init: true
     logging:
@@ -92,8 +100,12 @@ services:
       - filecloud-net
 
   solr:
-    image: filecloud/solr:8.11
+    # --8<-- [start:filecloud-solr-image]
+    image: filecloud/solr:8.11    
+    # --8<-- [end:filecloud-solr-image]
+    # --8<-- [start:filecloud-solr-container]
     container_name: filecloud-solr
+    # --8<-- [end:filecloud-solr-container]
     hostname: filecloud-solr
     init: true
     logging:

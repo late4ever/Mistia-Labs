@@ -13,11 +13,21 @@ icon: material/file-cloud
 
 :material-web: [https://filecloud.mistia.xyz](https://filecloud.mistia.xyz)
 
-:fontawesome-regular-id-badge: filecloud &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: filecloud/fileclouddocker:24.1
-
-:fontawesome-regular-id-badge: filecloud-db &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: mongo:6.0
-
-:fontawesome-regular-id-badge: filecloud-solr &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: filecloud/solr:8.11
+<table><tr><td>
+    --8<-- "mistia-nexus/filecloud/docker-compose.yml:filecloud-container"
+</td><td>
+    --8<-- "mistia-nexus/filecloud/docker-compose.yml:filecloud-image"
+</td></tr>
+<tr><td>
+    --8<-- "mistia-nexus/filecloud/docker-compose.yml:filecloud-db-container"
+</td><td>
+    --8<-- "mistia-nexus/filecloud/docker-compose.yml:filecloud-db-image"
+</td></tr>
+<tr><td>
+    --8<-- "mistia-nexus/filecloud/docker-compose.yml:filecloud-solr-container"
+</td><td>
+    --8<-- "mistia-nexus/filecloud/docker-compose.yml:filecloud-solr-image"
+</td></tr></table>
 
 | Container | Host Ports | Container Ports | Network | Host Path / Docker Volume | Container Path |
 |:---------:|:----------:|:---------------:|:-------:|:-------------------------:|:--------------:|
