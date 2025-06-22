@@ -1,6 +1,6 @@
 services:
   filecloud-server:
-    image: filecloud/filecloud-server:latest
+    image: filecloud/fileclouddocker:24.1
     container_name: filecloud
     hostname: filecloud
     init: true

@@ -13,7 +13,7 @@ icon: material/file-cloud
 
 :material-web: [https://filecloud.mistia.xyz](https://filecloud.mistia.xyz)
 
-:fontawesome-regular-id-badge: filecloud &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: filecloud/filecloud-server:latest
+:fontawesome-regular-id-badge: filecloud &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: filecloud/fileclouddocker:24.1
 
 :fontawesome-regular-id-badge: filecloud-db &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: mongo:6.0
 
