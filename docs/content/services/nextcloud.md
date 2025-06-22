@@ -226,27 +226,22 @@ docker exec nextcloud php occ config:system:set default_phone_region --value="SG
 
 3. Navigate to [Nextcloud >> Administration settings >> External storage](https://nextcloud.mistia.xyz/settings/admin/externalstorages)
 
-4. Add **Personal Folders** storage:
-   - **Folder name**: `Personal Files`
-   - **External storage**: `Local`
-   - **Configuration**: `/mnt/homes/$user`
-   - **Available for**: `All users`
-   - **Enable User Variables**: ✓
-   - **Allow sharing**: ✗ (keeps personal files private)
+4. Add SMB Share:
+   - **Folder name**: `Folder Name` or `/` to take over as root files view
+   - **External storage**: `SMB/CIFS`
+   - **Authenticaion**: `Manually enterd, stored in database`
+   - **Configuration**:
+     - `Mistia-Nexus`
+     - `[personal folder name]`
+   - **Available for**: `nextcloud user`
 
-5. Add **Shared Folders** storages:
-   - **Folder name**: `Shared Videos`
-   - **External storage**: `Local`
-   - **Configuration**: `/mnt/shared/Videos`
-   - **Available for**: `All users`
-   - **Folder name**: `Shared Photos`
-   - **External storage**: `Local`
-   - **Configuration**: `/mnt/shared/Photos`
-   - **Available for**: `All users`
-   - **Folder name**: `Shared Documents`
-   - **External storage**: `Local`
-   - **Configuration**: `/mnt/shared/Documents`
-   - **Available for**: `All users`
+   - **Folder name**: `/` to take over as root files view
+   - **External storage**: `SMB/CIFS`
+   - **Authenticaion**: `Manually enterd, stored in database`
+   - **Configuration**:
+     - `Mistia-Nexus`
+     - `Mistia`
+   - **Available for**: `All people`
 
 ### 📱 Mobile Setup
 
