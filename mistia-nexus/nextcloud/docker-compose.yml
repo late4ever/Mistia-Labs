@@ -1,6 +1,6 @@
 services:
   nextcloud:
-    image: nextcloud:31-apache
+    build: .
     container_name: nextcloud
     hostname: nextcloud
     init: true
@@ -51,8 +51,6 @@ services:
     volumes:
       - nextcloud_data:/var/www/html
       - nextcloud_config:/var/www/html/config
-      - /volume2/Mistia:/mnt/shared
-      - /home:/mnt/homes
     depends_on:
       db:
         condition: service_healthy
@@ -64,7 +62,7 @@ services:
       - mistia-proxy-net
 
   nextcloud-cron:
-    image: nextcloud:31-apache
+    build: .
     container_name: nextcloud-cron
     init: true
     logging:
@@ -86,15 +84,13 @@ services:
     volumes:
       - nextcloud_data:/var/www/html
       - nextcloud_config:/var/www/html/config
-      - /volume2/Mistia:/mnt/shared
-      - /home:/mnt/homes
     depends_on:
       nextcloud:
         condition: service_healthy
     restart: unless-stopped
     networks:
       - nextcloud-net
-      
+
   db:
     image: mariadb:11.4
     container_name: nextcloud-db
