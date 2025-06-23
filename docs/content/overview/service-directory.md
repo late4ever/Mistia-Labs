@@ -33,7 +33,6 @@ icon: material/clipboard-text
 | Service | URL | Purpose | Documentation |
 |---------|-----|---------|---------------|
 | **:simple-nextcloud:{ .nextcloud } Nextcloud** | [https://nextcloud.mistia.xyz](https://nextcloud.mistia.xyz) | Self-hosted file sync and collaboration | [View Here](../services/nextcloud.md) |
-| **:material-file-cloud: FileCloud** | [https://filecloud.mistia.xyz](https://filecloud.mistia.xyz) | Web-based access to SMB shares | [View Here](../services/filecloud.md) |
 
 ## 🌐 Network Configuration
 
