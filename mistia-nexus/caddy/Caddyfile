@@ -132,15 +132,6 @@ adguard.mistia.xyz {
 	}
 	# --8<-- [end:nextcloud]
 	
-	# --8<-- [start:filecloud]
-	@filecloud host filecloud.mistia.xyz
-	handle @filecloud {
-		reverse_proxy http://filecloud:80 {
-			import proxy_headers
-		}
-	}
-	# --8<-- [end:filecloud]
-	
 	# Fallback for any other subdomain
 	handle {
 		root * /srv/www
