@@ -10,6 +10,14 @@ services:
         max-file: '3'
     security_opt:
       - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 4096M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
     healthcheck:
       test:
         [
