@@ -1,0 +1,43 @@
+---
+# This file contains the body of the deployment loop.
+# It is called by nexus-deploy_services.yml for each item in the 'all_services' list.
+- name: "Run deployment for {{ service.name }}"
+  tags: "{{ [service.name] + service.tags }}"
+  block:
+    - name: "Create .env file for {{ service.name }} if required"
+      ansible.builtin.template:
+        src: "templates/{{ service.name }}.env.j2"
+        dest: "{{ deploy_path }}/{{ service.name }}/.env"
+        mode: '0644'
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+      when: service.has_env | default(false) | bool
+      become: no
+
+    - name: "Validate docker-compose.yml for {{ service.name }}"
+      ansible.builtin.command:
+        cmd: docker compose config
+        chdir: "{{ deploy_path }}/{{ service.name }}"
+      changed_when: false
+      become: no
+
+    - name: "Deploy {{ service.name }}"
+      community.docker.docker_compose_v2:
+        project_src: "{{ deploy_path }}/{{ service.name }}"
+        state: present
+        pulled: yes
+        build: yes
+      register: compose_result
+
+    - name: "Wait for {{ service.name }} container to become healthy"
+      when: compose_result.changed
+      community.docker.docker_container_info:
+        name: "{{ service.name }}"
+      register: container_info
+      until: "container_info.container.State.Health.Status is defined and container_info.container.State.Health.Status == 'healthy'"
+      retries: 24
+      delay: 10
+  rescue:
+    - name: "WARNING: Deployment of {{ service.name }} failed!"
+      ansible.builtin.debug:
+        msg: "The service {{ service.name }} failed to start or become healthy. Please check logs with 'docker logs {{ service.name }}'."

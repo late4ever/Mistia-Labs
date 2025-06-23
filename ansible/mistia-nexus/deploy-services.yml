@@ -1,0 +1,81 @@
+---
+- name: Deploy Mistia-Nexus Services
+  hosts: nexus
+  become: yes
+  vars_files:
+    - secrets.yml
+  vars:
+    # This is the absolute path on the NAS where your docker-compose projects are located.
+    deploy_path: "/volume2/docker/mistia-nexus"
+
+    # This is the master list of all services managed by this playbook.
+    all_services:
+      - name: adguard-home
+        tags: [core, dns]
+      - name: caddy
+        tags: [core, proxy]
+        has_env: yes
+      - name: portainer
+        tags: [core, management]
+      - name: duplicati
+        tags: [core, backup]
+        has_env: yes
+      - name: tailscale
+        tags: [core, network]
+        has_env: yes
+      - name: nextcloud
+        tags: [cloud]
+        has_env: yes
+
+  tasks:
+    #
+    # This task ensures the code on the NAS is synchronized with your Git repository's main branch.
+    #
+    - name: "SETUP: Synchronize Git repository on NAS"
+      tags: always
+      ansible.builtin.git:
+        repo: 'https://github.com/late4ever/Mistia-Labs.git'
+        dest: "{{ deploy_path }}"
+        version: main
+        force: yes
+      become: no
+
+    #
+    # This block ensures the basic Docker network is in place.
+    #
+    - name: "SETUP: Initial configuration"
+      tags: always
+      block:
+        - name: Ensure proxy network exists with correct subnet
+          community.docker.docker_network:
+            name: mistia-proxy-net
+            state: present
+            ipam_config:
+              - subnet: '172.21.0.0/16'
+
+    #
+    # This block handles reloading the Caddy proxy configuration.
+    #
+    - name: "ACTION: Validate and Reload Caddy Configuration"
+      tags: [never, proxy-reload]
+      block:
+        - name: "Validate Caddyfile syntax"
+          community.docker.docker_container_exec:
+            container: caddy
+            command: caddy validate --config /etc/caddy/Caddyfile
+
+        - name: "Reload Caddy with new configuration"
+          community.docker.docker_container_exec:
+            container: caddy
+            command: caddy reload --config /etc/caddy/Caddyfile
+          changed_when: false
+
+    #
+    # This is the main deployment loop. It iterates over 'all_services' and
+    # calls the separate loop file for each item, allowing for complex actions per service.
+    #
+    - name: "ACTION: DEPLOY AND VERIFY SERVICES"
+      ansible.builtin.include_tasks: _deploy_service_loop.yml
+      loop: "{{ all_services }}"
+      loop_control:
+        loop_var: service
