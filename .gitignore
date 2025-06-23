@@ -8,5 +8,6 @@
 # Ignore environment files that might contain secrets
 **/.env
 
-
-/mistia-nexus/docs/site
+# Ignore Ansible secrets
+ansible/secrets.yml
+ansible/.vault_pass
