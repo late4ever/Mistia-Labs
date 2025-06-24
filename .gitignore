@@ -10,10 +10,4 @@
 
 # Ignore Ansible secrets
 ansible/secrets.yml
-<<<<<<< HEAD
 ansible/.vault_pass
-=======
-ansible/.vault_pass
-ansible/mistia-nexus/secrets.yml
-ansible/mistia-nexus/.vault_pass
->>>>>>> 7538515be7688e4cc41572d0a9d1aeb1a3656819
