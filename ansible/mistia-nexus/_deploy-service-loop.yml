@@ -52,11 +52,22 @@
       register: compose_result
       failed_when: compose_result.failed or (compose_result.rc is defined and compose_result.rc != 0)
 
+
     # Fail fast if the deployment step fails
-    - name: "Fail if deployment failed for {{ service.name }}"
+    - name: "Fail if deployment failed for {{ service.name }} (critical abort)"
+      block:
+        - name: "Abort play if critical service failed deployment"
+          meta: end_play
+      when:
+        - compose_result.failed or (compose_result.rc is defined and compose_result.rc != 0)
+        - 'critical' in (service.tags | default([]))
+
+    - name: "Fail if deployment failed for {{ service.name }} (non-critical)"
       ansible.builtin.fail:
         msg: "Deployment failed for {{ service.name }}. Skipping health check."
-      when: compose_result.failed or (compose_result.rc is defined and compose_result.rc != 0)
+      when:
+        - compose_result.failed or (compose_result.rc is defined and compose_result.rc != 0)
+        - 'critical' not in (service.tags | default([]))
 
     # Wait for the main container to become healthy (if deployment changed anything)
     - name: "Wait for {{ service.name }} container to become healthy"
@@ -67,6 +78,14 @@
       until: "container_info.container.State.Health.Status is defined and container_info.container.State.Health.Status == 'healthy'"
       retries: 40
       delay: 3
+
+    # Abort play if health check fails for a critical service
+    - name: "Abort play if critical service failed health check"
+      meta: end_play
+      when:
+        - compose_result.changed
+        - (container_info is not skipped) and (container_info is failed or (container_info.container.State.Health.Status is defined and container_info.container.State.Health.Status != 'healthy'))
+        - 'critical' in (service.tags | default([]))
   rescue:
     - name: "WARNING: Deployment of {{ service.name }} failed!"
       ansible.builtin.debug:

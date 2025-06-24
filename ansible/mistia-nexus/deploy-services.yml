@@ -25,7 +25,7 @@
         tags: [critical, dns]
         has_build: false
       - name: caddy
-        tags: [core, proxy]
+        tags: [critical, core, proxy]
         has_env: yes
         has_build: true
       - name: portainer
