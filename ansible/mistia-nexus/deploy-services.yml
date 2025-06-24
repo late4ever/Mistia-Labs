@@ -1,48 +1,84 @@
 ---
+# Example to run this playbook for all services:
+#   ansible-playbook deploy-services.yml
+#
+# Example to run for only DNS-tagged services:
+#   ansible-playbook deploy-services.yml --tags dns
+#
+# Example to run for only a specific service (e.g., caddy):
+#   ansible-playbook deploy-services.yml --tags caddy
+#
+# Example when adding new service, reload Caddy and deploy new service:
+#   ansible-playbook deploy-services.yml --tags proxy-reload, jelly
 - name: Deploy Mistia-Nexus Services
   hosts: nexus
   become: yes
   vars_files:
     - secrets.yml
   vars:
-    # This is the absolute path on the NAS where your docker-compose projects are located.
-    deploy_path: "/volume2/docker/mistia-nexus"
+    repo_root_path: "/volume2/docker"
+    deploy_path: "{{ repo_root_path }}/mistia-nexus"
 
     # This is the master list of all services managed by this playbook.
     all_services:
       - name: adguard-home
-        tags: [core, dns]
+        tags: [critical, dns]
+        has_build: false
       - name: caddy
         tags: [core, proxy]
         has_env: yes
+        has_build: true
       - name: portainer
         tags: [core, management]
+        has_build: false
       - name: duplicati
         tags: [core, backup]
         has_env: yes
+        has_build: false
       - name: tailscale
         tags: [core, network]
         has_env: yes
+        has_build: false
       - name: nextcloud
         tags: [cloud]
         has_env: yes
+        has_build: true
+
+  pre_tasks:
+    - name: "Check if .git directory exists in repo_root_path"
+      ansible.builtin.stat:
+        path: "{{ repo_root_path }}/.git"
+      register: git_dir_stat
+      
+    - name: "Fail if .git directory does not exist"
+      ansible.builtin.fail:
+        msg: "No .git directory found in {{ repo_root_path }}. Is this a git repo?"
+      when: not git_dir_stat.stat.exists
+
+    - name: "Check if deploy_path exists"
+      ansible.builtin.stat:
+        path: "{{ deploy_path }}"
+      register: deploy_path_stat
+
+    - name: "Fail if deploy_path does not exist"
+      ansible.builtin.fail:
+        msg: "deploy_path {{ deploy_path }} does not exist on the target host."
+      when: not deploy_path_stat.stat.exists
 
   tasks:
-    #
-    # This task ensures the code on the NAS is synchronized with your Git repository's main branch.
-    #
-    - name: "SETUP: Synchronize Git repository on NAS"
+    # This task ensures the code on the NAS is synchronized with your Git repository Mistia-Labs/mistia-nexus
+    - name: "SETUP: Synchronize Git repository on NAS (shell style)"
       tags: always
-      ansible.builtin.git:
-        repo: 'https://github.com/late4ever/Mistia-Labs.git'
-        dest: "{{ deploy_path }}"
-        version: main
-        force: yes
+      ansible.builtin.shell: |
+        set -e
+        git fetch origin
+        git reset --hard origin/main
+        chmod +x ./scripts/*.sh
+      args:
+        chdir: "{{ deploy_path }}"
       become: no
 
-    #
-    # This block ensures the basic Docker network is in place.
-    #
+    # This block ensures the basic Docker network is in place
     - name: "SETUP: Initial configuration"
       tags: always
       block:
@@ -53,9 +89,7 @@
             ipam_config:
               - subnet: '172.21.0.0/16'
 
-    #
-    # This block handles reloading the Caddy proxy configuration.
-    #
+    # This block handles reloading the Caddy proxy configuration
     - name: "ACTION: Validate and Reload Caddy Configuration"
       tags: [never, proxy-reload]
       block:
@@ -70,11 +104,10 @@
             command: caddy reload --config /etc/caddy/Caddyfile
           changed_when: false
 
-    #
     # This is the main deployment loop. It iterates over 'all_services' and
     # calls the separate loop file for each item, allowing for complex actions per service.
-    #
     - name: "ACTION: DEPLOY AND VERIFY SERVICES"
+      tags: always
       ansible.builtin.include_tasks: _deploy-service-loop.yml
       loop: "{{ all_services }}"
       loop_control:

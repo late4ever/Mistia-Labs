@@ -21,10 +21,10 @@ services:
           memory: 512M    
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost/status.php']
-      interval: 1m
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
     labels:
       - 'com.mistia-nexus.service.name=Nextcloud'
       - 'com.mistia-nexus.service.type=Cloud Storage'
@@ -119,9 +119,9 @@ services:
           '--connect',
           '--innodb_initialized'
         ]
-      interval: 1m
-      timeout: 10s
-      retries: 3
+      interval: 30s
+      timeout: 5s
+      retries: 10
       start_period: 60s
     labels:
       - 'com.mistia-nexus.service.name=Nextcloud Database'
@@ -167,10 +167,10 @@ services:
           memory: 64M
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
-      interval: 1m
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
     labels:
       - 'com.mistia-nexus.service.name=Nextcloud Redis Cache'
       - 'com.mistia-nexus.service.type=Cache'
