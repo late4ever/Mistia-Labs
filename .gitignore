@@ -11,5 +11,5 @@
 # Ignore Ansible secrets
 ansible/secrets.yml
 ansible/.vault_pass
-ansible/mistia-nexus/secrets.yml
-ansible/mistia-nexus/.vault_pass
+ansible/**/secrets.yml
+ansible/**/.vault_pass
