@@ -1,6 +1,9 @@
 [Unit]
 Description=Monitor and enforce permissions for home directory and .ssh
 After=network.target
+# Add these lines to automatically restart on failure
+StartLimitIntervalSec=300
+StartLimitBurst=5
 
 [Service]
 Environment="USER=late4ever"

@@ -72,7 +72,7 @@ icon: material/nas
 3. Open `Control Panel` >> `Terminal`
    Configure the following:
    ![enable-ssh](../images/initial-setup/mistia-nexus/enable-ssh.png)
-   Open `Advance settings` and configure the following storage pools:
+   Open `Advance settings` and configure the following:
    ![ssh-advanced-settings](../images/initial-setup/mistia-nexus/ssh-advanced-settings.png)
 
 4. Open `Control Panel` >> `Network`
@@ -88,7 +88,7 @@ icon: material/nas
 1. Open **Windows Terminal** and SSH into the NAS
 
    ```bash
-   --8<-- "docs/content/.snippets/ssh.sh"
+   --8<-- "docs/content/.snippets/ssh.sh:ssh"
    ```
 
 2. Download the `ssh-permission` script and service files
@@ -133,7 +133,7 @@ icon: material/nas
 6. Now try to SSH into the NAS and Bitwarden should handle the authorisation
 
    ```bash
-   --8<-- "docs/content/.snippets/ssh.sh"
+   --8<-- "docs/content/.snippets/ssh.sh:ssh"
    ```
 
    ![Bitwarden](../images/initial-setup/mistia-nexus/bitwarden.png)
@@ -188,7 +188,7 @@ icon: material/nas
 1. SSH into the NAS
 
    ```bash
-   --8<-- "docs/content/.snippets/ssh.sh"
+   --8<-- "docs/content/.snippets/ssh.sh:ssh"
    ```
 
 2. Download the `setup.sh`
@@ -209,7 +209,7 @@ icon: material/nas
 
    ```bash
    exit
-   --8<-- "docs/content/.snippets/ssh.sh"
+   --8<-- "docs/content/.snippets/ssh.sh:ssh"
    ```
 
 4. Verify repository clone
