@@ -16,6 +16,7 @@
   vars_files:
     - secrets.yml
   vars:
+    ansible_python_interpreter: /usr/bin/python3.11
     repo_root_path: "/volume2/docker"
     deploy_path: "{{ repo_root_path }}/mistia-nexus"
 
