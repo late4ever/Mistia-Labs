@@ -2,7 +2,7 @@
 icon: simple/adguard
 ---
 
-# 🛠️ :simple-adguard:{ .adguard } DNS Troubleshooting
+# :simple-adguard:{ .adguard } DNS Troubleshooting
 
 !!! abstract "Overview"
     This guide outlines the procedure for investigating and unblocking a website that you suspect is being blocked by AdGuard Home.

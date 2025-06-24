@@ -107,6 +107,7 @@ nav:
   - Overview:
       - Service Directory: overview/service-directory.md
   - Initial Setup:
+      - Mistia Labs: initial-setup/mistia-labs.md
       - Mistia Nexus: initial-setup/mistia-nexus.md
   - Services:
       - AdGuard Home: services/adguard-home.md
@@ -118,8 +119,11 @@ nav:
       - Nginx Proxy: services/nginx-proxy.md
   - Procedures:
       - Management: procedures/management-commands.md
+      - Ansible Migration: procedures/ansible-migration-guide.md
+      - Automate Vault Password: procedures/automate-vault-password.md
       - Backup & Restore: procedures/backup-restore.md
       - DNS troubleshooting: procedures/dns-troubleshooting.md
+      - SSH troubleshooting: procedures/ssh-troubleshooting.md
       - Security Hardening: procedures/security-hardening.md
   - Templates:
       - Service Documentation: code-templates/service-doc.md
