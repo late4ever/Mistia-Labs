@@ -75,7 +75,7 @@
     # calls the separate loop file for each item, allowing for complex actions per service.
     #
     - name: "ACTION: DEPLOY AND VERIFY SERVICES"
-      ansible.builtin.include_tasks: _deploy_service_loop.yml
+      ansible.builtin.include_tasks: _deploy-service-loop.yml
       loop: "{{ all_services }}"
       loop_control:
         loop_var: service
