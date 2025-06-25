@@ -43,7 +43,7 @@ services:
         max-file: '3'
     
     healthcheck:
-      test: ['CMD-SHELL', 'curl -f http://localhost:8080/health || exit 1']
+      test: ['CMD-SHELL', 'curl -f http://localhost:8080/health']
       interval: 30s
       timeout: 10s
       retries: 3
