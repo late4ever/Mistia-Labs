@@ -137,6 +137,7 @@ adguard.mistia.xyz {
 	handle @dozzle {
 		reverse_proxy http://dozzle:8080 {
 			import proxy_headers
+      response_timeout 0
 		}
 	}
 	# --8<-- [end:dozzle]

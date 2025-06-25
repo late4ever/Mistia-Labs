@@ -139,13 +139,20 @@
     - name: 'ACTION: Validate and Reload Caddy Configuration.'
       tags: [never, proxy-reload]
       block:
-        - name: 'VERIFY: Validate Caddyfile syntax.'
+        - name: 'RESTART: Caddy container to refresh Caddyfile bind mount.'
+          community.docker.docker_container:
+            name: caddy
+            state: started
+            restart: true
+          tags: [never, proxy-reload]
+
+        - name: 'FORMAT: Caddyfile using caddy fmt.'
           community.docker.docker_container_exec:
             container: caddy
-            command: caddy validate --config /etc/caddy/Caddyfile
+            command: caddy fmt --overwrite /etc/caddy/Caddyfile
           register: caddy_validate_result
           changed_when: false
-          failed_when: caddy_validate_result.rc != 0 
+          failed_when: caddy_validate_result.rc != 0
 
         - name: 'ACTION: Reload Caddy with new configuration.'
           community.docker.docker_container_exec:
@@ -158,6 +165,6 @@
     - name: 'ACTION: Deploy and Verify Services.'
       tags: always
       ansible.builtin.include_tasks: _deploy-service-loop.yml
-      loop: "{{ all_services }}"
+      loop: '{{ all_services }}'
       loop_control:
         loop_var: service
