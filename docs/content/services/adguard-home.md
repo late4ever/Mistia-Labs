@@ -66,14 +66,6 @@ mistia-nexus/
 
 ### :simple-ansible: Ansible
 
-#### Ansible Virtual Environment
-
-Open the repo in WSL terminal
-
-```bash
---8<-- "docs/content/.snippets/ansible.sh:ve"
-```
-
 #### Ansible Vault
 
 --8<-- "docs/content/.snippets/general.txt:na"
@@ -95,7 +87,7 @@ Define the service
 --8<-- "docs/content/.snippets/ansible.sh:ve"
 
 ```bash
-ansible-playbook deploy-services.yml --tags adguard-home
+nexus-deploy --tags adguard-home
 ```
 
 ## ⚙️ Post-Deployment

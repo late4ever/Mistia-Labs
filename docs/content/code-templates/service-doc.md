@@ -87,8 +87,6 @@ Retrieve the PUID and PGID values for the `docker-compose.yml`
 
 ### :simple-ansible: Ansible
 
-#### Ansible Virtual Environment
-
 --8<-- "docs/content/.snippets/ansible.sh:ve"
 
 #### Ansible Vault

@@ -21,6 +21,35 @@ icon: material/home-minus-outline
 
 4. You will be prompted to create a **username** and **password** for your new Ubuntu environment
 
+## 🔑 Configure SSH Key with WSL
+
+1. **Get Your Private Key:**
+    - Open Bitwarden and view your SSH key item ("UGREEN NASync 4800 Plus")
+    - Copy the contents of the **private key** to your clipboard
+
+2. **Create the SSH Key File in WSL:**
+    - In your WSL terminal, run the following command to open a text editor:
+
+      ```bash
+      mkdir -p ~/.ssh
+      nano ~/.ssh/id_ed25519
+      ```
+
+    - **Paste your private key** into the editor. The key should start with `-----BEGIN OPENSSH PRIVATE KEY-----`
+    - ++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
+
+3. **Set Correct Permissions:**
+
+      ```bash
+      chmod 600 ~/.ssh/id_ed25519
+      ```
+
+4. **Verify**
+
+    ```bash
+    --8<-- "docs/content/.snippets/ssh.sh:ssh"
+    ```
+
 ## :simple-docker: Configure Docker with WSL
 
 1. Open `Docker Desktop` >> `Settings` >> `Resources` >> `WSL integration`
@@ -70,11 +99,8 @@ All subsequent commands should be run inside `Ubuntu (WSL) terminal`
     ansible-galaxy collection install community.docker
     ```
 
-!!! warning "Activating the Environment"
-    Remember to run this command every time you open a new WSL terminal to work on this project
-    ```bash
-    source ~/ansible-env/bin/activate
-    ```
+!!! success "Initial Activation Complete"
+    You have activated the environment for the initial setup. For all future work on the project, you will use a more convenient, project-specific script that you will have access to after cloning the repository in the next step.
 
 ## :simple-github: Clone Mistia-Labs Repository
 
@@ -92,3 +118,21 @@ code .
 ```
 
 This will open the project in a VS Code window, but the files and terminal will be running within the context of WSL.
+
+## 🚀 Activating the Project Environment
+
+Now that you have the project cloned, you should use the built-in activation script for your daily workflow. This script not only activates the Ansible environment but also sets up helpful aliases and functions.
+
+From the project root (`~/Mistia-Labs`), run:
+```bash
+source tools/activate.sh
+```
+
+!!! tip "What it does"
+    - Activates the `ansible-env` virtual environment.
+    - Sets your command prompt to `(Mistia-Labs)`.
+    - Creates a `nexus_deploy` function to run the main playbook.
+    - Creates an `ap` alias for `ansible-playbook`.
+
+!!! warning "Remember This Command!"
+    From now on, `source tools/activate.sh` is the only command you need to start working on the project in a new terminal.

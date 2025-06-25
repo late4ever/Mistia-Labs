@@ -212,31 +212,26 @@ icon: material/nas
    --8<-- "docs/content/.snippets/ssh.sh:ssh"
    ```
 
-4. Verify repository clone
+4. Start up the containers
+
+   --8<-- "docs/content/.snippets/ansible.sh:ve"
 
    ```bash
-   cd /volume2/docker/mistia-nexus
-   ls -la
+   nexus-deploy
    ```
 
-5. Follow the individual services guide on `Application Secret`
-
-      - [Adguard Home](../../services/adguard-home#application-secret)
-      - [Caddy](../../services/caddy#application-secret)
-      - [Portainer](../../services/portainer#application-secret)
-      - [Duplicati](../../services/duplicati#application-secret)
-
-6. Start up the containers
-
-   ```bash
-   ./scripts/start-all.sh
-   ```
+!!! danger "WSL Terminal"
+    This is to be done in WSL not in NAS
 
 ### 🔗 Configure DNS Sinkhole
 
 1. Download the `macvlan-host` script and service files
    Copy the whole code below and paste into the SSH terminal
    Paste in the [GitHub PAT](#github) when prompted
+
+   ```bash
+   --8<-- "docs/content/.snippets/ssh.sh:ssh"
+   ```
 
    ```bash
    read -sp 'Paste your GitHub PAT and press Enter: ' GITHUB_TOKEN
@@ -277,9 +272,4 @@ icon: material/nas
 
 ### 🔄 Next Steps
 
-Follow the individual services guide on `Initial Setup`
-
-- [AdGuard Home](../../services/adguard-home#initial-setup)
-- [Caddy](../../services/caddy#initial-setup)
-- [Portainer](../../services/portainer#initial-setup)
-- [Duplicati](../../services/duplicati#initial-setup)
+Follow the individual services guide on `Post Deployment` & `Initial Setup`

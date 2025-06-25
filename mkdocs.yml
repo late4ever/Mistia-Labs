@@ -114,11 +114,13 @@ nav:
       - Caddy: services/caddy.md
       - Tailscale: services/tailscale.md
       - Portainer: services/portainer.md
+      - Dockge: services/dockge.md
+      - Dozzle: services/dozzle.md
       - Duplicati: services/duplicati.md
       - Nextcloud: services/nextcloud.md
   - Procedures:
       - Management: procedures/management-commands.md
-      - Ansible Migration: procedures/ansible-migration-guide.md
+      - Ansible Setup: procedures/ansible-setup-guide.md
       - Automate Vault Password: procedures/automate-vault-password.md
       - Backup & Restore: procedures/backup-restore.md
       - DNS troubleshooting: procedures/dns-troubleshooting.md

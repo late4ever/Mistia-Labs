@@ -80,8 +80,6 @@ mistia-nexus/
 
 ### :simple-ansible: Ansible
 
-#### Ansible Virtual Environment
-
 --8<-- "docs/content/.snippets/ansible.sh:ve"
 
 #### Ansible Vault
@@ -127,7 +125,7 @@ Define the service
 --8<-- "docs/content/.snippets/ansible.sh:ve"
 
 ```bash
-ansible-playbook deploy-services.yml --tags caddy
+nexus-deploy --tags caddy
 ```
 
 ## ⚙️ Post-Deployment

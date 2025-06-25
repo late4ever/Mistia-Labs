@@ -2,15 +2,15 @@
 Open the repo in `WSL terminal`
 
 ```bash
-cd ~/Mistia-Labs/ansible/mistia-nexus/
-source ~/ansible-env/bin/activate
+cd ~/Mistia-Labs/
+source tools/activate.sh
 ```
 # --8<-- [end:ve]
 
 # --8<-- [start:vault-edit]
-ansible-vault edit secrets.yml
+nexus_vault
 # --8<-- [end:vault-edit]
 
 # --8<-- [start:playbook]
-ansible-playbook deploy-services.yml --tags proxy-reload,[service_name]
+nexus_deploy --tags proxy-reload,[service_name]
 # --8<-- [end:playbook]

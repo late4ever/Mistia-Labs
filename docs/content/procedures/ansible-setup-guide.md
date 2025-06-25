@@ -2,10 +2,10 @@
 icon: simple/ansible
 ---
 
-# :simple-ansible: Ansible Migration Guide
+# :simple-ansible: Ansible Setup Guide
 
 !!! abstract "Overview"
-    This guide outlines the process of migrating your homelab management from shell scripts to Ansible. This provides a more robust, declarative, and idempotent way to manage your services. You will create the Ansible project structure inside your existing `Mistia-Labs` repository.
+    This guide outlines the process of setting up Ansible. This provides a more robust, declarative, and idempotent way to manage your services. You will create the Ansible project structure inside your existing `Mistia-Labs` repository.
 
 !!! info "Working Directory"
     All commands should be run from your WSL terminal, inside your activated `(ansible-env)` virtual environment, from the `Mistia-Labs` directory.
@@ -16,10 +16,7 @@ First, we will create a dedicated `ansible` directory inside your `Mistia-Labs` 
 
 1. Navigate into your repository in the WSL terminal:
 
-    ```bash
-    cd ~/Mistia-Labs
-    source ~/ansible-env/bin/activate
-    ```
+    --8<-- "docs/content/.snippets/ansible.sh:ve"
 
 2. Create the necessary directory and files:
 
@@ -69,6 +66,12 @@ Mistia-Labs/
       ```bash
       chmod 600 ~/.ssh/id_ed25519
       ```
+
+4. **Verify**
+
+    ```bash
+    --8<-- "docs/content/.snippets/ssh.sh:ssh"
+    ```
 
 ## ⚙️ Configure Ansible
 
