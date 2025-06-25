@@ -37,7 +37,7 @@
         name: '{{ service.name }}'
       register: container_info
       until: "container_info.container.State.Health.Status is defined and container_info.container.State.Health.Status == 'healthy'"
-      retries: 40
+      retries: 20
       delay: 3
       become: no
 
