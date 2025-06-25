@@ -45,12 +45,12 @@ services:
       timeout: 5s
       retries: 10
       start_period: 20s
+    restart: unless-stopped
     ports:
       - '80:80'
       - '443:443'
       - '443:443/udp'
       - '853:853'
-    restart: unless-stopped
     networks:
       - mistia-proxy-net
 

@@ -17,89 +17,107 @@
     - secrets.yml
   vars:
     ansible_python_interpreter: /usr/bin/python3.11
-    repo_root_path: "/volume2/docker"
-    deploy_path: "{{ repo_root_path }}/mistia-nexus"
+    repo_root_path: '/volume2/docker'
+    deploy_path: '{{ repo_root_path }}/mistia-nexus'
 
     # This is the master list of all services managed by this playbook.
     all_services:
+      # --8<-- [start:adguard-home]
       - name: adguard-home
         tags: [critical, dns]
+        has_env: false
         has_build: false
+      # --8<-- [end:adguard-home]
+
+      # --8<-- [start:caddy]
       - name: caddy
         tags: [critical, core, proxy]
-        has_env: yes
+        has_env: true
         has_build: true
+      # --8<-- [end:caddy]
+
+      # --8<-- [start:portainer]
       - name: portainer
         tags: [core, management]
+        has_env: false
         has_build: false
+      # --8<-- [end:portainer]
+
+      # --8<-- [start:duplicati]
       - name: duplicati
         tags: [core, backup]
-        has_env: yes
+        has_env: true
         has_build: false
+      # --8<-- [end:duplicati]
+
+      # --8<-- [start:tailscale]
       - name: tailscale
-        tags: [core, network]
-        has_env: yes
+        tags: [core, vpn]
+        has_env: true
         has_build: false
+      # --8<-- [end:tailscale]
+
+      # --8<-- [start:nextcloud]
       - name: nextcloud
         tags: [cloud]
-        has_env: yes
+        has_env: true
         has_build: true
+      # --8<-- [end:nextcloud]
 
   pre_tasks:
-    - name: "Check if .git directory exists in repo_root_path"
+    - name: 'VERIFY: Check for .git directory existence.'
       ansible.builtin.stat:
-        path: "{{ repo_root_path }}/.git"
+        path: '{{ repo_root_path }}/.git'
       register: git_dir_stat
-      
-    - name: "Fail if .git directory does not exist"
+
+    - name: 'FAIL: Abort if .git directory does not exist.'
       ansible.builtin.fail:
-        msg: "No .git directory found in {{ repo_root_path }}. Is this a git repo?"
+        msg: 'No .git directory found in {{ repo_root_path }}. Is this a git repo?'
       when: not git_dir_stat.stat.exists
 
-    - name: "Check if deploy_path exists"
+    - name: 'VERIFY: Check if deploy_path exists.'
       ansible.builtin.stat:
-        path: "{{ deploy_path }}"
+        path: '{{ deploy_path }}'
       register: deploy_path_stat
 
-    - name: "Fail if deploy_path does not exist"
+    - name: 'FAIL: Abort if deploy_path does not exist.'
       ansible.builtin.fail:
-        msg: "deploy_path {{ deploy_path }} does not exist on the target host."
+        msg: 'deploy_path {{ deploy_path }} does not exist on the target host.'
       when: not deploy_path_stat.stat.exists
 
   tasks:
-    # This task ensures the code on the NAS is synchronized with your Git repository Mistia-Labs/mistia-nexus
-    - name: "SETUP: Synchronize Git repository on NAS (shell style)"
-      tags: always
+    # This task ensures the code on the NAS is synchronized with your Git repository.
+    # It pulls the latest changes and hard resets to origin/main.
+    - name: 'ACTION: Synchronize Git repository on NAS.'
       ansible.builtin.shell: |
         set -e
         git fetch origin
         git reset --hard origin/main
         chmod +x ./scripts/*.sh
       args:
-        chdir: "{{ deploy_path }}"
+        chdir: '{{ deploy_path }}'
       become: no
 
-    # This block ensures the basic Docker network is in place
-    - name: "SETUP: Initial configuration"
-      tags: always
+    # This block ensures the basic Docker network is in place.
+    - name: 'SETUP: Initial Docker network configuration.'
       block:
-        - name: Ensure proxy network exists with correct subnet
+        - name: 'Ensure proxy network exists with correct subnet.'
           community.docker.docker_network:
             name: mistia-proxy-net
             state: present
             ipam_config:
               - subnet: '172.21.0.0/16'
 
-    # This block handles reloading the Caddy proxy configuration
-    - name: "ACTION: Validate and Reload Caddy Configuration"
+    # This block handles reloading the Caddy proxy configuration after changes.
+    - name: 'ACTION: Validate and Reload Caddy Configuration.'
       tags: [never, proxy-reload]
       block:
-        - name: "Validate Caddyfile syntax"
+        - name: 'Validate Caddyfile syntax.'
           community.docker.docker_container_exec:
             container: caddy
             command: caddy validate --config /etc/caddy/Caddyfile
 
-        - name: "Reload Caddy with new configuration"
+        - name: 'Reload Caddy with new configuration.'
           community.docker.docker_container_exec:
             container: caddy
             command: caddy reload --config /etc/caddy/Caddyfile
@@ -107,9 +125,8 @@
 
     # This is the main deployment loop. It iterates over 'all_services' and
     # calls the separate loop file for each item, allowing for complex actions per service.
-    - name: "ACTION: DEPLOY AND VERIFY SERVICES"
-      tags: always
+    - name: 'ACTION: Deploy and Verify Services.'
       ansible.builtin.include_tasks: _deploy-service-loop.yml
-      loop: "{{ all_services }}"
+      loop: '{{ all_services }}'
       loop_control:
         loop_var: service

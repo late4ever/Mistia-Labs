@@ -34,6 +34,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./data:/data
     restart: unless-stopped
+    ports:
+      - 10001:9000
     networks:
       - mistia-proxy-net
 

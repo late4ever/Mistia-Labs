@@ -1,92 +1,55 @@
----
 # This file contains the body of the deployment loop.
-# It is called by mistia-nexus/deploy_services.yml for each item in the 'all_services' list
-- name: "Run deployment for {{ service.name }}"
-  tags: "{{ [service.name] + service.tags }}"
+# It is called by deploy-services.yml for each item in the 'all_services' list.
+- name: 'ACTION: Run deployment for {{ service.name }}.'
+  tags: '{{ [service.name] + service.tags }}'
   block:
-    # Create a .env file for the service if required (uses Jinja2 template)
-    - name: "Create .env file for {{ service.name }} if required"
+    - name: 'SETUP: Create .env file for {{ service.name }}.'
       ansible.builtin.template:
-        src: "templates/{{ service.name }}.env.j2"
-        dest: "{{ deploy_path }}/{{ service.name }}/.env"
+        src: 'templates/{{ service.name }}.env.j2'
+        dest: '{{ deploy_path }}/{{ service.name }}/.env'
         mode: '0644'
-        owner: "{{ ansible_user }}"
-        group: "admin"
-      when: service.has_env | default(false) | bool
+        owner: '{{ ansible_user }}'
+        group: 'admin'
+      when: service.has_env
       become: no
 
-    # Check if docker-compose.yml exists for the service
-    - name: "Check for docker-compose.yml in {{ service.name }}"
-      ansible.builtin.stat:
-        path: "{{ deploy_path }}/{{ service.name }}/docker-compose.yml"
-      register: compose_file_stat
-
-    # Fail fast if docker-compose.yml is missing
-    - name: "Fail if docker-compose.yml is missing for {{ service.name }}"
-      ansible.builtin.fail:
-        msg: "docker-compose.yml is missing for {{ service.name }}. Skipping deployment."
-      when: not compose_file_stat.stat.exists
-
-    # Validate the docker-compose.yml file syntax for the service
-    - name: "Validate docker-compose.yml for {{ service.name }}"
-      ansible.builtin.command:
-        cmd: docker compose config
-        chdir: "{{ deploy_path }}/{{ service.name }}"
-      changed_when: false
-      become: no
-      register: compose_validate
-
-    # Fail fast if docker-compose.yml is invalid
-    - name: "Fail if docker-compose.yml is invalid for {{ service.name }}"
-      ansible.builtin.fail:
-        msg: "docker-compose.yml for {{ service.name }} is invalid. Skipping deployment."
-      when: compose_validate.rc != 0
-
-    # Deploy the service using Docker Compose (build or pull as needed)
-    - name: "Deploy {{ service.name }}"
+    - name: 'ACTION: Deploy {{ service.name }} Docker Compose stack.'
       community.docker.docker_compose_v2:
-        project_src: "{{ deploy_path }}/{{ service.name }}"
+        project_src: '{{ deploy_path }}/{{ service.name }}'
         state: present
         build: "{{ 'always' if service.has_build | default(false) else 'never' }}"
         pull: "{{ 'always' if not service.has_build | default(false) else 'never' }}"
       register: compose_result
       failed_when: compose_result.failed or (compose_result.rc is defined and compose_result.rc != 0)
+      become: no
 
-
-    # Fail fast if the deployment step fails
-    - name: "Fail if deployment failed for {{ service.name }} (critical abort)"
-      block:
-        - name: "Abort play if critical service failed deployment"
-          meta: end_play
-      when:
-        - compose_result.failed or (compose_result.rc is defined and compose_result.rc != 0)
-        - critical in (service.tags | default([]))
-
-    - name: "Fail if deployment failed for {{ service.name }} (non-critical)"
+    - name: 'VERIFY: Handle deployment failure for {{ service.name }}.'
       ansible.builtin.fail:
-        msg: "Deployment failed for {{ service.name }}. Skipping health check."
+        msg: >
+          Deployment failed for {{ service.name }}.
+          {% if critical in (service.tags | default([])) %}Aborting play.{% else %}Skipping health check and continuing.{% endif %}
       when:
         - compose_result.failed or (compose_result.rc is defined and compose_result.rc != 0)
-        - critical not in (service.tags | default([]))
+      meta: end_play
 
-    # Wait for the main container to become healthy (if deployment changed anything)
-    - name: "Wait for {{ service.name }} container to become healthy"
+    - name: 'VERIFY: Wait for {{ service.name }} container to become healthy.'
       when: compose_result.changed
       community.docker.docker_container_info:
-        name: "{{ service.name }}"
+        name: '{{ service.name }}'
       register: container_info
       until: "container_info.container.State.Health.Status is defined and container_info.container.State.Health.Status == 'healthy'"
       retries: 40
       delay: 3
+      become: no
 
-    # Abort play if health check fails for a critical service
-    - name: "Abort play if critical service failed health check"
+    - name: 'VERIFY: Abort play if critical service failed health check.'
       meta: end_play
       when:
         - compose_result.changed
         - (container_info is not skipped) and (container_info is failed or (container_info.container.State.Health.Status is defined and container_info.container.State.Health.Status != 'healthy'))
         - critical in (service.tags | default([]))
+
   rescue:
-    - name: "WARNING: Deployment of {{ service.name }} failed!"
+    - name: 'WARNING: Deployment of {{ service.name }} failed!'
       ansible.builtin.debug:
         msg: "The service {{ service.name }} failed to start or become healthy. Please check logs with 'docker logs {{ service.name }}'."
