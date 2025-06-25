@@ -12,8 +12,8 @@ echo "Activating Mistia Labs project environment..."
 
 # --- BEGIN: Virtual Environment Activation ---
 if [ -f "$HOME/ansible-env/bin/activate" ]; then
-    export VIRTUAL_ENV_PROMPT="(Mistia-Labs) "
     source "$HOME/ansible-env/bin/activate"
+    export PS1="(Mistia-Labs) $_OLD_VIRTUAL_PS1"
     echo "Ansible virtual environment activated."
 else
     echo "Warning: Ansible virtual environment not found at $HOME/ansible-env. Please create it or adjust path."
@@ -53,22 +53,4 @@ function nexus_vault() {
 # Export a variable to indicate the environment is active (optional)
 export MISTIA_LABS_ENV_ACTIVE=true
 
-# Provide a deactivate function (optional but good practice)
-function deactivate() {
-    echo "Deactivating Mistia Labs project environment..."
-
-    # Unset this custom function to expose the original from the venv
-    unset -f deactivate
-
-    # Deactivate the Python virtual environment if it was activated by this script
-    if command -v deactivate &> /dev/null; then
-        deactivate
-        echo "Ansible virtual environment deactivated."
-    fi
-
-    # Unset project-specific aliases and functions
-    unset ap nexus_deploy nexus_vault MISTIA_LABS_ENV_ACTIVE VIRTUAL_ENV_PROMPT
-}
-
 echo "Aliases 'ap' and functions 'nexus_deploy', 'nexus_vault' are now available."
-echo "Use 'deactivate' to exit this environment."
