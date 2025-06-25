@@ -139,14 +139,13 @@
     - name: 'ACTION: Validate and Reload Caddy Configuration.'
       tags: [never, proxy-reload]
       block:
-        - name: 'RESTART: Caddy container to refresh Caddyfile bind mount.'
+        - name: 'ACTION: Restart Caddy container to refresh Caddyfile bind mount.'
           community.docker.docker_container:
             name: caddy
             state: started
             restart: true
-          tags: [never, proxy-reload]
 
-        - name: 'FORMAT: Caddyfile using caddy fmt.'
+        - name: 'ACTION: Format Caddyfile using caddy fmt.'
           community.docker.docker_container_exec:
             container: caddy
             command: caddy fmt --overwrite /etc/caddy/Caddyfile
