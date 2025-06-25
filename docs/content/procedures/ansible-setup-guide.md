@@ -133,18 +133,7 @@ We will use Ansible Vault to securely manage your secrets, replacing the manual 
         Type ++colon++ ++w++ ++q++ and press ++enter++ to write (save) and quit.
 
     ```yaml
-    # ansible/secrets.yml (this content will be encrypted)
-    cloudflare_api_token: "your-cloudflare-api-token"
-    caddy_email: "address@email.com"
-    duplicati_settings_key: "your-duplicati-settings-key"
-    duplicati_ui_password: "your-duplicati-ui-password"
-    ts_authkey: "your-tailscale-auth-key"
-    nextcloud_db_password: "your-nextcloud-db-password"
-    nextcloud_db_root_password: "your-nextcloud-db-root-password"
-    nextcloud_admin_user: "username"
-    nextcloud_admin_password: "your-nextcloud-admin-password"
-    #sudo password
-    ansible_become_pass: "sudo-password"
+    --8<-- "ansible/mistia-nexus/secrets.template.yml"
     ```
 
     Save and close the editor. The file is now encrypted.

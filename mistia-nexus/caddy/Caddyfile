@@ -72,15 +72,15 @@ adguard.mistia.xyz {
 
 	# --- Public Site Redirects ---
 
-  @docs host docs.mistia.xyz
-  handle @docs {
-    redir https://{host}{uri} 301
-  }
+  # @docs host docs.mistia.xyz
+  # handle @docs {
+  #   redir https://{host}{uri} 301
+  # }
 
-  @claim host claim.mistia.xyz
-  handle @claim {
-    redir https://{host}{uri} 301
-  }
+  # @claim host claim.mistia.xyz
+  # handle @claim {
+  #   redir https://{host}{uri} 301
+  # }
 
 	# --- Local Service Routing ---
 
