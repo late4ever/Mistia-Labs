@@ -20,16 +20,7 @@
         build: "{{ 'always' if service.has_build | default(false) else 'never' }}"
         pull: "{{ 'always' if not service.has_build | default(false) else 'never' }}"
       register: compose_result
-      failed_when: compose_result.failed or (compose_result.rc is defined and compose_result.rc != 0)
       become: no
-
-    - name: 'VERIFY: Handle deployment failure for {{ service.name }}.'
-      ansible.builtin.fail:
-        msg: >
-          Deployment failed for {{ service.name }}.
-          {% if critical in (service.tags | default([])) %}Aborting play.{% else %}Skipping health check and continuing.{% endif %}
-      when:
-        - compose_result.failed or (compose_result.rc is defined and compose_result.rc != 0)
 
     - name: 'VERIFY: Wait for {{ service.name }} container to become healthy.'
       when: compose_result.changed
@@ -41,14 +32,33 @@
       delay: 3
       become: no
 
-    - name: 'VERIFY: Abort play if critical service failed health check.'
-      meta: end_play
-      when:
-        - compose_result.changed
-        - (container_info is not skipped) and (container_info is failed or (container_info.container.State.Health.Status is defined and container_info.container.State.Health.Status != 'healthy'))
-        - critical in (service.tags | default([]))
-
   rescue:
+    - name: 'HANDLE FAILURE: Process failure for critical service {{ service.name }}.'
+      ansible.builtin.fail:
+        msg: |
+          Deployment or health check for critical service '{{ service.name }}' failed. Aborting.
+          Please check logs with 'docker logs {{ service.name }}'.
+          {% if compose_result is defined and compose_result.failed %}
+          === Docker Compose Result ===
+          {{ compose_result | to_nice_yaml }}
+          {% endif %}
+          {% if container_info is defined and container_info.failed %}
+          === Health Check / Container Info Result ===
+          {{ container_info | to_nice_yaml }}
+          {% endif %}
+      when: "'critical' in (service.tags | default([]))"
+
     - name: 'WARNING: Deployment of {{ service.name }} failed!'
       ansible.builtin.debug:
-        msg: "The service {{ service.name }} failed to start or become healthy. Please check logs with 'docker logs {{ service.name }}'."
+        msg: |
+          Deployment or health check for non-critical service '{{ service.name }}' failed. Continuing play.
+          Please check logs with 'docker logs {{ service.name }}'.
+          {% if compose_result is defined and compose_result.failed %}
+          === Docker Compose Result ===
+          {{ compose_result | to_nice_yaml }}
+          {% endif %}
+          {% if container_info is defined and container_info.failed %}
+          === Health Check / Container Info Result ===
+          {{ container_info | to_nice_yaml }}
+          {% endif %}
+      when: "'critical' not in (service.tags | default([]))"
