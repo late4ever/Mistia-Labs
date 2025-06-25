@@ -94,7 +94,6 @@
         set -e
         git fetch origin
         git reset --hard origin/main
-        chmod +x ./scripts/*.sh
       args:
         chdir: '{{ deploy_path }}'
       become: no
