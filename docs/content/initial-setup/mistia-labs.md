@@ -21,6 +21,23 @@ icon: material/home-minus-outline
 
 4. You will be prompted to create a **username** and **password** for your new Ubuntu environment
 
+## :simple-docker: Configure Docker with WSL
+
+1. Open `Docker Desktop` >> `Settings` >> `Resources` >> `WSL integration`
+
+2. Enable integration with additional distros:
+      - Toggle **Ubuntu**
+
+3. Click `Apply & restart`
+
+4. In `Ubuntu (WSL) terminal`
+
+    ```bash
+    sudo usermod -aG docker $USER
+    ```
+
+5. Close all active WSL session for the change to take effect.
+
 ## :simple-ansible: Install Ansible Inside WSL
 
 All subsequent commands should be run inside `Ubuntu (WSL) terminal`
