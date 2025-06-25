@@ -37,6 +37,8 @@ services:
       - ./config:/config
       - /:/nasroot:ro
     restart: unless-stopped
+    ports:
+      - '10101:8200'
     networks:
       - mistia-proxy-net
 
