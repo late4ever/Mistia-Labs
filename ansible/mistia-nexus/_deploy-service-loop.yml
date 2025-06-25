@@ -13,7 +13,7 @@
       when: service.has_env
       become: no
 
-    - name: 'ACTION: Deploy {{ service.name }} Docker Compose stack.'
+    - name: 'ACTION: Deploy {{ service.name }}.'
       community.docker.docker_compose_v2:
         project_src: '{{ deploy_path }}/{{ service.name }}'
         state: present

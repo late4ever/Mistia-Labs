@@ -93,16 +93,28 @@
       ansible.builtin.shell: |
         set -e
         git fetch origin
-        git reset --hard origin/main
+        LOCAL_HASH=$(git rev-parse HEAD)
+        REMOTE_HASH=$(git rev-parse origin/main)
+        if [ "$LOCAL_HASH" != "$REMOTE_HASH" ]; then
+            echo "Repository has changes. Resetting..."
+            git reset --hard origin/main
+            exit 0 # Indicate changed
+        else
+            echo "Repository is already up-to-date."
+            exit 1 # Indicate no change
+        fi
       args:
         chdir: '{{ deploy_path }}'
       become: no
+      changed_when: 'git_sync_result.rc == 0'
+      failed_when: 'git_sync_result.rc > 1'
+      register: git_sync_result
 
     # This block ensures the basic Docker network is in place.
     - name: 'SETUP: Initial Docker network configuration.'
       tags: always
       block:
-        - name: 'Ensure proxy network exists with correct subnet.'
+        - name: 'SETUP: Ensure mistia-proxy-net exists.'
           community.docker.docker_network:
             name: mistia-proxy-net
             state: present
@@ -113,12 +125,15 @@
     - name: 'ACTION: Validate and Reload Caddy Configuration.'
       tags: [never, proxy-reload]
       block:
-        - name: 'Validate Caddyfile syntax.'
+        - name: 'VERIFY: Validate Caddyfile syntax.'
           community.docker.docker_container_exec:
             container: caddy
             command: caddy validate --config /etc/caddy/Caddyfile
+          register: caddy_validate_result
+          changed_when: false
+          failed_when: caddy_validate_result.rc != 0 
 
-        - name: 'Reload Caddy with new configuration.'
+        - name: 'ACTION: Reload Caddy with new configuration.'
           community.docker.docker_container_exec:
             container: caddy
             command: caddy reload --config /etc/caddy/Caddyfile
