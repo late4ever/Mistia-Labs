@@ -1,0 +1,46 @@
+services:
+  dockge:
+    image: louislam/dockge:latest
+    container_name: dockge
+    hostname: dockge
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:5001 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    labels:
+      - 'com.mistia-nexus.service.name=Dockge'
+      - 'com.mistia-nexus.service.type=Management'
+    environment:
+      - TZ=Asia/Singapore
+      - DOCKGE_STACKS_DIR=/stacks
+    ports:
+      - "10002:5001"
+    networks:
+      - mistia-proxy-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./data:/app/data
+      - ..:/stacks
+    restart: unless-stopped
+
+networks:
+  mistia-proxy-net:
+    name: mistia-proxy-net
+    external: true

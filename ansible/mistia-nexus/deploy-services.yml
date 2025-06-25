@@ -43,6 +43,20 @@
         has_build: false
       # --8<-- [end:portainer]
 
+      # --8<-- [start:dockge]
+      - name: dockge
+        tags: [core, management]
+        has_env: false
+        has_build: false
+      # --8<-- [end:dockge]
+
+      # --8<-- [start:dozzle]
+      - name: dozzle
+        tags: [core, monitoring]
+        has_env: false
+        has_build: false
+      # --8<-- [end:dozzle]
+
       # --8<-- [start:duplicati]
       - name: duplicati
         tags: [core, backup]

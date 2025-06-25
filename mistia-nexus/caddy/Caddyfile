@@ -132,7 +132,25 @@ adguard.mistia.xyz {
 	}
 	# --8<-- [end:nextcloud]
 	
-	# Fallback for any other subdomain
+	# --8<-- [start:dozzle]
+	@dozzle host dozzle.mistia.xyz
+	handle @dozzle {
+		reverse_proxy http://dozzle:8080 {
+			import proxy_headers
+		}
+	}
+	# --8<-- [end:dozzle]
+
+	# --8<-- [start:dockge]
+	@dockge host dockge.mistia.xyz
+	handle @dockge {
+		reverse_proxy http://dockge:5001 {
+			import proxy_headers
+		}
+	}
+	# --8<-- [end:dockge]
+
+	# --- Fallback for unknown domains ---
 	handle {
 		root * /srv/www
 		rewrite * /404.html

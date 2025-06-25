@@ -1,0 +1,44 @@
+services:
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    hostname: dozzle
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/healthz || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    labels:
+      - 'com.mistia-nexus.service.name=Dozzle'
+      - 'com.mistia-nexus.service.type=Monitoring'
+    environment:
+      - TZ=Asia/Singapore
+      - DOZZLE_NO_ANALYTICS=true
+    ports:
+      - "10003:8080"
+    networks:
+      - mistia-proxy-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+
+networks:
+  mistia-proxy-net:
+    name: mistia-proxy-net
+    external: true

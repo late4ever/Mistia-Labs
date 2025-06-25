@@ -26,6 +26,8 @@ icon: material/clipboard-text
 | **:simple-caddy:{ .caddy } Caddy**<br>:material-api: Admin API | _Infrastructure_<br>[https://caddy.mistia.xyz](https://caddy.mistia.xyz/config) | Reverse proxy with auto-HTTPS<br>Configuration management | [View Here](../services/caddy.md) |
 | **:simple-tailscale: Tailscale** | [Tailscale Admin Console](https://login.tailscale.com/admin/machines) | Secure remote access VPN | [View Here](../services/tailscale.md) |
 | **:simple-portainer:{ .portainer } Portainer** | [https://portainer.mistia.xyz](https://portainer.mistia.xyz)<br>[https://mistia-nexus.local:10001](https://mistia-nexus.local:10001) | Docker management | [View Here](../services/portainer.md) |
+| **:material-egg-fried: Dockge** | [https://dockge.mistia.xyz](https://dockge.mistia.xyz)<br>[http://mistia-nexus.local:10002](http://mistia-nexus.local:10002) | Docker compose manager | [View Here](../services/dockge.md) |
+| **🐝 Dozzle** | [https://dozzle.mistia.xyz](https://dozzle.mistia.xyz)<br>[http://mistia-nexus.local:10003](http://mistia-nexus.local:10003) | Real-time log viewer | [View Here](../services/dozzle.md) |
 | **:simple-duplicati:{ .duplicati } Duplicati** | [https://duplicati.mistia.xyz](https://duplicati.mistia.xyz)<br>[https://mistia-nexus.local:10101](https://mistia-nexus.local:10101) | Encrypted backups | [View Here](../services/duplicati.md) |
 
 ### ☁️ Cloud Services
