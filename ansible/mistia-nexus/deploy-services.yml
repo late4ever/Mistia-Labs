@@ -89,6 +89,7 @@
     # This task ensures the code on the NAS is synchronized with your Git repository.
     # It pulls the latest changes and hard resets to origin/main.
     - name: 'ACTION: Synchronize Git repository on NAS.'
+      tags: always
       ansible.builtin.shell: |
         set -e
         git fetch origin
@@ -100,6 +101,7 @@
 
     # This block ensures the basic Docker network is in place.
     - name: 'SETUP: Initial Docker network configuration.'
+      tags: always
       block:
         - name: 'Ensure proxy network exists with correct subnet.'
           community.docker.docker_network:
@@ -126,7 +128,8 @@
     # This is the main deployment loop. It iterates over 'all_services' and
     # calls the separate loop file for each item, allowing for complex actions per service.
     - name: 'ACTION: Deploy and Verify Services.'
+      tags: always
       ansible.builtin.include_tasks: _deploy-service-loop.yml
-      loop: '{{ all_services }}'
+      loop: "{{ all_services }}"
       loop_control:
         loop_var: service

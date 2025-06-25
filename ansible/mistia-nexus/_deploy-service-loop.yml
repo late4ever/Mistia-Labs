@@ -30,7 +30,6 @@
           {% if critical in (service.tags | default([])) %}Aborting play.{% else %}Skipping health check and continuing.{% endif %}
       when:
         - compose_result.failed or (compose_result.rc is defined and compose_result.rc != 0)
-      meta: end_play
 
     - name: 'VERIFY: Wait for {{ service.name }} container to become healthy.'
       when: compose_result.changed
