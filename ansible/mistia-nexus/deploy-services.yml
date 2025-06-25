@@ -100,8 +100,7 @@
       when: not deploy_path_stat.stat.exists
 
   tasks:
-    # This task ensures the code on the NAS is synchronized with your Git repository.
-    # It pulls the latest changes and hard resets to origin/main.
+    # Synchronize the code on the NAS with your Git repository
     - name: 'ACTION: Synchronize Git repository on NAS.'
       tags: always
       ansible.builtin.shell: |
@@ -124,7 +123,7 @@
       failed_when: 'git_sync_result.rc > 1'
       register: git_sync_result
 
-    # This block ensures the basic Docker network is in place.
+    # Ensure the basic Docker network is in place
     - name: 'SETUP: Initial Docker network configuration.'
       tags: always
       block:
@@ -135,7 +134,7 @@
             ipam_config:
               - subnet: '172.21.0.0/16'
 
-    # This block handles reloading the Caddy proxy configuration after changes.
+    # Handle reloading the Caddy proxy configuration after changes
     - name: 'ACTION: Validate and Reload Caddy Configuration.'
       tags: [never, proxy-reload]
       block:
@@ -159,8 +158,7 @@
             command: caddy reload --config /etc/caddy/Caddyfile
           changed_when: false
 
-    # This is the main deployment loop. It iterates over 'all_services' and
-    # calls the separate loop file for each item, allowing for complex actions per service.
+    # Main deployment loop: iterates over 'all_services' and calls the separate loop file for each item
     - name: 'ACTION: Deploy and Verify Services.'
       tags: always
       ansible.builtin.include_tasks: _deploy-service-loop.yml

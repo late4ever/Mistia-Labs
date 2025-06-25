@@ -3,6 +3,7 @@
 - name: 'ACTION: Run deployment for {{ service.name }}.'
   tags: '{{ [service.name] + service.tags }}'
   block:
+    # Create .env file for the service if required
     - name: 'SETUP: Create .env file for {{ service.name }}.'
       ansible.builtin.template:
         src: 'templates/{{ service.name }}.env.j2'
@@ -13,6 +14,7 @@
       when: service.has_env
       become: no
 
+    # Deploy the service using Docker Compose
     - name: 'ACTION: Deploy {{ service.name }}.'
       community.docker.docker_compose_v2:
         project_src: '{{ deploy_path }}/{{ service.name }}'
@@ -22,6 +24,7 @@
       register: compose_result
       become: no
 
+    # Wait for the service container to become healthy
     - name: 'VERIFY: Wait for {{ service.name }} container to become healthy.'
       when: compose_result.changed
       community.docker.docker_container_info:
@@ -33,6 +36,7 @@
       become: no
       no_log: true
 
+  # Handle failures gracefully and provide concise error messages
   rescue:
     - name: 'HANDLE FAILURE for {{ service.name }}'
       vars:
