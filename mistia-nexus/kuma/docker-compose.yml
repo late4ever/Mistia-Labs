@@ -1,0 +1,44 @@
+services:
+  kuma:
+    image: louislam/uptime-kuma:1
+    container_name: kuma
+    hostname: kuma
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.75'
+          memory: 1024M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    healthcheck:
+      test: ["CMD-SHELL", "node /app/extra/healthcheck.js"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    labels:
+      - 'com.mistia-nexus.service.name=Uptime Kuma'
+      - 'com.mistia-nexus.service.type=Monitoring'
+    environment:
+      - TZ=Asia/Singapore
+      - UPTIME_KUMA_PORT=3001
+    ports:
+      - "10004:3001"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    networks:
+      - mistia-proxy-net
+
+networks:
+  mistia-proxy-net:
+    name: mistia-proxy-net
+    external: true

@@ -28,6 +28,7 @@ icon: material/clipboard-text
 | **:simple-portainer:{ .portainer } Portainer** | [https://portainer.mistia.xyz](https://portainer.mistia.xyz)<br>[https://mistia-nexus.local:10001](https://mistia-nexus.local:10001) | Docker management | [View Here](../services/portainer.md) |
 | **:material-egg-fried: Dockge** | [https://dockge.mistia.xyz](https://dockge.mistia.xyz)<br>[http://mistia-nexus.local:10002](http://mistia-nexus.local:10002) | Docker compose manager | [View Here](../services/dockge.md) |
 | **🐝 Dozzle** | [https://dozzle.mistia.xyz](https://dozzle.mistia.xyz)<br>[http://mistia-nexus.local:10003](http://mistia-nexus.local:10003) | Real-time log viewer | [View Here](../services/dozzle.md) |
+| **🐻 Uptime Kuma** | [https://kuma.mistia.xyz](https://kuma.mistia.xyz)<br>[http://mistia-nexus.local:10004](http://mistia-nexus.local:10004) | Service uptime monitoring | [View Here](../services/kuma.md) |
 | **:simple-duplicati:{ .duplicati } Duplicati** | [https://duplicati.mistia.xyz](https://duplicati.mistia.xyz)<br>[https://mistia-nexus.local:10101](https://mistia-nexus.local:10101) | Encrypted backups | [View Here](../services/duplicati.md) |
 
 ### ☁️ Cloud Services
@@ -42,8 +43,22 @@ icon: material/clipboard-text
 
 | Network Node | IP Address | Description |
 |--------------|:----------:|--------------------|
-| **🌐 Default Gateway** | `192.168.50.1` | Main router providing internet access and local routing. |
-| **:simple-adguard:{ .adguard } AdGuard Home** | `192.168.50.2` | Primary DNS sinkhole service for network-wide ad blocking. |
+| **🌐 Default Gateway** | `192.168.50.1` | Main router providing internet access and local routing |
+| **:simple-adguard:{ .adguard } AdGuard Home** | `192.168.50.2` | Primary DNS sinkhole service for network-wide ad blocking |
 | **:material-lan: Macvlan-Host** | `192.168.50.3` | Dedicated interface for Host to reach Adguard Home |
-| **:material-nas: UGREEN NASync Host** | `192.168.50.4` | UGREEN NASyc host system. |
-| **:simple-caddy:{ .caddy } Caddy Reverse Proxy** | `192.168.50.4:443` | Manages external access to services with SSL. |
+| **:material-nas: UGREEN NASync Host** | `192.168.50.4` | UGREEN NASyc host system |
+| **:simple-caddy:{ .caddy } Caddy Reverse Proxy** | `192.168.50.4:443` | Manages external access to services with SSL |
+
+### :material-lan-connect: Exposed Host Ports
+
+This table lists the ports exposed on the NAS host (`192.168.50.4`).
+
+| Service | Host Port | Description |
+|---------|:---------:|-------------|
+| **Caddy** | `80`, `443`<br>`853`<br>`2019` | Standard HTTP/S ports for the reverse proxy<br>DNS over TLS (DoT) port<br>Admin API |
+| **Portainer** | `10001` | Local access to the Portainer web UI |
+| **Dockge** | `10002` | Local access to the Dockge web UI |
+| **Dozzle** | `10003` | Local access to the Dozzle web UI |
+| **Uptime Kuma** | `10004` | Local access to the Uptime Kuma web UI |
+| **Duplicati** | `10101` | Local access to the Duplicati web UI |
+| **Nextcloud** | `10201` | Local access to the Nextcloud web UI |

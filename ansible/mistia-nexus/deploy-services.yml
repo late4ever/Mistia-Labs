@@ -57,6 +57,13 @@
         has_build: false
       # --8<-- [end:dozzle]
 
+      # --8<-- [start:kuma]
+      - name: kuma
+        tags: [core, monitoring]
+        has_env: false
+        has_build: false
+      # --8<-- [end:kuma]
+
       # --8<-- [start:duplicati]
       - name: duplicati
         tags: [core, backup]

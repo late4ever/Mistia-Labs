@@ -20,10 +20,10 @@ services:
           memory: [service-dependent]
     healthcheck:
       test: ['CMD-SHELL', 'curl -f http://localhost:PORT/']
-      interval: 1m
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
     labels:
       - 'com.mistia-nexus.service.name=[service-name]'
       - 'com.mistia-nexus.service.type=[service-type]'

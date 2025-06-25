@@ -41,7 +41,7 @@
 }
 
 # --- Dedicated AdGuard Home Block ---
-# This block gets a specific certificate and has all headers explicitly imported.
+# This block gets a specific certificate for AdGuard Home
 # --8<-- [start:adguard]
 adguard.mistia.xyz {
 	import security_headers
@@ -70,7 +70,19 @@ adguard.mistia.xyz {
 	import security_headers
 	encode zstd br gzip
 
-	# --- Service Routing ---
+	# --- Public Site Redirects ---
+
+  @docs host docs.mistia.xyz
+  handle @docs {
+    redir https://{host}{uri} 301
+  }
+
+  @claim host claim.mistia.xyz
+  handle @claim {
+    redir https://{host}{uri} 301
+  }
+
+	# --- Local Service Routing ---
 
 	# --8<-- [start:nexus]
 	@nexus host nexus.mistia.xyz
@@ -114,6 +126,37 @@ adguard.mistia.xyz {
 	}
 	# --8<-- [end:portainer]
 
+	# --8<-- [start:dockge]
+	@dockge host dockge.mistia.xyz
+	handle @dockge {
+		reverse_proxy http://dockge:5001 {
+			import proxy_headers
+		}
+	}
+	# --8<-- [end:dockge]
+	
+	# --8<-- [start:dozzle]
+	@dozzle host dozzle.mistia.xyz
+	handle @dozzle {
+		reverse_proxy http://dozzle:8080 {
+			import proxy_headers
+      transport http {
+            dial_timeout 10s
+            response_header_timeout 0s
+        }
+		}
+	}
+	# --8<-- [end:dozzle]
+
+	# --8<-- [start:kuma]
+	@kuma host kuma.mistia.xyz
+	handle @kuma {
+		reverse_proxy http://kuma:3001 {
+			import proxy_headers
+		}
+	}
+	# --8<-- [end:kuma]
+
 	# --8<-- [start:duplicati]
 	@duplicati host duplicati.mistia.xyz
 	handle @duplicati {
@@ -131,28 +174,6 @@ adguard.mistia.xyz {
 		}
 	}
 	# --8<-- [end:nextcloud]
-	
-	# --8<-- [start:dozzle]
-	@dozzle host dozzle.mistia.xyz
-	handle @dozzle {
-		reverse_proxy http://dozzle:8080 {
-			import proxy_headers
-      transport http {
-            dial_timeout 10s
-            response_header_timeout 0s
-        }
-		}
-	}
-	# --8<-- [end:dozzle]
-
-	# --8<-- [start:dockge]
-	@dockge host dockge.mistia.xyz
-	handle @dockge {
-		reverse_proxy http://dockge:5001 {
-			import proxy_headers
-		}
-	}
-	# --8<-- [end:dockge]
 
 	# --- Fallback for unknown domains ---
 	handle {
