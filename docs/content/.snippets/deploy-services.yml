@@ -1,0 +1,14 @@
+all_services:
+  - name: [service-name]
+          # tags required
+          # critial - critical service
+          # core - core service
+          # cloud - cloud service
+          # media - media service
+          # utility - utility service
+          tags: [tags]
+          # whether env file is required
+          has_env: [true|false]
+          # whether bulding of Dockerfile is required
+          has_build: [true|false] 
+          

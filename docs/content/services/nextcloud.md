@@ -34,11 +34,6 @@ icon: simple/nextcloud
 
 The `mistia-proxy-net` network must be available.
 
-### 🗃️ External Storage Requirements
-
-- **NAS Shared folders**: `/volume2/Mistia/` with subdirectories for Videos, Photos, Documents etc
-- **NAS User folders**: `/home/` with user-specific subdirectories (`/home/late4ever/`, `/home/mistsoya/`)
-
 ### 🗂️ NVMe Storage
 
 SSH into the NAS to create the NVMe volume
@@ -117,33 +112,63 @@ mistia-nexus/
 --8<-- "mistia-nexus/caddy/Caddyfile:nextcloud"
 ```
 
-### 📄 Application Secrets
+### :simple-ansible: Ansible
+
+#### Ansible Virtual Environment
+
+--8<-- "docs/content/.snippets/ansible.sh:ve"
+
+#### Ansible Vault
 
 ```bash
-cd /volume2/docker/mistia-nexus/
-./scripts/git-update.sh
-
-cd /volume2/docker/mistia-nexus/nextcloud
-sudo nano .env
+--8<-- "docs/content/.snippets/ansible.sh:vault-edit"
 ```
 
-```text title=".env"
-DB_PASSWORD=[secret-here]
-DB_ROOT_PASSWORD=[secret-here] 
-ADMIN_USER=late4ever
-ADMIN_PASSWORD=[secret-here]
+Press ++i++ to enter `Insert Mode`
+
+```yaml title="secrets.yml"
+nextcloud_db_password: "nextcloud-db-password"
+nextcloud_db_root_password: "nextcloud-db-root-password"
+nextcloud_admin_user: "nextcloud-admin-user"
+nextcloud_admin_password: "nextcloud-admin-password"
+```
+
+Press ++esc++ to exit `Insert Mode`
+Type ++colon++ ++w++ ++q++ and press ++enter++ to save and exit
+
+#### .env Template
+
+```bash
+touch templates/nextcloud.env.j2
+nano template/nextcloud.env.j2
+```
+
+```j2 title="nextcloud.env.j2"
+DB_PASSWORD={{ nextcloud_db_password }}
+DB_ROOT_PASSWORD={{ nextcloud_db_root_password }}
+ADMIN_USER={{ nextcloud_admin_user }}
+ADMIN_PASSWORD={{ nextcloud_admin_password }}
 ```
 
 ++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
 
-### 🚀 Service Deployment
+#### Deploy-Services Playbook
 
-```bash
-cd /volume2/docker/mistia-nexus/
-./scripts/add-service.sh nextcloud
+Define the service
+
+```yaml title="deploy-services.yml"
+--8<-- "ansible/mistia-nexus/deploy-services.yml:nextcloud"
 ```
 
-## 🚀 Initial Setup
+## ✨ Deployment
+
+--8<-- "docs/content/.snippets/ansible.sh:ve"
+
+```bash
+ansible-playbook deploy-services.yml --tags proxy-reload, nextcloud
+```
+
+## ⚙️ Post-Deployment
 
 ### 📝 DNS Rewrite
 
@@ -155,6 +180,8 @@ cd /volume2/docker/mistia-nexus/
       - Click `Save`
 
 3. Navigate to [https://nextcloud.mistia.xyz](https://nextcloud.mistia.xyz) to verify
+
+## 🚀 Initial Setup
 
 ### 🪪 Account Setup
 

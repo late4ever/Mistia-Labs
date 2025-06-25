@@ -1,0 +1,6 @@
+@[service-name] host service-name.mistia.xyz
+	handle @service-name {
+		reverse_proxy http://service-name:8200 {
+			import proxy_headers
+		}
+	}

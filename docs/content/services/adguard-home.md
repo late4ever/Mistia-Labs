@@ -58,23 +58,44 @@ mistia-nexus/
 --8<-- "mistia-nexus/adguard-home/docker-compose.yml"
 ```
 
-### Reverse Proxy
+### 🔀 Reverse Proxy
 
 ```Caddyfile title="Caddyfile"
 --8<-- "mistia-nexus/caddy/Caddyfile:adguard"
 ```
 
-### 📄 Application Secret
+### :simple-ansible: Ansible
 
-```text
-not needed
-```
+#### Ansible Virtual Environment
 
-## ✨ Initial Deployment
+Open the repo in WSL terminal
 
 ```bash
-cd /volume2/docker/mistia-nexus/
-./script/update.sh adguard-home
+--8<-- "docs/content/.snippets/ansible.sh:ve"
+```
+
+#### Ansible Vault
+
+--8<-- "docs/content/.snippets/general.txt:na"
+
+#### .env Template
+
+--8<-- "docs/content/.snippets/general.txt:na"
+
+#### Deploy-Services Playbook
+
+Define the service
+
+```yaml title="deploy-services.yml"
+--8<-- "ansible/mistia-nexus/deploy-services.yml:adguard-home"
+```
+
+## ✨ Deployment
+
+--8<-- "docs/content/.snippets/ansible.sh:ve"
+
+```bash
+ansible-playbook deploy-services.yml --tags dns
 ```
 
 ## ⚙️ Post-Deployment
@@ -140,7 +161,7 @@ Follow the instructions in this [Github Repo](https://github.com/celenityy/adgua
 7. Click `Save configuration`
 
 To use DoH: [https://adguard.mistia.xyz/dns-query](https://adguard.mistia.xyz/dns-query)
-To use Dot: [tls://adguard.mistia.xyz/dns-query](tls://adguard.mistia.xyz/dns-query)
+To use Dot: [tls://adguard.mistia.xyz/dns-query](tls://adguard.mistia.xyz)
 
 ### 📝 DNS Rewrite
 

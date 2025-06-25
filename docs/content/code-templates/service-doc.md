@@ -15,9 +15,9 @@ icon: material/application-brackets
 
 :fontawesome-regular-id-badge: [container-name] &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: [image-name]
 
-| Host Ports | Container Ports | Network |  Host Path | Container Path |
-|:----------:|:------------:|:----------:|:----------:|:--------------:|
-| `[host-port]` | `[container-ports]` | `[network]` | `[host volume]` | `[container path]` |
+| Container<br>`Only for`<br>`multiple services` | Host Ports | Container Ports | Network |  Host Path | Container Path |
+|:--------- |:----------:|:------------:|:----------:|:----------:|:--------------:|
+| `Only for multi` | `[host-port]` | `[container-ports]` | `[network]` | `[host volume]` | `[container path]` |
 
 ## 📋 Prerequisites
 
@@ -67,6 +67,8 @@ Retrieve the PUID and PGID values for the `docker-compose.yml`
 
 ```yaml title="docker-compose.yml"
 --8<-- "[service-name]/docker-compose.yml"
+# sample only
+--8<-- "docs/content/.snippets/docker-compose.yml"
 ```
 
 ### 🐋 Dockerfile
@@ -79,38 +81,75 @@ Retrieve the PUID and PGID values for the `docker-compose.yml`
 
 ```Caddyfile title="Caddyfile"
 --8<-- "caddy/Caddyfile:[service-name]"
+# sample only
+--8<-- "docs/content/.snippets/Caddyfile"
 ```
 
-### 📄 Application Secret
+### :simple-ansible: Ansible
 
-Create this `.env` file in the deployment location.
+#### Ansible Virtual Environment
+
+--8<-- "docs/content/.snippets/ansible.sh:ve"
+
+#### Ansible Vault
 
 ```bash
-cd /volume2/docker/mistia-nexus/
-./script/git-update.sh
-
-cd /volume2/docker/mistia-nexus/[service-name]
-sudo nano .env
+--8<-- "docs/content/.snippets/ansible.sh:vault-edit"
 ```
 
-```text title=".env"
-[key]=[secret]
+Press ++i++ to enter `Insert Mode`
+
+```yaml title="secrets.yml"
+the-key-name: the-key-value
+```
+
+Press ++esc++ to exit `Insert Mode`
+Type ++colon++ ++w++ ++q++ and press ++enter++ to save and exit
+
+#### .env Template
+
+```bash
+touch templates/[service-name].env.j2
+nano template/[service-name].env.j2
+```
+
+```j2 title="[service-name].env.j2"
+THE_KEY_NAME= {{ the-key-name }}
 ```
 
 ++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
 
-```bash
-chmod 600 .env
+#### Deploy-Services Playbook
+
+Define the service
+
+```yaml title="deploy-services.yml"
+--8<-- "ansible/mistia-nexus/deploy-services.yml:service-name"
+# sample only
+--8<-- "docs/content/.snippets/deploy-services.yml"
 ```
 
-## ✨ Initial Deployment
+## ✨ Deployment
+
+--8<-- "docs/content/.snippets/ansible.sh:ve"
 
 ```bash
-cd /volume2/docker/mistia-nexus/
-./script/add-service.sh [service-name]
+# sample only
+--8<-- "docs/content/.snippets/ansible.sh:playbook"
 ```
 
 ## ⚙️ Post-Deployment
+
+### 📝 DNS Rewrite
+
+1. Navigate to [https://adguard.mistia.xyz](https://adguard.mistia.xyz) >> `Filters` >> `DNS rewrites`
+
+2. Click `Add DNS rewrite`
+      - **Domain**: `service.mistia.xyz`
+      - **Answer**: `192.168.50.4`
+      - Click `Save`
+
+3. Navigate to [https://service.mistia.xyz](https://service.mistia.xyz) to verify
 
 [Describe any necessary steps to take after the container is running, such as running setup scripts, configuring reverse proxies, etc.]
 
@@ -127,14 +166,3 @@ cd /volume2/docker/mistia-nexus/
 1. [Step-by-step instructions for the requirements]
 2. [Another step.]
 3. [And so on.]
-
-### 📝 DNS Rewrite
-
-1. Navigate to [https://adguard.mistia.xyz](https://adguard.mistia.xyz) >> `Filters` >> `DNS rewrites`
-
-2. Click `Add DNS rewrite`
-      - **Domain**: `service.mistia.xyz`
-      - **Answer**: `192.168.50.4`
-      - Click `Save`
-
-3. Navigate to [https://service.mistia.xyz](https://service.mistia.xyz) to verify

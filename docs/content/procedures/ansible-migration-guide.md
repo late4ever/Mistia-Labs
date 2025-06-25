@@ -36,6 +36,8 @@ Mistia-Labs/
     ├── ansible.cfg                   # <-- Global Ansible settings
     ├── inventory.ini                 # <-- Your master inventory
     └── mistia-nexus/                 # <-- Directory for this specific environment
+        ├── ansible.cfg               # <-- Ansible settings
+        ├── inventory.ini             # <-- Inventory
         ├── deploy_services.yml       # <-- The main playbook for the nexus
         ├── _deploy_service_loop.yml  # <-- The loop file
         ├── secrets.yml               # <-- Encrypted secrets for the nexus
@@ -130,13 +132,13 @@ We will use Ansible Vault to securely manage your secrets, replacing the manual 
     ```yaml
     # ansible/secrets.yml (this content will be encrypted)
     cloudflare_api_token: "your-cloudflare-api-token"
-    caddy_email: "late4ever+caddy@gmail.com"
+    caddy_email: "address@email.com"
     duplicati_settings_key: "your-duplicati-settings-key"
     duplicati_ui_password: "your-duplicati-ui-password"
     ts_authkey: "your-tailscale-auth-key"
     nextcloud_db_password: "your-nextcloud-db-password"
     nextcloud_db_root_password: "your-nextcloud-db-root-password"
-    nextcloud_admin_user: "late4ever"
+    nextcloud_admin_user: "username"
     nextcloud_admin_password: "your-nextcloud-admin-password"
     #sudo password
     ansible_become_pass: "sudo-password"

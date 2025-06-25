@@ -1,6 +1,5 @@
 ---
 icon: simple/caddy
-status: new
 ---
 
 # :simple-caddy:{ .caddy } Caddy
@@ -79,37 +78,59 @@ mistia-nexus/
 --8<-- "mistia-nexus/caddy/www/404.html"
 ```
 
-### 📄 Application Secret
+### :simple-ansible: Ansible
 
-Create this `.env` file in the deployment location.
+#### Ansible Virtual Environment
+
+--8<-- "docs/content/.snippets/ansible.sh:ve"
+
+#### Ansible Vault
 
 ```bash
-cd /volume2/docker/mistia-nexus/
-./script/git-update.sh
-
-cd /volume2/docker/mistia-nexus/caddy
-sudo nano .env
+--8<-- "docs/content/.snippets/ansible.sh:vault-edit"
 ```
 
-```text title=".env"
-CLOUDFLARE_API_TOKEN=[secret-here]
-CADDY_EMAIL=late4ever+caddy@gmail.com
+Press ++i++ to enter `Insert Mode`
+
+```yaml title="secrets.yml"
+cloudflare_api_token: "your-cloudflare-api-token"
+caddy_email: "address@email.com"
+```
+
+Press ++esc++ to exit `Insert Mode`
+Type ++colon++ ++w++ ++q++ and press ++enter++ to save and exit
+
+#### .env Template
+
+```bash
+touch templates/caddy.env.j2
+nano template/caddy.env.j2
+```
+
+```j2 title="caddy.env.j2"
+CLOUDFLARE_API_TOKEN={{ cloudflare_api_token }}
+CADDY_EMAIL={{ caddy_email }}
 ```
 
 ++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
 
-```bash
-chmod 600 .env
+#### Deploy-Services Playbook
+
+Define the service
+
+```yaml title="deploy-services.yml"
+--8<-- "ansible/mistia-nexus/deploy-services.yml:caddy"
 ```
 
-## ✨ Initial Deployment
+## ✨ Deployment
+
+--8<-- "docs/content/.snippets/ansible.sh:ve"
 
 ```bash
-cd /volume2/docker/mistia-nexus/
-./script/update.sh caddy
+ansible-playbook deploy-services.yml --tags proxy
 ```
 
-## 🚀 Initial Setup
+## ⚙️ Post-Deployment
 
 ### 📝 DNS Rewrite
 

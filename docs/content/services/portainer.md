@@ -50,26 +50,43 @@ mistia-nexus/
 --8<-- "mistia-nexus/portainer/docker-compose.yml"
 ```
 
-### Reverse Proxy
+### 🔀 Reverse Proxy
 
 ```Caddyfile title="Caddyfile"
 --8<-- "mistia-nexus/caddy/Caddyfile:portainer"
 ```
 
-## 📄 Application Secret
+### :simple-ansible: Ansible
 
-```text
-not needed
+#### Ansible Virtual Environment
+
+--8<-- "docs/content/.snippets/ansible.sh:ve"
+
+#### Ansible Vault
+
+--8<-- "docs/content/.snippets/general.txt:na"
+
+#### .env Template
+
+--8<-- "docs/content/.snippets/general.txt:na"
+
+#### Deploy-Services Playbook
+
+Define the service
+
+```yaml title="deploy-services.yml"
+--8<-- "ansible/mistia-nexus/deploy-services.yml:portainer"
 ```
 
-## ✨ Initial Deployment
+## ✨ Deployment
+
+--8<-- "docs/content/.snippets/ansible.sh:ve"
 
 ```bash
-cd /volume2/docker/mistia-nexus/
-./script/add-service.sh [service-name]
+ansible-playbook deploy-services.yml --tags proxy-reload, portainer
 ```
 
-## 🚀 Initial Setup
+## ⚙️ Post-Deployment
 
 ### 📝 DNS Rewrite
 
@@ -82,6 +99,8 @@ cd /volume2/docker/mistia-nexus/
 
 3. Navigate to [https://portainer.mistia.xyz](https://portainer.mistia.xyz) to verify
 
+## 🚀 Initial Setup
+
 ### 🪪 Account Setup
 
 1. Navigate to [https://portainer.mistia.xyz](https://portainer.mistia.xyz)
@@ -89,4 +108,3 @@ cd /volume2/docker/mistia-nexus/
 2. Create an administrator account
 
 3. Select the `Local` environment and click `Connect` to manage the local Docker instance
-4. 

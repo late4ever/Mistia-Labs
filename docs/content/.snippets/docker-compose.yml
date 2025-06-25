@@ -33,9 +33,9 @@ services:
       - PGID=10                   
     volumes:
       - host:container
+    restart: unless-stopped
     # ports:
     #   - 'HOST_PORT:CONTAINER_PORT'  # <-- UNCOMMENT if direct access required
-    restart: unless-stopped
     networks:
       - mistia-proxy-net
     #sysctls:

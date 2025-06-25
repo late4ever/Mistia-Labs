@@ -116,7 +116,6 @@ nav:
       - Portainer: services/portainer.md
       - Duplicati: services/duplicati.md
       - Nextcloud: services/nextcloud.md
-      - Nginx Proxy: services/nginx-proxy.md
   - Procedures:
       - Management: procedures/management-commands.md
       - Ansible Migration: procedures/ansible-migration-guide.md
