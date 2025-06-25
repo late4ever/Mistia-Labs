@@ -11,13 +11,13 @@ icon: simple/portainer
 
 ## 📑 Service Information
 
-:material-web: [https://portainer.mistia.xyz](https://portainer.mistia.xyz)
+:material-web: [https://portainer.mistia.xyz](https://portainer.mistia.xyz)  &nbsp;&nbsp;&nbsp; :material-nas: [https://mistia-nexus.local:10001](https://mistia-nexus.local:10001)
 
 :fontawesome-regular-id-badge: portainer &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: portainer/portainer-ce:alpine
 
 | Host Ports | Container Ports | Network |  Host Path | Container Path |
 |:----------:|:------------:|:----------:|:----------:|:--------------:|
-| *proxied* | `8000`,`9000`,`9443` | `mistia-proxy-net` | `portainer/data`<br>`/var/run/docker.sock` | `/data`<br>`/var/run/docker.sock` |
+| `10001` | `8000`,`9000`,`9443` | `mistia-proxy-net` | `portainer/data`<br>`/var/run/docker.sock` | `/data`<br>`/var/run/docker.sock` |
 
 ## 📋 Prerequisites
 
@@ -83,7 +83,7 @@ Define the service
 --8<-- "docs/content/.snippets/ansible.sh:ve"
 
 ```bash
-ansible-playbook deploy-services.yml --tags proxy-reload, portainer
+ansible-playbook deploy-services.yml --tags proxy-reload,portainer
 ```
 
 ## ⚙️ Post-Deployment

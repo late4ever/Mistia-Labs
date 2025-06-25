@@ -16,7 +16,7 @@ icon: material/clipboard-text
 | Service | URL |
 |---------|-----|
 | **:material-router-wireless: Router**<br>ASUS ZenWiFi Pro ET12 | [https://asus-et12.mistia.xyz](https://asus-et12.mistia.xyz)<br>[https://192.168.50.1:8443](https://192.168.50.1:8443) |
-| **:material-nas: Mistia Nexus**<br>UGREEN NASync DXP4800 Plus | [https://nexus.mistia.xyz](https://nexus.mistia.xyz)<br>[https://192.168.50.4:9443](https://192.168.50.4:9443) |
+| **:material-nas: Mistia Nexus**<br>UGREEN NASync DXP4800 Plus | [https://nexus.mistia.xyz](https://nexus.mistia.xyz)<br>[https://mistia-nexus.local:9443](https://mistia-nexus.local:9443) |
 
 ### 🛠️ Core Services
 
@@ -25,14 +25,14 @@ icon: material/clipboard-text
 | **:simple-adguard:{ .adguard } AdGuard Home** | [https://adguard.mistia.xyz](https://adguard.mistia.xyz)<br>[https://192.168.50.2](https://192.168.50.2) | Network-wide DNS filtering | [View Here](../services/adguard-home.md) |
 | **:simple-caddy:{ .caddy } Caddy**<br>:material-api: Admin API | _Infrastructure_<br>[https://caddy.mistia.xyz](https://caddy.mistia.xyz/config) | Reverse proxy with auto-HTTPS<br>Configuration management | [View Here](../services/caddy.md) |
 | **:simple-tailscale: Tailscale** | [Tailscale Admin Console](https://login.tailscale.com/admin/machines) | Secure remote access VPN | [View Here](../services/tailscale.md) |
-| **:simple-portainer:{ .portainer } Portainer** | [https://portainer.mistia.xyz](https://portainer.mistia.xyz) | Docker management | [View Here](../services/portainer.md) |
-| **:simple-duplicati:{ .duplicati } Duplicati** | [https://duplicati.mistia.xyz](https://duplicati.mistia.xyz) | Encrypted backups | [View Here](../services/duplicati.md) |
+| **:simple-portainer:{ .portainer } Portainer** | [https://portainer.mistia.xyz](https://portainer.mistia.xyz)<br>[https://mistia-nexus.local:10001](https://mistia-nexus.local:10001) | Docker management | [View Here](../services/portainer.md) |
+| **:simple-duplicati:{ .duplicati } Duplicati** | [https://duplicati.mistia.xyz](https://duplicati.mistia.xyz)<br>[https://mistia-nexus.local:10101](https://mistia-nexus.local:10101) | Encrypted backups | [View Here](../services/duplicati.md) |
 
 ### ☁️ Cloud Services
 
 | Service | URL | Purpose | Documentation |
 |---------|-----|---------|---------------|
-| **:simple-nextcloud:{ .nextcloud } Nextcloud** | [https://nextcloud.mistia.xyz](https://nextcloud.mistia.xyz) | Self-hosted file sync and collaboration | [View Here](../services/nextcloud.md) |
+| **:simple-nextcloud:{ .nextcloud } Nextcloud** | [https://nextcloud.mistia.xyz](https://nextcloud.mistia.xyz)<br>[https://mistia-nexus.local:10201](https://mistia-nexus.local:10201) | Self-hosted file sync and collaboration | [View Here](../services/nextcloud.md) |
 
 ## 🌐 Network Configuration
 

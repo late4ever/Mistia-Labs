@@ -12,5 +12,5 @@ ansible-vault edit secrets.yml
 # --8<-- [end:vault-edit]
 
 # --8<-- [start:playbook]
-ansible-playbook deploy-services.yml --tags proxy-reload, [service_name]
+ansible-playbook deploy-services.yml --tags proxy-reload,[service_name]
 # --8<-- [end:playbook]

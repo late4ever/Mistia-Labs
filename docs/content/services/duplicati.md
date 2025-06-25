@@ -11,13 +11,13 @@ icon: simple/duplicati
 
 ## 📑 Service Information
 
-:material-web: [https://duplicati.mistia.xyz](https://duplicati.mistia.xyz)
+:material-web: [https://duplicati.mistia.xyz](https://duplicati.mistia.xyz)  &nbsp;&nbsp;&nbsp; :material-nas: [https://mistia-nexus.local:10101](https://mistia-nexus.local:10101)
 
 :fontawesome-regular-id-badge: duplicati &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: lscr.io/linuxserver/duplicati:latest
 
 | Host Ports | Container Ports | Network | Host Path | Container Path |
 |:----------:|:---------------:|:----------------:|:---------------------------:|:--------------:|
-| *proxied* | `8200` | `mistia-proxy-net` | `duplicati/config`<br>`/` | `/config`<br>`/nasroot:ro` |
+| `10011` | `8200` | `mistia-proxy-net` | `duplicati/config`<br>`/` | `/config`<br>`/nasroot:ro` |
 
 ## 📋 Prerequisites
 
@@ -110,7 +110,7 @@ Define the service
 --8<-- "docs/content/.snippets/ansible.sh:ve"
 
 ```bash
-ansible-playbook deploy-services.yml --tags proxy-reload, duplicati
+ansible-playbook deploy-services.yml --tags proxy-reload,duplicati
 ```
 
 ## ⚙️ Post-Deployment

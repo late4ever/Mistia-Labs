@@ -11,7 +11,8 @@ icon: simple/nextcloud
 
 ## 📑 Service Information
 
-:material-web: [https://nextcloud.mistia.xyz](https://nextcloud.mistia.xyz)
+:material-web: [https://nextcloud.mistia.xyz](https://nextcloud.mistia.xyz)  &nbsp;&nbsp;&nbsp; :material-nas: [https://mistia-nexus.local:10201](https://mistia-nexus.local:10201)
+
 
 :fontawesome-regular-id-badge: nextcloud &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: nextcloud:apache
 
@@ -23,7 +24,7 @@ icon: simple/nextcloud
 
 | Container | Host Ports | Container Ports | Network | Host Path / Docker Volume | Container Path |
 |:---------:|:----------:|:---------------:|:-------:|:-------------------------:|:--------------:|
-| nextcloud | *proxied* | `80` | `nextcloud-net`<br>`mistia-proxy-net` | `/volume1/docker/nextcloud/data`<br>`/volume1/docker/nextcloud/config` | `/var/www/html`<br>`/var/www/html/config` |
+| nextcloud | `10201` | `80` | `nextcloud-net`<br>`mistia-proxy-net` | `/volume1/docker/nextcloud/data`<br>`/volume1/docker/nextcloud/config` | `/var/www/html`<br>`/var/www/html/config` |
 | nextcloud-cron | `N/A` | `80` | `nextcloud-net` | `/volume1/docker/nextcloud/data`<br>`/volume1/docker/nextcloud/config` | `/var/www/html`<br>`/var/www/html/config`|
 | nextcloud-db | `N/A` | `3306` | `nextcloud-net` | `/volume1/docker/nextcloud/db` | `/var/lib/mysql` |
 | nextcloud-redis | `N/A` | `6379` | `nextcloud-net` | `/volume1/docker/nextcloud/redis` | `/data` |
@@ -165,7 +166,7 @@ Define the service
 --8<-- "docs/content/.snippets/ansible.sh:ve"
 
 ```bash
-ansible-playbook deploy-services.yml --tags proxy-reload, nextcloud
+ansible-playbook deploy-services.yml --tags proxy-reload,nextcloud
 ```
 
 ## ⚙️ Post-Deployment

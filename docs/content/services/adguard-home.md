@@ -95,7 +95,7 @@ Define the service
 --8<-- "docs/content/.snippets/ansible.sh:ve"
 
 ```bash
-ansible-playbook deploy-services.yml --tags dns
+ansible-playbook deploy-services.yml --tags adguard-home
 ```
 
 ## ⚙️ Post-Deployment

@@ -127,7 +127,7 @@ Define the service
 --8<-- "docs/content/.snippets/ansible.sh:ve"
 
 ```bash
-ansible-playbook deploy-services.yml --tags proxy
+ansible-playbook deploy-services.yml --tags caddy
 ```
 
 ## ⚙️ Post-Deployment
