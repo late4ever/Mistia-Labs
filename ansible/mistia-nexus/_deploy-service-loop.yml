@@ -1,10 +1,10 @@
-# This file contains the body of the deployment loop.
-# It is called by deploy-services.yml for each item in the 'all_services' list.
-- name: 'ACTION: Run deployment for {{ service.name }}.'
+# This file contains the body of the deployment loop
+# It is called by deploy-services.yml for each item in the 'all_services' list
+- name: 'ACTION: Run deployment for {{ service.name }}'
   tags: '{{ [service.name] + service.tags }}'
   block:
     # Create .env file for the service if required
-    - name: 'SETUP: Create .env file for {{ service.name }}.'
+    - name: 'SETUP: Create .env file for {{ service.name }}'
       ansible.builtin.template:
         src: 'templates/{{ service.name }}.env.j2'
         dest: '{{ deploy_path }}/{{ service.name }}/.env'
@@ -15,7 +15,7 @@
       become: no
 
     # Deploy the service using Docker Compose
-    - name: 'ACTION: Deploy {{ service.name }}.'
+    - name: 'ACTION: Deploy {{ service.name }}'
       community.docker.docker_compose_v2:
         project_src: '{{ deploy_path }}/{{ service.name }}'
         state: present
@@ -25,7 +25,7 @@
       become: no
 
     # Wait for the service container to become healthy
-    - name: 'VERIFY: Wait for {{ service.name }} container to become healthy.'
+    - name: 'VERIFY: Wait for {{ service.name }} container to become healthy'
       when: compose_result.changed
       community.docker.docker_container_info:
         name: '{{ service.name }}'
@@ -40,22 +40,22 @@
   rescue:
     - name: 'HANDLE FAILURE for {{ service.name }}'
       vars:
-        # Determine the failure reason and craft a concise message.
+        # Determine the failure reason and craft a concise message
         failure_reason: >-
           {% if compose_result is defined and compose_result.failed %}
-          Docker Compose deployment failed. Error: {{ compose_result.stderr | default(compose_result.stdout) | default('No specific error message available.') }}
+          Docker Compose deployment failed. Error: {{ compose_result.stderr | default(compose_result.stdout) | default('No specific error message available') }}
           {% elif container_info is defined and container_info.failed %}
-          Health check failed. Last log: {{ ((container_info.container.State.Health.Log | default([])) | last).Output | default('No health log available.') | trim }}
+          Health check failed. Last log: {{ ((container_info.container.State.Health.Log | default([])) | last).Output | default('No health log available') | trim }}
           {% else %}
-          An unknown error occurred during deployment or health check.
+          An unknown error occurred during deployment or health check
           {% endif %}
 
-        # Construct the final message based on whether the service is critical.
+        # Construct the final message based on whether the service is critical
         final_msg: >-
           {% if 'critical' in (service.tags | default([])) %}
-          [CRITICAL] {{ failure_reason }} Aborting play.
+          [CRITICAL] {{ failure_reason }} Aborting play
           {% else %}
-          [WARNING] {{ failure_reason }} Continuing play.
+          [WARNING] {{ failure_reason }} Continuing play
           {% endif %}
       block:
         - name: 'FAIL CRITICAL service {{ service.name }}'

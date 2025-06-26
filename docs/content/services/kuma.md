@@ -60,17 +60,37 @@ mistia-nexus/
 
 --8<-- "docs/content/.snippets/general.txt:na"
 
+#### Secrets Template
+
+--8<-- "docs/content/.snippets/general.txt:na"
+
 #### .env Template
 
 --8<-- "docs/content/.snippets/general.txt:na"
 
 #### Deploy-Services Playbook
 
-Define the service
+```bash
+nano ansible/mistia-nexus/deploy-services.yml
+```
 
 ```yaml title="deploy-services.yml"
 --8<-- "ansible/mistia-nexus/deploy-services.yml:kuma"
 ```
+
+++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
+
+#### DNS Rewrite Entry
+
+```bash
+nano ansible/group_vars/all/dns.yml
+```
+
+```yaml title="dns.yml"
+--8<-- "ansible/group_vars/all/dns.yml:kuma"
+```
+
+++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
 
 ## ✨ Deployment
 
@@ -97,6 +117,6 @@ nexus-deploy --tags proxy-reload,kuma
 
 1. Navigate to [https://kuma.mistia.xyz](https://kuma.mistia.xyz)
 
-2. Create an administrator account when prompted.
+2. Create an administrator account
 
-3. Start adding your services as monitors. A good starting point is to add all the `*.mistia.xyz` URLs for your core services.
+3. Start adding your services as monitors. A good starting point is to add all the `*.mistia.xyz` URLs for your core services

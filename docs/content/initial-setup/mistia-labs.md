@@ -50,6 +50,20 @@ icon: material/home-minus-outline
     --8<-- "docs/content/.snippets/ssh.sh:ssh"
     ```
 
+## :material-dns: Configure DNS server
+
+```bash
+sudo nano /etc/resolv.conf
+```
+
+Replace existing `nameserver` to `192.168.50.2`
+
+```conf title="resolv.conf"
+nameserver 192.168.50.2
+```
+
+++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ to save and exit
+
 ## :simple-docker: Configure Docker with WSL
 
 1. Open `Docker Desktop` >> `Settings` >> `Resources` >> `WSL integration`
@@ -124,6 +138,7 @@ This will open the project in a VS Code window, but the files and terminal will 
 Now that you have the project cloned, you should use the built-in activation script for your daily workflow. This script not only activates the Ansible environment but also sets up helpful aliases and functions.
 
 From the project root (`~/Mistia-Labs`), run:
+
 ```bash
 source tools/activate.sh
 ```

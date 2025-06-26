@@ -88,7 +88,20 @@ ts_authkey: "tailscale-auth-key"
 ```
 
 Press ++esc++ to exit `Insert Mode`
+
 Type ++colon++ ++w++ ++q++ and press ++enter++ to save and exit
+
+#### Secrets Template
+
+```bash
+nano ansible/mistia-nexus/secrets.template.yml
+```
+
+```yaml title="secrets.template.yml"
+ts_authkey: ""
+```
+
+++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
 
 #### .env Template
 
@@ -105,11 +118,17 @@ TS_AUTHKEY={{ "tailscale-auth-key" }}
 
 #### Deploy-Services Playbook
 
-Define the service
+```bash
+nano ansible/mistia-nexus/deploy-services.yml
+```
 
 ```yaml title="deploy-services.yml"
 --8<-- "ansible/mistia-nexus/deploy-services.yml:tailscale"
 ```
+
+#### DNS Rewrite Entry
+
+--8<-- "docs/content/.snippets/general.txt:na"
 
 ## ✨ Deployment
 

@@ -79,13 +79,27 @@ duplicati_ui_password: "duplicati-ui-password"
 ```
 
 Press ++esc++ to exit `Insert Mode`
+
 Type ++colon++ ++w++ ++q++ and press ++enter++ to save and exit
+
+#### Secrets Template
+
+```bash
+nano ansible/mistia-nexus/secrets.template.yml
+```
+
+```yaml title="secrets.template.yml"
+duplicati_settings_key: ""
+duplicati_ui_password: ""
+```
+
+++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
 
 #### .env Template
 
 ```bash
-touch templates/duplicati.env.j2
-nano template/duplicati.env.j2
+touch ansible/mistia-nexus/templates/duplicati.env.j2
+nano ansible/mistia-nexus/template/duplicati.env.j2
 ```
 
 ```j2 title="duplicati.env.j2"
@@ -97,11 +111,27 @@ DUPLICATI_UI_PASSWORD={{ duplicati_ui_password }}
 
 #### Deploy-Services Playbook
 
-Define the service
+```bash
+nano ansible/mistia-nexus/deploy-services.yml
+```
 
 ```yaml title="deploy-services.yml"
 --8<-- "ansible/mistia-nexus/deploy-services.yml:duplicati"
 ```
+
+++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
+
+#### DNS Rewrite Entry
+
+```bash
+nano ansible/group_vars/all/dns.yml
+```
+
+```yaml title="dns.yml"
+--8<-- "ansible/group_vars/all/dns.yml:duplicati"
+```
+
+++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
 
 ## ✨ Deployment
 
@@ -111,15 +141,10 @@ Define the service
 nexus-deploy --tags proxy-reload,duplicati
 ```
 
-## ⚙️ Post-Deployment
+## 🚀 Initial Setup
 
-### 📝 DNS Rewrite
+### 🪪 Account Setup
 
-1. Navigate to [https://adguard.mistia.xyz](https://adguard.mistia.xyz) >> `Filters` >> `DNS rewrites`
+1. Navigate to [https://duplicati.mistia.xyz](https://duplicati.mistia.xyz)
 
-2. Click `Add DNS rewrite`
-      - **Domain**: `duplicati.mistia.xyz`
-      - **Answer**: `192.168.50.4`
-      - Click `Save`
-
-3. Navigate to [https://duplicati.mistia.xyz](https://duplicati.mistia.xyz) to verify
+2. Login using the `DUPLICATI_UI_PASSWORD` define in the secrets

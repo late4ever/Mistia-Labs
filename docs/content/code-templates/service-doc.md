@@ -98,17 +98,30 @@ Retrieve the PUID and PGID values for the `docker-compose.yml`
 Press ++i++ to enter `Insert Mode`
 
 ```yaml title="secrets.yml"
-the-key-name: the-key-value
+the-key-name: "the-key-value"
 ```
 
 Press ++esc++ to exit `Insert Mode`
+
 Type ++colon++ ++w++ ++q++ and press ++enter++ to save and exit
+
+#### Secrets Template
+
+```bash
+nano ansible/mistia-nexus/secrets.template.yml
+```
+
+```yaml title="secrets.template.yml"
+the-key-name: ""
+```
+
+++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
 
 #### .env Template
 
 ```bash
-touch templates/[service-name].env.j2
-nano template/[service-name].env.j2
+touch ansible/mistia-nexus/templates/[service-name].env.j2
+nano ansible/mistia-nexus/template/[service-name].env.j2
 ```
 
 ```j2 title="[service-name].env.j2"
@@ -119,13 +132,31 @@ THE_KEY_NAME= {{ the-key-name }}
 
 #### Deploy-Services Playbook
 
-Define the service
+```bash
+nano ansible/mistia-nexus/deploy-services.yml
+```
 
 ```yaml title="deploy-services.yml"
 --8<-- "ansible/mistia-nexus/deploy-services.yml:service-name"
 # sample only
 --8<-- "docs/content/.snippets/deploy-services.yml"
 ```
+
+++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
+
+#### DNS Rewrite Entry
+
+```bash
+nano ansible/group_vars/all/dns.yml
+```
+
+```yaml title="dns.yml"
+--8<-- "ansible/group_vars/all/dns.yml:[service-name]"
+# sample only
+--8<-- "docs/content/.snippets/dns.yml"
+```
+
+++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
 
 ## ✨ Deployment
 
@@ -137,17 +168,6 @@ Define the service
 ```
 
 ## ⚙️ Post-Deployment
-
-### 📝 DNS Rewrite
-
-1. Navigate to [https://adguard.mistia.xyz](https://adguard.mistia.xyz) >> `Filters` >> `DNS rewrites`
-
-2. Click `Add DNS rewrite`
-      - **Domain**: `service.mistia.xyz`
-      - **Answer**: `192.168.50.4`
-      - Click `Save`
-
-3. Navigate to [https://service.mistia.xyz](https://service.mistia.xyz) to verify
 
 [Describe any necessary steps to take after the container is running, such as running setup scripts, configuring reverse proxies, etc.]
 

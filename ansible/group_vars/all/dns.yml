@@ -1,0 +1,47 @@
+---
+# This file is the single source of truth for all DNS rewrites
+# managed by Ansible across the entire network.
+adguard_dns_rewrites:
+  - domain: nexus.mistia.xyz
+    answer: '192.168.50.4'
+  - domain: asus-et12.mistia.xyz
+    answer: '192.168.50.4'
+  # --8<-- [start:adguard]
+  - domain: adguard.mistia.xyz
+    answer: '192.168.50.4'
+  # --8<-- [end:adguard]
+
+  # --8<-- [start:caddy]
+  - domain: caddy.mistia.xyz
+    answer: '192.168.50.4'
+  # --8<-- [end:caddy]
+
+  # --8<-- [start:portainer]
+  - domain: portainer.mistia.xyz
+    answer: '192.168.50.4'
+  # --8<-- [end:portainer]
+
+  # --8<-- [start:dockge]
+  - domain: dockge.mistia.xyz
+    answer: '192.168.50.4'
+  # --8<-- [end:dockge]
+
+  # --8<-- [start:dozzle]
+  - domain: dozzle.mistia.xyz
+    answer: '192.168.50.4'
+  # --8<-- [end:dozzle]
+
+  # --8<-- [start:kuma]
+  - domain: kuma.mistia.xyz
+    answer: '192.168.50.4'
+  # --8<-- [end:kuma]
+
+  # --8<-- [start:duplicati]
+  - domain: duplicati.mistia.xyz
+    answer: '192.168.50.4'
+  # --8<-- [end:duplicati]
+
+  # --8<-- [start:nextcloud]
+  - domain: nextcloud.mistia.xyz
+    answer: '192.168.50.4'
+  # --8<-- [end:nextcloud]

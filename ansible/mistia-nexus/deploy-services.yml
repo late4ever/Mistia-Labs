@@ -9,7 +9,7 @@
 #   ansible-playbook deploy-services.yml --tags caddy
 #
 # Example when adding new service, reload Caddy and deploy new service:
-#   ansible-playbook deploy-services.yml --tags proxy-reload, jelly
+#   ansible-playbook deploy-services.yml --tags proxy-reload,jelly
 - name: Deploy Mistia-Nexus Services
   hosts: nexus
   become: yes
@@ -19,6 +19,7 @@
     ansible_python_interpreter: /usr/bin/python3.11
     repo_root_path: '/volume2/docker'
     deploy_path: '{{ repo_root_path }}/mistia-nexus'
+    adguard_host_ip: '192.168.50.2'
 
     # This is the master list of all services managed by this playbook.
     all_services:
@@ -86,29 +87,29 @@
       # --8<-- [end:nextcloud]
 
   pre_tasks:
-    - name: 'VERIFY: Check for .git directory existence.'
+    - name: 'VERIFY: Check for .git directory existence'
       ansible.builtin.stat:
         path: '{{ repo_root_path }}/.git'
       register: git_dir_stat
 
-    - name: 'FAIL: Abort if .git directory does not exist.'
+    - name: 'FAIL: Abort if .git directory does not exist'
       ansible.builtin.fail:
-        msg: 'No .git directory found in {{ repo_root_path }}. Is this a git repo?'
+        msg: 'No .git directory found in {{ repo_root_path }}'
       when: not git_dir_stat.stat.exists
 
-    - name: 'VERIFY: Check if deploy_path exists.'
+    - name: 'VERIFY: Check if deploy_path exists'
       ansible.builtin.stat:
         path: '{{ deploy_path }}'
       register: deploy_path_stat
 
-    - name: 'FAIL: Abort if deploy_path does not exist.'
+    - name: 'FAIL: Abort if deploy_path does not exist'
       ansible.builtin.fail:
-        msg: 'deploy_path {{ deploy_path }} does not exist on the target host.'
+        msg: 'deploy_path {{ deploy_path }} does not exist on the target host'
       when: not deploy_path_stat.stat.exists
 
   tasks:
     # Synchronize the code on the NAS with your Git repository
-    - name: 'ACTION: Synchronize Git repository on NAS.'
+    - name: 'ACTION: Synchronize Git repository on NAS'
       tags: always
       ansible.builtin.shell: |
         set -e
@@ -116,11 +117,11 @@
         LOCAL_HASH=$(git rev-parse HEAD)
         REMOTE_HASH=$(git rev-parse origin/main)
         if [ "$LOCAL_HASH" != "$REMOTE_HASH" ]; then
-            echo "Repository has changes. Resetting..."
+            echo "Repository has changes. Resetting to origin/main"
             git reset --hard origin/main
             exit 0 # Indicate changed
         else
-            echo "Repository is already up-to-date."
+            echo "Repository is already up-to-date"
             exit 1 # Indicate no change
         fi
       args:
@@ -131,10 +132,10 @@
       register: git_sync_result
 
     # Ensure the basic Docker network is in place
-    - name: 'SETUP: Initial Docker network configuration.'
+    - name: 'SETUP: Initial Docker network configuration'
       tags: always
       block:
-        - name: 'SETUP: Ensure mistia-proxy-net exists.'
+        - name: 'SETUP: Ensure mistia-proxy-net exists'
           community.docker.docker_network:
             name: mistia-proxy-net
             state: present
@@ -142,16 +143,16 @@
               - subnet: '172.21.0.0/16'
 
     # Handle reloading the Caddy proxy configuration after changes
-    - name: 'ACTION: Validate and Reload Caddy Configuration.'
+    - name: 'ACTION: Validate and Reload Caddy Configuration'
       tags: [never, proxy-reload]
       block:
-        - name: 'ACTION: Restart Caddy container to refresh Caddyfile bind mount.'
+        - name: 'ACTION: Restart Caddy container to refresh Caddyfile bind mount'
           community.docker.docker_container:
             name: caddy
             state: started
             restart: true
 
-        - name: 'ACTION: Format Caddyfile using caddy fmt.'
+        - name: 'ACTION: Format Caddyfile using caddy fmt'
           community.docker.docker_container_exec:
             container: caddy
             command: caddy fmt --overwrite /etc/caddy/Caddyfile
@@ -159,16 +160,108 @@
           changed_when: false
           failed_when: caddy_validate_result.rc != 0
 
-        - name: 'ACTION: Reload Caddy with new configuration.'
+        - name: 'ACTION: Reload Caddy with new configuration'
           community.docker.docker_container_exec:
             container: caddy
             command: caddy reload --config /etc/caddy/Caddyfile
           changed_when: false
 
     # Main deployment loop: iterates over 'all_services' and calls the separate loop file for each item
-    - name: 'ACTION: Deploy and Verify Services.'
+    - name: 'ACTION: Deploy and Verify Services'
       tags: always
       ansible.builtin.include_tasks: _deploy-service-loop.yml
       loop: '{{ all_services }}'
       loop_control:
         loop_var: service
+
+  post_tasks:
+    - name: 'ACTION: Synchronize AdGuard Home DNS Rewrites'
+      tags: always
+      become: no
+      block:
+        # Step 1: Set the desired state from the variables file
+        - name: 'SETUP: Set desired DNS rewrite facts from variables file'
+          ansible.builtin.set_fact:
+            desired_rewrites: '{{ adguard_dns_rewrites | default([]) }}'
+            desired_domains: "{{ adguard_dns_rewrites | default([]) | map(attribute='domain') | list }}"
+
+        # Step 2: Authenticate and get current state from AdGuard Home
+        - name: 'ACTION: Authenticate with AdGuard Home API'
+          no_log: true
+          ansible.builtin.uri:
+            url: 'http://{{ adguard_host_ip }}/control/login'
+            method: POST
+            body_format: json
+            body:
+              {
+                'name': '{{ adguard_user }}',
+                'password': '{{ adguard_password }}'
+              }
+            status_code: 200
+          register: adguard_login
+          ignore_errors: true
+
+        - name: 'INFO: Display message on AdGuard Home authentication failure'
+          ansible.builtin.debug:
+            msg:
+              - 'Could not authenticate with AdGuard Home. This is expected on the first run'
+              - 'Please complete the setup at http://{{ adguard_host_ip }} and re-run the playbook'
+              - 'Skipping DNS rewrite synchronization'
+          when: adguard_login.failed
+
+        - name: 'GATHER INFO: Get current DNS rewrites from AdGuard Home'
+          ansible.builtin.uri:
+            url: 'http://{{ adguard_host_ip }}/control/rewrite/list'
+            method: GET
+            headers:
+              Cookie: '{{ adguard_login.set_cookie }}'
+            status_code: 200
+          register: current_rewrites_response
+          when: not adguard_login.failed
+
+        - name: 'SETUP: Set current DNS rewrite facts from API response'
+          ansible.builtin.set_fact:
+            current_rewrites: '{{ current_rewrites_response.json | default([]) }}'
+            current_domains: "{{ current_rewrites_response.json | default([]) | map(attribute='domain') | list }}"
+          when: not adguard_login.failed
+
+        # Step 3: Calculate and apply changes
+        - name: 'SETUP: Calculate DNS rewrites to add'
+          ansible.builtin.set_fact:
+            domains_to_add: '{{ desired_domains | difference(current_domains) }}'
+          when: not adguard_login.failed
+
+        - name: 'SETUP: Calculate DNS rewrites to delete'
+          ansible.builtin.set_fact:
+            domains_to_delete: '{{ current_domains | difference(desired_domains) }}'
+          when: not adguard_login.failed
+
+        - name: 'ACTION: Add missing DNS rewrites to AdGuard Home'
+          ansible.builtin.uri:
+            url: 'http://{{ adguard_host_ip }}/control/rewrite/add'
+            method: POST
+            headers:
+              Cookie: '{{ adguard_login.set_cookie }}'
+            body_format: json
+            body: '{{ item }}'
+            status_code: 200
+          loop: "{{ desired_rewrites | selectattr('domain', 'in', domains_to_add) | list }}"
+          when:
+            - not adguard_login.failed
+            - domains_to_add is defined
+            - domains_to_add | length > 0
+
+        - name: 'ACTION: Delete extra DNS rewrites from AdGuard Home'
+          ansible.builtin.uri:
+            url: 'http://{{ adguard_host_ip }}/control/rewrite/delete'
+            method: POST
+            headers:
+              Cookie: '{{ adguard_login.set_cookie }}'
+            body_format: json
+            body: '{{ item }}'
+            status_code: 200
+          loop: "{{ current_rewrites | selectattr('domain', 'in', domains_to_delete) | list }}"
+          when:
+            - not adguard_login.failed
+            - domains_to_delete is defined
+            - domains_to_delete | length > 0

@@ -4,6 +4,8 @@ icon: material/egg-fried
 
 # :material-egg-fried: Dockge
 
+<!-- markdownlint-disable MD033 -->
+
 !!! abstract "Overview"
     Dockge is a fancy, easy-to-use, and reactive self-hosted docker compose.yaml stack-oriented manager. It allows you to manage your docker-compose files through a user-friendly web interface.
 
@@ -59,36 +61,43 @@ mistia-nexus/               # Mapped to /stacks for managing compose files
 
 --8<-- "docs/content/.snippets/general.txt:na"
 
+#### Secrets Template
+
+--8<-- "docs/content/.snippets/general.txt:na"
+
 #### .env Template
 
 --8<-- "docs/content/.snippets/general.txt:na"
 
 #### Deploy-Services Playbook
 
-Define the service
+```bash
+nano ansible/mistia-nexus/deploy-services.yml
+```
 
 ```yaml title="deploy-services.yml"
 --8<-- "ansible/mistia-nexus/deploy-services.yml:dockge"
 ```
+
+++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
+
+#### DNS Rewrite Entry
+
+```bash
+nano ansible/group_vars/all/dns.yml
+```
+
+```yaml title="dns.yml"
+--8<-- "ansible/group_vars/all/dns.yml:dockge"
+```
+
+++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
 
 ## ✨ Deployment
 
 ```bash
 nexus-deploy --tags proxy-reload,dockge
 ```
-
-## ⚙️ Post-Deployment
-
-### 📝 DNS Rewrite
-
-1. Navigate to [https://adguard.mistia.xyz](https://adguard.mistia.xyz) >> `Filters` >> `DNS rewrites`
-
-2. Click `Add DNS rewrite`
-      - **Domain**: `dockge.mistia.xyz`
-      - **Answer**: `192.168.50.4`
-      - Click `Save`
-
-3. Navigate to [https://dockge.mistia.xyz](https://dockge.mistia.xyz) to verify
 
 ## 🚀 Initial Setup
 

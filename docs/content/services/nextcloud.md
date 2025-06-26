@@ -13,7 +13,6 @@ icon: simple/nextcloud
 
 :material-web: [https://nextcloud.mistia.xyz](https://nextcloud.mistia.xyz)  &nbsp;&nbsp;&nbsp; :material-nas: [https://mistia-nexus.local:10201](https://mistia-nexus.local:10201)
 
-
 :fontawesome-regular-id-badge: nextcloud &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: nextcloud:apache
 
 :fontawesome-regular-id-badge: nextcloud-cron &nbsp;&nbsp;&nbsp; :fontawesome-brands-docker: nextcloud:apache
@@ -133,7 +132,23 @@ nextcloud_admin_password: "nextcloud-admin-password"
 ```
 
 Press ++esc++ to exit `Insert Mode`
+
 Type ++colon++ ++w++ ++q++ and press ++enter++ to save and exit
+
+#### Secrets Template
+
+```bash
+nano ansible/mistia-nexus/secrets.template.yml
+```
+
+```yaml title="secrets.template.yml"
+nextcloud_db_password: ""
+nextcloud_db_root_password: ""
+nextcloud_admin_user: ""
+nextcloud_admin_password: ""
+```
+
+++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
 
 #### .env Template
 
@@ -153,11 +168,27 @@ ADMIN_PASSWORD={{ nextcloud_admin_password }}
 
 #### Deploy-Services Playbook
 
-Define the service
+```bash
+nano ansible/mistia-nexus/deploy-services.yml
+```
 
 ```yaml title="deploy-services.yml"
 --8<-- "ansible/mistia-nexus/deploy-services.yml:nextcloud"
 ```
+
+++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
+
+#### DNS Rewrite Entry
+
+```bash
+nano ansible/group_vars/all/dns.yml
+```
+
+```yaml title="dns.yml"
+--8<-- "ansible/group_vars/all/dns.yml:nextcloud"
+```
+
+++ctrl+x++ &nbsp;&nbsp;&nbsp; ++y++ &nbsp;&nbsp;&nbsp; ++enter++ &nbsp;&nbsp;&nbsp; to save and exit
 
 ## ✨ Deployment
 
@@ -166,19 +197,6 @@ Define the service
 ```bash
 nexus-deploy --tags proxy-reload,nextcloud
 ```
-
-## ⚙️ Post-Deployment
-
-### 📝 DNS Rewrite
-
-1. Navigate to [https://adguard.mistia.xyz](https://adguard.mistia.xyz) >> `Filters` >> `DNS rewrites`
-
-2. Click `Add DNS rewrite`
-      - **Domain**: `nextcloud.mistia.xyz`
-      - **Answer**: `192.168.50.4`
-      - Click `Save`
-
-3. Navigate to [https://nextcloud.mistia.xyz](https://nextcloud.mistia.xyz) to verify
 
 ## 🚀 Initial Setup
 
