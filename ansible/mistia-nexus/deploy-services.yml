@@ -59,7 +59,7 @@
       # --8<-- [end:dozzle]
 
       # --8<-- [start:kuma]
-      - name: kuma
+      - name: uptime-kuma
         tags: [core, monitoring]
         has_env: false
         has_build: false
