@@ -116,7 +116,7 @@ nav:
       - Portainer: services/portainer.md
       - Dockge: services/dockge.md
       - Dozzle: services/dozzle.md
-      - Uptime Kuma: services/kuma.md
+      - Uptime Kuma: services/uptime-kuma.md
       - Duplicati: services/duplicati.md
       - Nextcloud: services/nextcloud.md
   - Procedures:

@@ -17,7 +17,7 @@ icon: material/teddy-bear
 
 | Host Ports | Container Ports | Network |  Host Path | Container Path |
 |:----------:|:------------:|:----------:|:----------:|:--------------:|
-| `10004` | `3001` | `mistia-proxy-net` | `kuma/data` | `/app/data` |
+| `10004` | `3001` | `mistia-proxy-net` | `uptime-kuma/data` | `/app/data` |
 
 ## 📋 Prerequisites
 
@@ -31,7 +31,7 @@ The `mistia-proxy-net` network must be available.
 
 ```text
 mistia-nexus/
-└── kuma/
+└── uptime-kuma/
     ├── docker-compose.yml  # Defines the Uptime Kuma service, network, and volumes
     └── data/               # Mapped volume for persistent data
 ```
@@ -45,7 +45,7 @@ mistia-nexus/
 ### 🐋 Docker Compose
 
 ```yaml title="docker-compose.yml"
---8<-- "mistia-nexus/kuma/docker-compose.yml"
+--8<-- "mistia-nexus/uptime-kuma/docker-compose.yml"
 ```
 
 ### 🔀 Reverse Proxy
@@ -95,21 +95,8 @@ nano ansible/group_vars/all/dns.yml
 ## ✨ Deployment
 
 ```bash
-nexus-deploy --tags proxy-reload,kuma
+nexus-deploy --tags proxy-reload,uptime-kuma
 ```
-
-## ⚙️ Post-Deployment
-
-### 📝 DNS Rewrite
-
-1. Navigate to [https://adguard.mistia.xyz](https://adguard.mistia.xyz) >> `Filters` >> `DNS rewrites`
-
-2. Click `Add DNS rewrite`
-      - **Domain**: `kuma.mistia.xyz`
-      - **Answer**: `192.168.50.4`
-      - Click `Save`
-
-3. Navigate to [https://kuma.mistia.xyz](https://kuma.mistia.xyz) to verify
 
 ## 🚀 Initial Setup
 

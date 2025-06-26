@@ -1,8 +1,8 @@
 services:
-  kuma:
+  uptime-kuma:
     image: louislam/uptime-kuma:1
-    container_name: kuma
-    hostname: kuma
+    container_name: uptime-kuma
+    hostname: uptime-kuma
     logging:
       driver: 'json-file'
       options:

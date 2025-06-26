@@ -111,7 +111,7 @@ adguard.mistia.xyz {
 	# --8<-- [start:caddyadmin]
 	@caddyadmin host caddy.mistia.xyz
 	handle @caddyadmin {
-		reverse_proxy http://localhost:2019 {
+		reverse_proxy http://caddy:2019 {
 			import proxy_headers
 		}
 	}
@@ -151,7 +151,7 @@ adguard.mistia.xyz {
 	# --8<-- [start:kuma]
 	@kuma host kuma.mistia.xyz
 	handle @kuma {
-		reverse_proxy http://kuma:3001 {
+		reverse_proxy http://uptime-kuma:3001 {
 			import proxy_headers
 		}
 	}
