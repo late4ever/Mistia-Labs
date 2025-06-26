@@ -30,7 +30,7 @@ services:
       start_period: 20s
     labels:
       - 'com.mistia-nexus.service.name=AdGuard Home'
-      - 'com.mistia-nexus.service.type=Network Security'
+      - 'com.mistia-nexus.service.type=DNS Sinkhole'
     environment:
       - TZ=Asia/Singapore
     networks:

@@ -1,0 +1,99 @@
+---
+# This file is the single source of truth for all Uptime Kuma monitors
+# managed by Ansible across the entire network.
+kuma_monitor_groups:
+  'Mistia-Nexus':
+    - name: 'Caddy'
+      url: 'http://192.168.50.4/healthz'
+      type: 'http'
+      interval: 30
+      tags:
+        - 'Reverse Proxy'
+
+    - name: 'AdGuard Home'
+      url: 'https://adguard.mistia.xyz'
+      type: 'http'
+      interval: 30
+      checkCertExpiry: true
+      expiryDays: 14
+      tags:
+        - 'DNS Sinkhole'
+
+    - name: 'Portainer'
+      url: 'https://portainer.mistia.xyz'
+      type: 'http'
+      interval: 30
+      checkCertExpiry: true
+      expiryDays: 14
+      tags:
+        - 'Management'
+
+    - name: 'Dockge'
+      url: 'https://dockge.mistia.xyz'
+      type: 'http'
+      interval: 30
+      checkCertExpiry: true
+      expiryDays: 14
+      tags:
+        - 'Management'
+
+    - name: 'Dozzle'
+      url: 'https://dozzle.mistia.xyz'
+      type: 'http'
+      interval: 30
+      checkCertExpiry: true
+      expiryDays: 14
+      tags:
+        - 'Monitoring'
+
+    - name: 'Uptime Kuma'
+      url: 'https://kuma.mistia.xyz'
+      type: 'http'
+      interval: 30
+      checkCertExpiry: true
+      expiryDays: 14
+      tags:
+        - 'Monitoring'
+
+    - name: 'Duplicati'
+      url: 'https://duplicati.mistia.xyz'
+      type: 'http'
+      interval: 30
+      checkCertExpiry: true
+      expiryDays: 14
+      tags:
+        - 'Backup'
+
+    - name: 'Nextcloud'
+      url: 'https://nextcloud.mistia.xyz'
+      type: 'http'
+      interval: 30
+      checkCertExpiry: true
+      expiryDays: 14
+      tags:
+        - 'Cloud'
+
+    - name: 'Tailscale'
+      type: 'docker'
+      dockerHost: 'uptime-kuma'
+      containerName: 'tailscale'
+      interval: 30
+      tags:
+        - 'VPN'
+
+  'Hardware':
+    - name: 'UGREEN NASync 4800 Plus'
+      url: 'https://nexus.mistia.xyz'
+      type: 'http'
+      interval: 30
+      insecureSkipVerify: true
+      tags:
+        - 'NAS'
+
+    - name: 'ASUS ZenWifi Pro ET12'
+      url: 'https://asus-et12.mistia.xyz'
+      type: 'http'
+      interval: 30
+      insecureSkipVerify: true
+      tags:
+        - 'Router'

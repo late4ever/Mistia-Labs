@@ -27,7 +27,7 @@ services:
       start_period: 20s
     labels:
       - 'com.mistia-nexus.service.name=Nextcloud'
-      - 'com.mistia-nexus.service.type=Cloud Storage'
+      - 'com.mistia-nexus.service.type=Cloud'
     environment:
       - TZ=Asia/Singapore
       - MYSQL_HOST=nextcloud-db

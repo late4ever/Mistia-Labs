@@ -17,7 +17,7 @@ icon: material/teddy-bear
 
 | Host Ports | Container Ports | Network |  Host Path | Container Path |
 |:----------:|:------------:|:----------:|:----------:|:--------------:|
-| `10004` | `3001` | `mistia-proxy-net` | `uptime-kuma/data` | `/app/data` |
+| `10004` | `3001` | `mistia-proxy-net` | `uptime-kuma/data`<br>`/var/run/docker.sock` | `/app/data`<br>`/var/run/docker.sock:ro` |
 
 ## 📋 Prerequisites
 
