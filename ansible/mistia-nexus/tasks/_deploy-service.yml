@@ -1,10 +1,10 @@
 # This file contains the body of the deployment loop
 # It is called by deploy-services.yml for each item in the 'all_services' list
-- name: 'ACTION: Run deployment for {{ service.name }}'
+- name: 'ACTION: Deploy {{ service.name }}'
   tags: '{{ [service.name] + service.tags }}'
   block:
     # Create .env file for the service if required
-    - name: 'SETUP: Create .env file for {{ service.name }}'
+    - name: 'SETUP: .env File for {{ service.name }}'
       ansible.builtin.template:
         src: 'templates/{{ service.name }}.env.j2'
         dest: '{{ deploy_path }}/{{ service.name }}/.env'
@@ -25,7 +25,7 @@
       become: no
 
     # Wait for the service container to become healthy
-    - name: 'VERIFY: Wait for {{ service.name }} container to become healthy'
+    - name: 'VERIFY: {{ service.name }} Container is Healthy'
       when: compose_result.changed
       community.docker.docker_container_info:
         name: '{{ service.name }}'
@@ -38,7 +38,7 @@
 
   # Handle failures gracefully and provide concise error messages
   rescue:
-    - name: 'HANDLE FAILURE for {{ service.name }}'
+    - name: 'RESCUE: {{ service.name }} Deployment Failure'
       vars:
         # Determine the failure reason and craft a concise message
         failure_reason: >-
@@ -58,12 +58,12 @@
           [WARNING] {{ failure_reason }} Continuing play
           {% endif %}
       block:
-        - name: 'FAIL CRITICAL service {{ service.name }}'
+        - name: 'FAIL: CRITICAL service {{ service.name }}'
           ansible.builtin.fail:
             msg: '{{ final_msg }}'
           when: "'critical' in (service.tags | default([]))"
 
-        - name: 'WARN NON-CRITICAL service {{ service.name }}'
+        - name: 'WARN: NON-CRITICAL service {{ service.name }}'
           ansible.builtin.debug:
             msg: '{{ final_msg }}'
           when: "'critical' not in (service.tags | default([]))"

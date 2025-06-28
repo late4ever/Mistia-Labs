@@ -1,4 +1,4 @@
-- name: 'SETUP: Ensure Nexus environment is ready'
+- name: 'SETUP: Ensure Nexus Environment'
   block:
     - name: 'SETUP: Ansible Python Virtual Environment'
       become: yes

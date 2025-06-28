@@ -1,5 +1,5 @@
 # Ensure the basic Docker network is in place
-- name: 'SETUP: Ensure mistia-proxy-net exists'
+- name: 'SETUP: Ensure mistia-proxy-net Exists'
   community.docker.docker_network:
     name: mistia-proxy-net
     state: present
