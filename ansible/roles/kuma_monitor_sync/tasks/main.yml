@@ -55,7 +55,7 @@
     - name: 'RESCUE: Task Failed'
       ansible.builtin.debug:
         msg:
-          - 'Uptime Kuma setup or login failed!'
+          - 'Uptime Kuma Monitors Sync Failed!'
           - '──────────────────────────────────'
           - 'Failed Task: {{ ansible_failed_task.name }}'
           - 'Reason:'

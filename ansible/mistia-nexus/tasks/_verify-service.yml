@@ -1,0 +1,43 @@
+# This file contains the body of the verification loop
+# It is called by deploy.yml for each item in the 'all_services' list
+- name: 'VERIFY: {{ service.name }} is Healthy'
+  tags: '{{ [service.name] + service.tags }}'
+  block:
+    - name: 'VERIFY: {{ service.name }} Container is Healthy'
+      community.docker.docker_container_info:
+        name: '{{ service.name }}'
+      register: container_info
+      until: "container_info.container.State.Health.Status is defined and container_info.container.State.Health.Status == 'healthy'"
+      retries: 20
+      delay: 3
+      become: no
+      no_log: true
+
+  rescue:
+    - name: 'RESCUE: {{ service.name }} Verification Failure'
+      vars:
+        # Determine the failure reason and craft a concise message
+        failure_reason: >-
+          {% if container_info is defined and container_info.failed %}
+          Health check failed. Last log: {{ ((container_info.container.State.Health.Log | default([])) | last).Output | default('No health log available') | trim }}
+          {% else %}
+          An unknown error occurred during health check
+          {% endif %}
+
+        # Construct the final message based on whether the service is critical
+        final_msg: >-
+          {% if 'critical' in (service.tags | default([])) %}
+          [CRITICAL] {{ failure_reason }} Aborting play
+          {% else %}
+          [WARNING] {{ failure_reason }} Continuing play
+          {% endif %}
+      block:
+        - name: 'FAIL: CRITICAL service {{ service.name }}'
+          ansible.builtin.fail:
+            msg: '{{ final_msg }}'
+          when: "'critical' in (service.tags | default([]))"
+
+        - name: 'WARN: NON-CRITICAL service {{ service.name }}'
+          ansible.builtin.debug:
+            msg: '{{ final_msg }}'
+          when: "'critical' not in (service.tags | default([]))"

@@ -1,9 +1,8 @@
 # This file contains the body of the deployment loop
-# It is called by deploy-services.yml for each item in the 'all_services' list
+# It is called by deploy.yml for each item in the 'all_services' list
 - name: 'ACTION: Deploy {{ service.name }}'
   tags: '{{ [service.name] + service.tags }}'
   block:
-    # Create .env file for the service if required
     - name: 'SETUP: .env File for {{ service.name }}'
       ansible.builtin.template:
         src: 'templates/{{ service.name }}.env.j2'
@@ -14,29 +13,14 @@
       when: service.has_env
       become: no
 
-    # Deploy the service using Docker Compose
     - name: 'ACTION: Deploy {{ service.name }}'
       community.docker.docker_compose_v2:
         project_src: '{{ deploy_path }}/{{ service.name }}'
         state: present
         build: "{{ 'always' if service.has_build | default(false) else 'never' }}"
         pull: "{{ 'always' if not service.has_build | default(false) else 'never' }}"
-      register: compose_result
       become: no
 
-    # Wait for the service container to become healthy
-    - name: 'VERIFY: {{ service.name }} Container is Healthy'
-      when: compose_result.changed
-      community.docker.docker_container_info:
-        name: '{{ service.name }}'
-      register: container_info
-      until: "container_info.container.State.Health.Status is defined and container_info.container.State.Health.Status == 'healthy'"
-      retries: 20
-      delay: 3
-      become: no
-      no_log: true
-
-  # Handle failures gracefully and provide concise error messages
   rescue:
     - name: 'RESCUE: {{ service.name }} Deployment Failure'
       vars:
@@ -44,10 +28,8 @@
         failure_reason: >-
           {% if compose_result is defined and compose_result.failed %}
           Docker Compose deployment failed. Error: {{ compose_result.stderr | default(compose_result.stdout) | default('No specific error message available') }}
-          {% elif container_info is defined and container_info.failed %}
-          Health check failed. Last log: {{ ((container_info.container.State.Health.Log | default([])) | last).Output | default('No health log available') | trim }}
           {% else %}
-          An unknown error occurred during deployment or health check
+          An unknown error occurred during deployment
           {% endif %}
 
         # Construct the final message based on whether the service is critical
