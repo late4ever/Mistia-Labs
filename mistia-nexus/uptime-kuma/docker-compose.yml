@@ -14,10 +14,10 @@ services:
       resources:
         limits:
           cpus: '1.25'
-          memory: 1536M
+          memory: 1024M
         reservations:
           cpus: '0.25'
-          memory: 256M
+          memory: 128M
     healthcheck:
       test: ["CMD-SHELL", "node /app/extra/healthcheck.js"]
       interval: 30s
