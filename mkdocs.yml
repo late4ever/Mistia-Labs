@@ -124,8 +124,9 @@ nav:
       - Ansible Setup: procedures/ansible-setup-guide.md
       - Automate Vault Password: procedures/automate-vault-password.md
       - Backup & Restore: procedures/backup-restore.md
-      - DNS troubleshooting: procedures/dns-troubleshooting.md
-      - SSH troubleshooting: procedures/ssh-troubleshooting.md
+      - Troubleshoot Internet: procedures/internet-troubleshooting.md
+      - Troubleshoot DNS: procedures/dns-troubleshooting.md
+      - Troubleshoot SSH: procedures/ssh-troubleshooting.md
       - Security Hardening: procedures/security-hardening.md
   - Templates:
       - Service Documentation: code-templates/service-doc.md
