@@ -1,0 +1,87 @@
+- name: 'ACTION: Synchronize AdGuard Home DNS Rewrites'
+  become: no
+  block:
+    - name: 'ACTION: Authenticate with AdGuard Home API'
+      ansible.builtin.uri:
+        url: '{{ adguard_url }}/control/login'
+        method: POST
+        body_format: json
+        body:
+          { 'name': '{{ adguard_user }}', 'password': '{{ adguard_password }}' }
+        status_code: 200
+      register: adguard_login
+      no_log: true
+      ignore_errors: true
+
+    - name: 'INFO: Display Message on AdGuard Home Authentication Failure'
+      ansible.builtin.debug:
+        msg:
+          - 'Could not authenticate with AdGuard Home. This is expected on the first run'
+          - 'Please complete the setup at {{ adguard_url }} and re-run the playbook'
+          - 'Skipping DNS rewrite synchronization'
+      when: adguard_login.failed
+
+    - name: 'GATHER INFO: Get Current DNS Rewrites from AdGuard Home'
+      ansible.builtin.uri:
+        url: '{{ adguard_url }}/control/rewrite/list'
+        method: GET
+        headers:
+          Cookie: '{{ adguard_login.set_cookie }}'
+        status_code: 200
+      register: current_rewrites_response
+      when: not adguard_login.failed
+
+    - name: 'SETUP: Desired DNS Rewrites'
+      ansible.builtin.set_fact:
+        desired_rewrites: >-
+          [{% for service in all_services | selectattr('dns_domain', 'defined') %}
+            {
+              "domain": "{{ service.dns_domain }}",
+              "answer": "{{ service.dns_answer | default(dns_answer) }}"
+            }{% if not loop.last %},{% endif %}
+          {% endfor %}]
+      when: not adguard_login.failed
+
+    - name: 'SETUP: Calculate DNS Rewrites to Add'
+      ansible.builtin.set_fact:
+        domains_to_add: '{{ desired_rewrites | difference(current_rewrites_response.json) }}'
+      when: not adguard_login.failed
+
+    - name: 'SETUP: Calculate DNS rewrites to delete'
+      ansible.builtin.set_fact:
+        domains_to_delete: '{{ current_rewrites_response.json | difference(desired_rewrites) }}'
+      when: not adguard_login.failed
+
+    - name: 'ACTION: Add DNS Rewrites'
+      ansible.builtin.uri:
+        url: '{{ adguard_url }}/control/rewrite/add'
+        method: POST
+        headers:
+          Cookie: '{{ adguard_login.set_cookie }}'
+        body_format: json
+        body: '{{ item }}'
+        status_code: 200
+      loop: '{{ domains_to_add }}'
+      when: not adguard_login.failed
+
+    - name: 'ACTION: Delete DNS Rewrites'
+      ansible.builtin.uri:
+        url: '{{ adguard_url }}/control/rewrite/delete'
+        method: POST
+        headers:
+          Cookie: '{{ adguard_login.set_cookie }}'
+        body_format: json
+        body: '{{ item }}'
+        status_code: 200
+      loop: '{{ domains_to_delete }}'
+      when: not adguard_login.failed
+
+  rescue:
+    - name: 'RESCUE: Task Failed'
+      ansible.builtin.debug:
+        msg:
+          - 'Uptime Kuma setup or login failed!'
+          - '──────────────────────────────────'
+          - 'Failed Task: {{ ansible_failed_task.name }}'
+          - 'Reason:'
+          - "{{ (ansible_failed_result.msg | split('\n')) }}"

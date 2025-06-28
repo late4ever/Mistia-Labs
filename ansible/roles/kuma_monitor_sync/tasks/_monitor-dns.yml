@@ -1,0 +1,79 @@
+- name: 'SETUP: Get All Monitor DNS'
+  set_fact:
+    current_monitor_dns: >-
+      [{% for m in result.monitors if m.type == 'dns' -%}
+        {
+          "name": "{{ m.name }}",
+          "tags": [
+            {% for t in m.tags | default([]) %}
+              {"name": "{{ t.name }}", "value": "{{ t.value }}"}{% if not loop.last %},{% endif %}
+            {% endfor %}
+          ]
+        }{% if not loop.last %},{% endif %}
+      {%- endfor %}]
+
+# - name: 'DEBUG: Current Monitor DNS'
+#   ansible.builtin.debug:
+#     msg: 'Current Monitor DNS: {{ current_monitor_dns }}'
+
+- name: 'SETUP: Calculate Monitor DNS to Delete'
+  ansible.builtin.set_fact:
+    monitor_dns_todelete: >-
+      {{ (current_monitor_dns | map(attribute='name') | list) | difference(desired_monitor_dns | map(attribute='name') | list) }}
+
+# - name: 'DEBUG: Monitor DNS to Delete'
+#   ansible.builtin.debug:
+#     msg: 'Monitor DNS to delete: {{ monitor_dns_todelete }}'
+
+- name: 'ACTION: Delete Monitor DNS'
+  lucasheld.uptime_kuma.monitor:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    name: '{{ item }}'
+    state: absent
+  loop: '{{ monitor_dns_todelete }}'
+
+# - name: 'DEBUG: Monitor DNS to Add'
+#   ansible.builtin.debug:
+#     msg: "Monitor DNS to add: {{ desired_monitor_dns | map(attribute='name') | list }}"
+
+- name: 'ACTION: Ensure Monitor DNS'
+  lucasheld.uptime_kuma.monitor:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    parent_name: '{{ item.kuma_parent }}'
+    name: '{{ item.name }}'
+    description: '{{ item.kuma_description | default(item.name) }}'
+    type: dns
+    url: '{{ item.kuma_url }}'
+    dns_resolve_server: '{{ item.kuma_resolve_server }}'
+    dns_resolve_type: '{{ item.Kuma_resolve_type }}'
+    hostname: '{{ item.kuma_hostname }}'
+    port: '{{ item.kuma_port }}'
+    interval: '{{ item.kuma_interval | default(kuma_interval) }}'
+    maxretries: '{{ item.kuma_maxretries | default(kuma_maxretries) }}'
+    state: present
+  loop: '{{ desired_monitor_dns }}'
+
+- name: 'ACTION: Remove All Monitor Tags'
+  lucasheld.uptime_kuma.monitor_tag:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    monitor_name: '{{ item.0.name }}'
+    tag_name: '{{ item.1.name }}'
+    value: '{{ item.1.value }}'
+    state: absent
+  loop: "{{ current_monitor_dns | subelements('tags') }}"
+  when:
+    - item.0.name not in monitor_dns_todelete
+    - item.1.name not in (desired_monitor_dns | selectattr('name', 'equalto', item.0.name) | map(attribute='tags') | first | default([]))
+
+- name: 'ACTION: Tag Monitor'
+  lucasheld.uptime_kuma.monitor_tag:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    monitor_name: '{{ item.0.name }}'
+    tag_name: '{{ item.1 }}'
+    value: ''
+    state: present
+  loop: "{{ desired_monitor_dns | subelements('tags') }}"

@@ -1,0 +1,22 @@
+- name: 'ACTION: Reload Caddy Configuration'
+  listen: 'Reload Caddy'
+  block:
+    - name: 'HANDLER: Restart Caddy container to refresh Caddyfile bind mount'
+      community.docker.docker_container:
+        name: caddy
+        state: started
+        restart: true
+
+    - name: 'HANDLER: Format Caddyfile using caddy fmt'
+      community.docker.docker_container_exec:
+        container: caddy
+        command: caddy fmt --overwrite /etc/caddy/Caddyfile
+      register: caddy_validate_result
+      changed_when: false
+      failed_when: caddy_validate_result.rc != 0
+
+    - name: 'HANDLER: Reload Caddy with new configuration'
+      community.docker.docker_container_exec:
+        container: caddy
+        command: caddy reload --config /etc/caddy/Caddyfile
+      changed_when: false

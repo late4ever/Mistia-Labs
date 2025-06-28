@@ -1,0 +1,62 @@
+- name: 'ACTION: Synchronize Uptime Kuma Monitors'
+  become: no
+  block:
+    - name: 'SETUP: Uptime Kuma Admin'
+      lucasheld.uptime_kuma.setup:
+        api_url: '{{ kuma_url}}'
+        api_username: '{{ kuma_user }}'
+        api_password: '{{ kuma_password }}'
+
+    - name: 'ACTION: Authenticate with Uptime Kuma API'
+      lucasheld.uptime_kuma.login:
+        api_url: '{{ kuma_url}}'
+        api_username: '{{ kuma_user }}'
+        api_password: '{{ kuma_password }}'
+      register: kuma_login
+
+    - name: 'GATHER INFO: Get All Monitors from Uptime Kuma'
+      lucasheld.uptime_kuma.monitor_info:
+        api_url: '{{ kuma_url}}'
+        api_token: '{{ kuma_login.token }}'
+      register: result
+
+    - name: 'SETUP: Desired Monitors'
+      ansible.builtin.set_fact:
+        desired_monitor_groups: "{{ kuma_monitor_groups | default([]) | map(attribute='name') | list }}"
+        desired_monitor_tags: "{{ kuma_tags | default([]) | map(attribute='name') | list }}"
+        desired_monitor_dockers: "{{ all_services | selectattr('kuma_type', 'equalto', 'docker') | list }}"
+        desired_monitor_https: "{{ all_services | selectattr('kuma_type', 'equalto', 'http') | list }}"
+        desired_monitor_dns: "{{ all_services | selectattr('kuma_type', 'equalto', 'dns') | list }}"
+        desired_monitor_keywords: "{{ all_services | selectattr('kuma_type', 'equalto', 'keyword') | list }}"
+        desired_monitor_browsers: "{{ all_services | selectattr('kuma_type', 'equalto', 'real-browser') | list }}"
+
+    - name: 'SETUP: Ensure Monitor Groups'
+      import_tasks: _monitor-groups.yml
+
+    - name: 'SETUP: Ensure Monitor Tags'
+      import_tasks: _monitor-tags.yml
+
+    - name: 'SETUP: Ensure Monitor Dockers'
+      import_tasks: _monitor-dockers.yml
+
+    - name: 'SETUP: Ensure Monitor Https'
+      import_tasks: _monitor-https.yml
+
+    - name: 'SETUP: Ensure Monitor DNS'
+      import_tasks: _monitor-dns.yml
+
+    - name: 'SETUP: Ensure Monitor Keywords'
+      import_tasks: _monitor-keywords.yml
+
+    - name: 'SETUP: Ensure Monitor Browsers'
+      import_tasks: _monitor-browsers.yml
+
+  rescue:
+    - name: 'RESCUE: Task Failed'
+      ansible.builtin.debug:
+        msg:
+          - 'Uptime Kuma setup or login failed!'
+          - '──────────────────────────────────'
+          - 'Failed Task: {{ ansible_failed_task.name }}'
+          - 'Reason:'
+          - "{{ (ansible_failed_result.msg | split('\n')) }}"

@@ -1,0 +1,42 @@
+- name: 'SETUP: Get All Monitor Tags'
+  lucasheld.uptime_kuma.tag_info:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+  register: tags_result
+
+# - name: 'DEBUG: tags_result'
+#   ansible.builtin.debug:
+#     msg: 'tags_result: {{ tags_result }}'
+
+- name: 'SETUP: Get All Monitor Browsers'
+  set_fact:
+    current_monitor_tags: "{{ tags_result.tags | map(attribute='name') | list }}"
+
+# - name: 'DEBUG: Current Monitor Tags'
+#   ansible.builtin.debug:
+#     msg: 'Current Monitor Tags: {{ current_monitor_tags }}'
+
+- name: 'SETUP: Calculate Monitor Tags to Delete'
+  ansible.builtin.set_fact:
+    monitor_tags_todelete: '{{ current_monitor_tags | difference(desired_monitor_tags) }}'
+
+# - name: 'DEBUG: Monitor Tags to Delete'
+#   ansible.builtin.debug:
+#     msg: 'Monitor Tags to delete: {{ monitor_tags_todelete }}'
+
+- name: 'ACTION: Delete Monitor Tags'
+  lucasheld.uptime_kuma.tag:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    name: '{{ item }}'
+    state: absent
+  loop: '{{ monitor_tags_todelete }}'
+
+- name: 'ACTION: Add Monitor Tags'
+  lucasheld.uptime_kuma.tag:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    name: '{{ item.name }}'
+    color: '{{ item.color | default("#000000") }}'
+    state: present
+  loop: '{{ kuma_tags }}'

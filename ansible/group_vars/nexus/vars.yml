@@ -1,0 +1,7 @@
+ansible_python_interpreter: /opt/ansible-venv/bin/python
+repo_root_path: '/volume2/docker'
+deploy_path: '{{ repo_root_path }}/mistia-nexus'
+network_subnet: '172.21.0.0/16'
+adguard_ip: '192.168.50.2'
+adguard_url: 'http://{{ adguard_ip }}'
+kuma_url: 'http://{{ inventory_hostname }}:10004'

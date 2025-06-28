@@ -1,0 +1,76 @@
+- name: 'SETUP: Get All Monitor Keywords'
+  set_fact:
+    current_monitor_keywords: >-
+      [{% for m in result.monitors if m.type == 'keywords' -%}
+        {
+          "name": "{{ m.name }}",
+          "tags": [
+            {% for t in m.tags | default([]) %}
+              {"name": "{{ t.name }}", "value": "{{ t.value }}"}{% if not loop.last %},{% endif %}
+            {% endfor %}
+          ]
+        }{% if not loop.last %},{% endif %}
+      {%- endfor %}]
+
+# - name: 'DEBUG: Current Monitor Keywords'
+#   ansible.builtin.debug:
+#     msg: 'Current Monitor Keywords: {{ current_monitor_keywords }}'
+
+- name: 'SETUP: Calculate Monitor Keywords to Delete'
+  ansible.builtin.set_fact:
+    monitor_keywords_todelete: >-
+      {{ (current_monitor_keywords | map(attribute='name') | list) | difference(desired_monitor_keywords | map(attribute='name') | list) }}
+
+# - name: 'DEBUG: Monitor Keywords to Delete'
+#   ansible.builtin.debug:
+#     msg: 'Monitor Keywords to delete: {{ monitor_keywords_todelete }}'
+
+- name: 'ACTION: Delete Monitor Keywords'
+  lucasheld.uptime_kuma.monitor:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    name: '{{ item }}'
+    state: absent
+  loop: '{{ monitor_keywords_todelete }}'
+
+# - name: 'DEBUG: Monitor Keywords to Add'
+#   ansible.builtin.debug:
+#     msg: "Monitor Keywords to add: {{ desired_monitor_keywords | map(attribute='name') | list }}"
+
+- name: 'ACTION: Ensure Monitor Keywords'
+  lucasheld.uptime_kuma.monitor:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    parent_name: '{{ item.kuma_parent }}'
+    name: '{{ item.name }}'
+    description: '{{ item.kuma_description | default(item.name) }}'
+    type: keyword
+    url: '{{ item.kuma_url }}'
+    keyword: '{{ item.kuma_keyword }}'
+    interval: '{{ item.kuma_interval | default(kuma_interval) }}'
+    maxretries: '{{ item.kuma_maxretries | default(kuma_maxretries) }}'
+    state: present
+  loop: '{{ desired_monitor_keywords }}'
+
+- name: 'ACTION: Remove All Monitor Tags'
+  lucasheld.uptime_kuma.monitor_tag:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    monitor_name: '{{ item.0.name }}'
+    tag_name: '{{ item.1.name }}'
+    value: '{{ item.1.value }}'
+    state: absent
+  loop: "{{ current_monitor_keywords | subelements('tags') }}"
+  when:
+    - item.0.name not in monitor_keywords_todelete
+    - item.1.name not in (desired_monitor_keywords | selectattr('name', 'equalto', item.0.name) | map(attribute='tags') | first | default([]))
+
+- name: 'ACTION: Tag Monitor'
+  lucasheld.uptime_kuma.monitor_tag:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    monitor_name: '{{ item.0.name }}'
+    tag_name: '{{ item.1 }}'
+    value: ''
+    state: present
+  loop: "{{ desired_monitor_keywords | subelements('tags') }}"

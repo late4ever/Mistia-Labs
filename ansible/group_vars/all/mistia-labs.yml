@@ -1,0 +1,192 @@
+---
+# --8<-- [start:kuma-groups]
+kuma_monitor_groups:
+  - name: Mistia-Nexus
+    kuma_type: group
+  - name: Mistia-Labs
+    kuma_type: group
+  - name: Mistia
+    kuma_type: group
+# --8<-- [start:kuma-groups]
+
+# --8<-- [start:kuma-tags]
+kuma_tags:
+  - name: critical
+    color: '#e53935'
+  - name: core
+    color: '#3949ab'
+  - name: dns
+    color: '#00bcd4'
+  - name: proxy
+    color: '#8e24aa'
+  - name: management
+    color: '#43a047'
+  - name: monitoring
+    color: '#fbc02d'
+  - name: backup
+    color: '#6d4c41'
+  - name: vpn
+    color: '#00897b'
+  - name: cloud
+    color: '#039be5'
+  - name: hardware
+    color: '#757575'
+  - name: website
+    color: '#fb8c00'
+# --8<-- [end:kuma-tags]
+
+all_services:
+  # --8<-- [start:adguard-home]
+  - name: adguard-home
+    tags: [critical, dns]
+    has_env: false
+    has_build: false
+    deploy_to: nexus
+    kuma_description: 'Network-wide DNS Sinkhole'
+    kuma_url: 'https://adguard.mistia.xyz'
+    kuma_type: 'dns'
+    kuma_resolve_server: '{{ adguard_ip }}'
+    Kuma_resolve_type: 'A'
+    kuma_hostname: 'mistia.xyz'
+    kuma_port: 53
+    kuma_parent: Mistia-Nexus
+    dns_domain: adguard.mistia.xyz
+  # --8<-- [end:adguard-home]
+
+  # --8<-- [start:caddy]
+  - name: caddy
+    tags: [critical, core, proxy]
+    has_env: true
+    has_build: true
+    deploy_to: nexus
+    kuma_description: 'Reverse Proxy'
+    kuma_url: 'http://192.168.50.4/healthz'
+    kuma_type: 'keyword'
+    kuma_keyword: 'OK'
+    kuma_parent: Mistia-Nexus
+    dns_domain: caddy.mistia.xyz
+  # --8<-- [end:caddy]
+
+  # --8<-- [start:portainer]
+  - name: portainer
+    tags: [core, management]
+    has_env: false
+    has_build: false
+    deploy_to: nexus
+    kuma_description: 'Container Management'
+    kuma_url: 'https://portainer.mistia.xyz'
+    kuma_type: 'http'
+    kuma_parent: Mistia-Nexus
+    dns_domain: portainer.mistia.xyz
+  # --8<-- [end:portainer]
+
+  # --8<-- [start:dockge]
+  - name: dockge
+    tags: [core, management]
+    has_env: false
+    has_build: false
+    deploy_to: nexus
+    kuma_description: 'Container Management'
+    kuma_url: 'https://dockge.mistia.xyz'
+    kuma_type: 'http'
+    kuma_parent: Mistia-Nexus
+    dns_domain: dockge.mistia.xyz
+  # --8<-- [end:dockge]
+
+  # --8<-- [start:dozzle]
+  - name: dozzle
+    tags: [core, monitoring]
+    has_env: false
+    has_build: false
+    deploy_to: nexus
+    kuma_description: 'Container Log Viewer'
+    kuma_url: 'https://dozzle.mistia.xyz'
+    kuma_type: 'http'
+    kuma_parent: Mistia-Nexus
+    dns_domain: dozzle.mistia.xyz
+  # --8<-- [end:dozzle]
+
+  # --8<-- [start:kuma]
+  - name: uptime-kuma
+    tags: [core, monitoring]
+    has_env: false
+    has_build: false
+    deploy_to: nexus
+    kuma_description: 'Status Monitoring'
+    kuma_url: 'https://kuma.mistia.xyz'
+    kuma_type: 'http'
+    kuma_parent: Mistia-Nexus
+    dns_domain: kuma.mistia.xyz
+  # --8<-- [end:kuma]
+
+  # --8<-- [start:duplicati]
+  - name: duplicati
+    tags: [core, backup]
+    has_env: true
+    has_build: false
+    deploy_to: nexus
+    kuma_description: 'Encrypted Backup Solution'
+    kuma_url: 'https://duplicati.mistia.xyz'
+    kuma_type: 'http'
+    kuma_parent: Mistia-Nexus
+    dns_domain: duplicati.mistia.xyz
+  # --8<-- [end:duplicati]
+
+  # --8<-- [start:tailscale]
+  - name: tailscale
+    tags: [core, vpn]
+    has_env: true
+    has_build: false
+    deploy_to: nexus
+    kuma_description: 'Virtual Private Network'
+    kuma_type: 'docker'
+    kuma_parent: Mistia-Nexus
+    kuma_container: 'tailscale'
+  # --8<-- [end:tailscale]
+
+  # --8<-- [start:nextcloud]
+  - name: nextcloud
+    tags: [cloud]
+    has_env: true
+    has_build: true
+    deploy_to: nexus
+    kuma_description: 'Cloud Services'
+    kuma_url: 'https://nextcloud.mistia.xyz'
+    kuma_type: 'http'
+    kuma_parent: Mistia-Nexus
+    dns_domain: nextcloud.mistia.xyz
+  # --8<-- [end:nextcloud]:
+
+  - name: 'UGREEN NASync 4800 Plus'
+    tags: [hardware]
+    kuma_description: 'Network Attached Storage'
+    kuma_url: 'https://192.168.50.4:9443'
+    kuma_type: 'http'
+    kuma_parent: Mistia-Labs
+    kuma_ignoreTls: yes
+    dns_domain: nexus.mistia.xyz
+
+  - name: 'ASUS ZenWifi Pro ET12'
+    tags: [hardware]
+    kuma_description: 'Mesh Wi-Fi Router'
+    kuma_url: 'https://192.168.50.1:8443'
+    kuma_type: 'http'
+    kuma_parent: Mistia-Labs
+    kuma_ignoreTls: yes
+    dns_domain: asus-et12.mistia.xyz
+
+  - name: mistia.xyz
+    tags: [website]
+    kuma_description: 'Mistia Website'
+    kuma_url: 'https://mistia.xyz'
+    kuma_type: 'real-browser'
+    kuma_interval: 300
+    kuma_parent: Mistia
+
+  - name: docs.mistia.xyz
+    tags: [website]
+    kuma_description: 'Mistia Labs Documentation'
+    kuma_url: 'https://docs.mistia.xyz'
+    kuma_type: 'real-browser'
+    kuma_interval: 300
+    kuma_parent: Mistia

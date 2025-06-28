@@ -1,0 +1,30 @@
+- name: 'SETUP: Ensure Nexus environment is ready'
+  block:
+    - name: 'SETUP: Ansible Python Virtual Environment'
+      become: yes
+      block:
+        - name: 'SETUP: python3.11-venv and python3-pip'
+          ansible.builtin.apt:
+            name:
+              - python3.11-venv
+              - python3-pip
+            state: present
+            update_cache: yes
+
+        - name: 'SETUP: Ansible Python Virtual Environment'
+          ansible.builtin.command:
+            cmd: python3.11 -m venv /opt/ansible-venv
+          args:
+            creates: /opt/ansible-venv/bin/activate
+
+        - name: 'SETUP: Ansible Dependencies in Virtual Environment'
+          ansible.builtin.pip:
+            name:
+              - pip
+              - requests
+              - docker
+              - pyyaml
+              - uptime-kuma-api
+            virtualenv: /opt/ansible-venv
+            virtualenv_python: python3.11
+            state: latest

@@ -1,0 +1,84 @@
+- name: 'SETUP: Get All Monitor Dockers'
+  set_fact:
+    current_monitor_dockers: >-
+      [{% for m in result.monitors if m.type == 'docker' -%}
+        {
+          "name": "{{ m.name }}",
+          "tags": [
+            {% for t in m.tags | default([]) %}
+              {"name": "{{ t.name }}", "value": "{{ t.value }}"}{% if not loop.last %},{% endif %}
+            {% endfor %}
+          ]
+        }{% if not loop.last %},{% endif %}
+      {%- endfor %}]
+
+# - name: 'DEBUG: Current Monitor Dockers'
+#   ansible.builtin.debug:
+#     msg: 'Current Monitor Dockers: {{ current_monitor_dockers }}'
+
+- name: 'SETUP: Calculate Monitor Dockers to Delete'
+  ansible.builtin.set_fact:
+    monitor_dockers_todelete: >-
+      {{ (current_monitor_dockers | map(attribute='name') | list) | difference(desired_monitor_dockers | map(attribute='name') | list) }}
+
+# - name: 'DEBUG: Monitor Dockers to Delete'
+#   ansible.builtin.debug:
+#     msg: 'Monitor Dockers to delete: {{ monitor_dockers_todelete }}'
+
+- name: 'ACTION: Delete Monitor Dockers'
+  lucasheld.uptime_kuma.monitor:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    name: '{{ item }}'
+    state: absent
+  loop: '{{ monitor_dockers_todelete }}'
+
+# - name: 'DEBUG: Monitor Dockers to Add'
+#   ansible.builtin.debug:
+#     msg: 'Monitor Dockers to add: {{ desired_monitor_dockers }}'
+
+- name: 'ACTION: Add Default Docker Host: Uptime-Kuma'
+  lucasheld.uptime_kuma.docker_host:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    name: Uptime-Kuma
+    dockerType: socket
+    dockerDaemon: /var/run/docker.sock
+
+- name: 'ACTION: Ensure Monitor Dockers'
+  lucasheld.uptime_kuma.monitor:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    parent_name: '{{ item.kuma_parent }}'
+    name: '{{ item.name }}'
+    description: '{{ item.kuma_description | default(item.name) }}'
+    type: docker
+    docker_container: '{{ item.kuma_container }}'
+    docker_host_name: Uptime-Kuma
+    interval: '{{ item.kuma_interval | default(kuma_interval) }}'
+    maxretries: '{{ item.kuma_maxretries | default(kuma_maxretries) }}'
+    state: present
+  loop: '{{ desired_monitor_dockers }}'
+
+- name: 'ACTION: Remove All Monitor Tags'
+  lucasheld.uptime_kuma.monitor_tag:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    monitor_name: '{{ item.0.name }}'
+    tag_name: '{{ item.1.name }}'
+    value: '{{ item.1.value }}'
+    state: absent
+  loop: "{{ current_monitor_dockers | subelements('tags') }}"
+  when:
+    - item.0.name not in monitor_dockers_todelete
+    - item.1.name not in (desired_monitor_dockers | selectattr('name', 'equalto', item.0.name) | map(attribute='tags') | first | default([]))
+
+- name: 'ACTION: Tag Monitor'
+  lucasheld.uptime_kuma.monitor_tag:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    monitor_name: '{{ item.0.name }}'
+    tag_name: '{{ item.1 }}'
+    value: ''
+    state: present
+  loop: "{{ desired_monitor_dockers | subelements('tags') }}"

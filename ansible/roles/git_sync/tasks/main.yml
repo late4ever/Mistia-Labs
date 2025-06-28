@@ -1,0 +1,27 @@
+- name: 'SETUP: Git Repository Synchronization'
+  block:
+    - name: 'VERIFY: .git Directory Exists'
+      ansible.builtin.stat:
+        path: '{{ repo_root_path }}/.git'
+      register: git_dir_stat
+      failed_when: not git_dir_stat.stat.exists
+      ignore_errors: false
+
+    - name: 'ACTION: Synchronize Git Repository'
+      become: no
+      ansible.builtin.shell: |
+        set -e
+        git fetch origin
+        LOCAL_HASH=$(git rev-parse HEAD)
+        REMOTE_HASH=$(git rev-parse origin/main)
+        if [ "$LOCAL_HASH" != "$REMOTE_HASH" ]; then
+            git reset --hard origin/main
+            exit 0
+        else
+            exit 1
+        fi
+      args:
+        chdir: '{{ repo_root_path }}'
+      register: git_sync_result
+      changed_when: 'git_sync_result.rc == 0'
+      failed_when: 'git_sync_result.rc > 1'

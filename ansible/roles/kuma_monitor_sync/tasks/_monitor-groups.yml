@@ -1,0 +1,35 @@
+- name: 'SETUP: Get All Monitor Groups'
+  set_fact:
+    current_monitor_groups: "{{ result.monitors | selectattr('type', 'equalto', 'group') | map(attribute='name') | list }}"
+
+# - name: 'DEBUG: Current Monitor Groups'
+#   ansible.builtin.debug:
+#     msg: 'Current Monitor Groups: {{ current_monitor_groups }}'
+
+- name: 'SETUP: Calculate Monitor Groups to Delete'
+  ansible.builtin.set_fact:
+    monitor_groups_todelete: '{{ current_monitor_groups | difference(desired_monitor_groups) }}'
+
+# - name: 'DEBUG: Monitor Groups to Delete'
+#   ansible.builtin.debug:
+#     msg: 'Monitor Groups to delete: {{ monitor_groups_todelete }}'
+
+- name: 'ACTION: Delete Monitor Groups'
+  lucasheld.uptime_kuma.monitor:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    name: '{{ item }}'
+    state: absent
+  loop: '{{ monitor_groups_todelete }}'
+
+- name: 'ACTION: Add Monitor Groups'
+  lucasheld.uptime_kuma.monitor:
+    api_url: '{{ kuma_url}}'
+    api_token: '{{ kuma_login.token }}'
+    name: '{{ item.name }}'
+    description: '{{ item.kuma_description | default(item.name) }}'
+    type: group
+    interval: '{{ item.kuma_interval | default(kuma_interval) }}'
+    maxretries: '{{ item.kuma_maxretries | default(kuma_maxretries) }}'
+    state: present
+  loop: '{{ kuma_monitor_groups }}'

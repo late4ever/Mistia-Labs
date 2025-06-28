@@ -1,0 +1,4 @@
+kuma_interval: 30
+kuma_maxretries: 0
+kuma_expiryNotification: yes
+dns_answer: '{{ inventory_hostname }}'

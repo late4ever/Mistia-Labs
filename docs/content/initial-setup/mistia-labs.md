@@ -108,9 +108,13 @@ All subsequent commands should be run inside `Ubuntu (WSL) terminal`
     ```bash
     # Install the Ansible package itself
     pip install ansible
+    # Install uptime kume api
+    pip install uptime-kuma-api
 
     # Install the Docker collection required for managing containers
     ansible-galaxy collection install community.docker
+    # Install the uptime kuma collection required for managing monitors
+    ansible-galaxy collection install lucasheld.uptime_kuma
     ```
 
 !!! success "Initial Activation Complete"

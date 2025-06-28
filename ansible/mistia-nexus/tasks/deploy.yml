@@ -1,0 +1,27 @@
+# Ensure the basic Docker network is in place
+- name: 'SETUP: Ensure mistia-proxy-net exists'
+  community.docker.docker_network:
+    name: mistia-proxy-net
+    state: present
+    ipam_config:
+      - subnet: '{{network_subnet}}'
+
+# Main deployment loop: iterates over 'all_services' and calls the separate loop file for each item
+- name: 'ACTION: Deploy and Verify Services'
+  ansible.builtin.include_tasks: _deploy-service.yml
+  loop: >-
+    [{% for item in all_services | selectattr("deploy_to", "defined") | selectattr("deploy_to", "equalto", "nexus") %}
+      {
+        "name": "{{ item.name }}",
+        "tags": {{ item.tags | default([]) | to_json }},
+        "has_env": {{ item.has_env | default(false) | to_json }},
+        "has_build": {{ item.has_build | default(false) | to_json }}
+      }{% if not loop.last %},{% endif %}
+    {% endfor %}]
+  loop_control:
+    loop_var: service
+  when: >
+    (
+      ansible_run_tags | intersect([service.name] + (service.tags | default([])))
+    ) | length > 0 or
+    (ansible_run_tags | length == 0)

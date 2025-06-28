@@ -1,361 +1,68 @@
 ---
+# Ansible Playbook to deploy Mistia-Nexus services
+#
+#  WSL Terminal:
+#   cd ~/Mistia-Labs
+#   source tools/activate.sh
+#
 # Example to run this playbook for all services:
-#   ansible-playbook deploy-services.yml
+#   nexus_deploy
 #
 # Example to run for only DNS-tagged services:
-#   ansible-playbook deploy-services.yml --tags dns
+#   nexus_deploy --tags dns
 #
-# Example to run for only a specific service (e.g., caddy):
-#   ansible-playbook deploy-services.yml --tags caddy
+# Example to run for only a specific service:
+#   nexus_deploy --tags jellyfin
 #
-# Example when adding new service, reload Caddy and deploy new service:
-#   ansible-playbook deploy-services.yml --tags proxy-reload,jelly
+# Example to run for a new specific service:
+#   nexus_deploy --tags sync,jellyfin
+#
 - name: Deploy Mistia-Nexus Services
   hosts: nexus
   become: yes
+  gather_facts: no
   vars_files:
     - secrets.yml
-  vars:
-    ansible_python_interpreter: /usr/bin/python3.11
-    repo_root_path: '/volume2/docker'
-    deploy_path: '{{ repo_root_path }}/mistia-nexus'
-    adguard_host_ip: '192.168.50.2'
-    nexus_host_ip: '192.168.50.4'
-    kuma_host_port: 10004
-
-    # This is the master list of all services managed by this playbook.
-    all_services:
-      # --8<-- [start:adguard-home]
-      - name: adguard-home
-        tags: [critical, dns]
-        has_env: false
-        has_build: false
-      # --8<-- [end:adguard-home]
-
-      # --8<-- [start:caddy]
-      - name: caddy
-        tags: [critical, core, proxy]
-        has_env: true
-        has_build: true
-      # --8<-- [end:caddy]
-
-      # --8<-- [start:portainer]
-      - name: portainer
-        tags: [core, management]
-        has_env: false
-        has_build: false
-      # --8<-- [end:portainer]
-
-      # --8<-- [start:dockge]
-      - name: dockge
-        tags: [core, management]
-        has_env: false
-        has_build: false
-      # --8<-- [end:dockge]
-
-      # --8<-- [start:dozzle]
-      - name: dozzle
-        tags: [core, monitoring]
-        has_env: false
-        has_build: false
-      # --8<-- [end:dozzle]
-
-      # --8<-- [start:kuma]
-      - name: uptime-kuma
-        tags: [core, monitoring]
-        has_env: false
-        has_build: false
-      # --8<-- [end:kuma]
-
-      # --8<-- [start:duplicati]
-      - name: duplicati
-        tags: [core, backup]
-        has_env: true
-        has_build: false
-      # --8<-- [end:duplicati]
-
-      # --8<-- [start:tailscale]
-      - name: tailscale
-        tags: [core, vpn]
-        has_env: true
-        has_build: false
-      # --8<-- [end:tailscale]
-
-      # --8<-- [start:nextcloud]
-      - name: nextcloud
-        tags: [cloud]
-        has_env: true
-        has_build: true
-      # --8<-- [end:nextcloud]
 
   pre_tasks:
-    - name: 'VERIFY: Check for .git directory existence'
-      ansible.builtin.stat:
-        path: '{{ repo_root_path }}/.git'
-      register: git_dir_stat
+    - name: 'Setup'
+      tags: always
+      block:
+        - name: 'Setup Nexus Environment'
+          import_tasks: tasks/setup.yml
 
-    - name: 'FAIL: Abort if .git directory does not exist'
-      ansible.builtin.fail:
-        msg: 'No .git directory found in {{ repo_root_path }}'
-      when: not git_dir_stat.stat.exists
+        - name: 'ACTION: Stat Caddyfile Before Sync'
+          ansible.builtin.stat:
+            path: '{{ deploy_path }}/caddy/Caddyfile'
+          register: caddyfile_before
 
-    - name: 'VERIFY: Check if deploy_path exists'
-      ansible.builtin.stat:
-        path: '{{ deploy_path }}'
-      register: deploy_path_stat
+        - name: 'Git Synchronization'
+          import_role:
+            name: git_sync
 
-    - name: 'FAIL: Abort if deploy_path does not exist'
-      ansible.builtin.fail:
-        msg: 'deploy_path {{ deploy_path }} does not exist on the target host'
-      when: not deploy_path_stat.stat.exists
+        - name: 'ACTION: Stat Caddyfile After Sync'
+          ansible.builtin.stat:
+            path: '{{ deploy_path }}/caddy/Caddyfile'
+          register: caddyfile_after
+
+        - name: 'ACTION: Reload Caddy if Caddyfile Changed'
+          ansible.builtin.debug:
+            msg: 'Caddyfile changed, notifying handler.'
+          when: caddyfile_before.stat.checksum != caddyfile_after.stat.checksum
+          notify: 'Reload Caddy'
 
   tasks:
-    # Synchronize the code on the NAS with your Git repository
-    - name: 'ACTION: Synchronize Git repository on NAS'
+    - name: 'Deploy Nexus Services'
       tags: always
-      ansible.builtin.shell: |
-        set -e
-        git fetch origin
-        LOCAL_HASH=$(git rev-parse HEAD)
-        REMOTE_HASH=$(git rev-parse origin/main)
-        if [ "$LOCAL_HASH" != "$REMOTE_HASH" ]; then
-            echo "Repository has changes. Resetting to origin/main"
-            git reset --hard origin/main
-            exit 0 # Indicate changed
-        else
-            echo "Repository is already up-to-date"
-            exit 1 # Indicate no change
-        fi
-      args:
-        chdir: '{{ deploy_path }}'
-      become: no
-      changed_when: 'git_sync_result.rc == 0'
-      failed_when: 'git_sync_result.rc > 1'
-      register: git_sync_result
-
-    # Ensure the basic Docker network is in place
-    - name: 'SETUP: Initial Docker network configuration'
-      tags: always
-      block:
-        - name: 'SETUP: Ensure mistia-proxy-net exists'
-          community.docker.docker_network:
-            name: mistia-proxy-net
-            state: present
-            ipam_config:
-              - subnet: '172.21.0.0/16'
-
-    # Handle reloading the Caddy proxy configuration after changes
-    - name: 'ACTION: Validate and Reload Caddy Configuration'
-      tags: [never, proxy-reload]
-      block:
-        - name: 'ACTION: Restart Caddy container to refresh Caddyfile bind mount'
-          community.docker.docker_container:
-            name: caddy
-            state: started
-            restart: true
-
-        - name: 'ACTION: Format Caddyfile using caddy fmt'
-          community.docker.docker_container_exec:
-            container: caddy
-            command: caddy fmt --overwrite /etc/caddy/Caddyfile
-          register: caddy_validate_result
-          changed_when: false
-          failed_when: caddy_validate_result.rc != 0
-
-        - name: 'ACTION: Reload Caddy with new configuration'
-          community.docker.docker_container_exec:
-            container: caddy
-            command: caddy reload --config /etc/caddy/Caddyfile
-          changed_when: false
-
-    # Main deployment loop: iterates over 'all_services' and calls the separate loop file for each item
-    - name: 'ACTION: Deploy and Verify Services'
-      tags: always
-      ansible.builtin.include_tasks: _deploy-service-loop.yml
-      loop: '{{ all_services }}'
-      loop_control:
-        loop_var: service
+      import_tasks: tasks/deploy.yml
 
   post_tasks:
-    - name: 'ACTION: Synchronize AdGuard Home DNS Rewrites'
-      tags: always
-      become: no
-      block:
-        # Step 1: Set the desired state from the variables file
-        - name: 'SETUP: Set desired DNS rewrite facts from variables file'
-          ansible.builtin.set_fact:
-            desired_rewrites: '{{ adguard_dns_rewrites | default([]) }}'
-            desired_domains: "{{ adguard_dns_rewrites | default([]) | map(attribute='domain') | list }}"
+    - name: 'Synchronize AdGuard Home DNS Rewrites'
+      tags: sync
+      import_role:
+        name: dns_rewrite_sync
 
-        # Step 2: Authenticate and get current state from AdGuard Home
-        - name: 'ACTION: Authenticate with AdGuard Home API'
-          no_log: true
-          ansible.builtin.uri:
-            url: 'http://{{ adguard_host_ip }}/control/login'
-            method: POST
-            body_format: json
-            body:
-              {
-                'name': '{{ adguard_user }}',
-                'password': '{{ adguard_password }}'
-              }
-            status_code: 200
-          register: adguard_login
-          ignore_errors: true
-
-        - name: 'INFO: Display message on AdGuard Home authentication failure'
-          ansible.builtin.debug:
-            msg:
-              - 'Could not authenticate with AdGuard Home. This is expected on the first run'
-              - 'Please complete the setup at http://{{ adguard_host_ip }} and re-run the playbook'
-              - 'Skipping DNS rewrite synchronization'
-          when: adguard_login.failed
-
-        - name: 'GATHER INFO: Get current DNS rewrites from AdGuard Home'
-          ansible.builtin.uri:
-            url: 'http://{{ adguard_host_ip }}/control/rewrite/list'
-            method: GET
-            headers:
-              Cookie: '{{ adguard_login.set_cookie }}'
-            status_code: 200
-          register: current_rewrites_response
-          when: not adguard_login.failed
-
-        - name: 'SETUP: Set current DNS rewrite facts from API response'
-          ansible.builtin.set_fact:
-            current_rewrites: '{{ current_rewrites_response.json | default([]) }}'
-            current_domains: "{{ current_rewrites_response.json | default([]) | map(attribute='domain') | list }}"
-          when: not adguard_login.failed
-
-        # Step 3: Calculate and apply changes
-        - name: 'SETUP: Calculate DNS rewrites to add'
-          ansible.builtin.set_fact:
-            domains_to_add: '{{ desired_domains | difference(current_domains) }}'
-          when: not adguard_login.failed
-
-        - name: 'SETUP: Calculate DNS rewrites to delete'
-          ansible.builtin.set_fact:
-            domains_to_delete: '{{ current_domains | difference(desired_domains) }}'
-          when: not adguard_login.failed
-
-        - name: 'ACTION: Add missing DNS rewrites to AdGuard Home'
-          ansible.builtin.uri:
-            url: 'http://{{ adguard_host_ip }}/control/rewrite/add'
-            method: POST
-            headers:
-              Cookie: '{{ adguard_login.set_cookie }}'
-            body_format: json
-            body: '{{ item }}'
-            status_code: 200
-          loop: "{{ desired_rewrites | selectattr('domain', 'in', domains_to_add) | list }}"
-          when:
-            - not adguard_login.failed
-            - domains_to_add is defined
-            - domains_to_add | length > 0
-
-        - name: 'ACTION: Delete extra DNS rewrites from AdGuard Home'
-          ansible.builtin.uri:
-            url: 'http://{{ adguard_host_ip }}/control/rewrite/delete'
-            method: POST
-            headers:
-              Cookie: '{{ adguard_login.set_cookie }}'
-            body_format: json
-            body: '{{ item }}'
-            status_code: 200
-          loop: "{{ current_rewrites | selectattr('domain', 'in', domains_to_delete) | list }}"
-          when:
-            - not adguard_login.failed
-            - domains_to_delete is defined
-            - domains_to_delete | length > 0
-
-    - name: 'ACTION: Synchronize Uptime Kuma Monitors'
-      tags: always
-      become: no
-      block:
-        - name: 'SETUP: Flatten monitor groups into a single desired state list'
-          ansible.builtin.set_fact:
-            desired_monitors: |
-              {% set flattened = [] %}
-              {% for group_name, monitors in kuma_monitor_groups.items() %}
-                {% for monitor in monitors %}
-                  {% set _ = monitor.update({'group': group_name}) %}
-                  {% set final_tags = [group_name] + (monitor.tags | default([])) %}
-                  {% set _ = monitor.update({'tags': final_tags}) %}
-                  {% set _ = flattened.append(monitor) %}
-                {% endfor %}
-              {% endfor %}
-              {{ flattened }}
-
-        - name: 'ACTION: Authenticate with Uptime Kuma API'
-          ansible.builtin.uri:
-            url: 'http://{{ nexus_host_ip }}:{{ kuma_host_port }}/api/login'
-            method: POST
-            body_format: json
-            body:
-              username: '{{ kuma_user }}'
-              password: '{{ kuma_password }}'
-            status_code: 200
-          register: kuma_login
-          ignore_errors: true
-
-        - name: 'INFO: Display message on Uptime Kuma authentication failure'
-          ansible.builtin.debug:
-            msg:
-              - 'Could not authenticate with Uptime Kuma. This is expected on the first run'
-              - 'Please complete the setup at http://{{ nexus_host_ip }}:{{ kuma_host_port }} and re-run the playbook'
-              - 'Skipping monitor synchronization'
-          when: kuma_login.failed or kuma_login.json.ok == false
-
-        - name: 'GATHER INFO: Get current monitors from Uptime Kuma'
-          community.general.kuma_monitor:
-            api_url: 'http://{{ nexus_host_ip }}:{{ kuma_host_port }}'
-            username: '{{ kuma_user }}'
-            password: '{{ kuma_password }}'
-            state: list
-          register: kuma_current_state
-          when: not (kuma_login.failed or kuma_login.json.ok == false)
-
-        - name: 'SETUP: Set current monitors fact'
-          ansible.builtin.set_fact:
-            current_monitors: '{{ kuma_current_state.monitors | default([]) }}'
-          when: not (kuma_login.failed or kuma_login.json.ok == false)
-
-        - name: 'SETUP: Calculate monitors to add'
-          ansible.builtin.set_fact:
-            monitors_to_add: "{{ desired_monitors | community.general.lists_difference(current_monitors, 'name') }}"
-          when: not (kuma_login.failed or kuma_login.json.ok == false)
-
-        - name: 'SETUP: Calculate monitors to delete'
-          ansible.builtin.set_fact:
-            monitors_to_delete: "{{ current_monitors | community.general.lists_difference(desired_monitors, 'name') }}"
-          when: not (kuma_login.failed or kuma_login.json.ok == false)
-
-        - name: 'ACTION: Add or update monitors in Uptime Kuma'
-          community.general.kuma_monitor:
-            api_url: 'http://{{ nexus_host_ip }}:{{ kuma_host_port }}'
-            username: '{{ kuma_user }}'
-            password: '{{ kuma_password }}'
-            state: present
-            name: '{{ item.name }}'
-            monitor_type: "{{ item.type | default('http') }}"
-            url: '{{ item.url | default(omit) }}'
-            hostname: '{{ item.hostname | default(omit) }}'
-            docker_host: '{{ item.dockerHost | default(omit) }}'
-            docker_container: '{{ item.containerName | default(omit) }}'
-            interval: '{{ item.interval | default(60) }}'
-            insecure: '{{ item.insecureSkipVerify | default(false) }}'
-            cert_expiry_check: '{{ item.checkCertExpiry | default(false) }}'
-            cert_expiry_days: '{{ item.expiryDays | default(30) }}'
-            tags: '{{ item.tags | default([]) }}'
-          loop: '{{ monitors_to_add | default([]) }}'
-          when: not (kuma_login.failed or kuma_login.json.ok == false)
-
-        - name: 'ACTION: Delete extra monitors from Uptime Kuma'
-          community.general.kuma_monitor:
-            api_url: 'http://{{ nexus_host_ip }}:{{ kuma_host_port }}'
-            username: '{{ kuma_user }}'
-            password: '{{ kuma_password }}'
-            state: absent
-            name: '{{ item.name }}'
-          loop: '{{ monitors_to_delete | default([]) }}'
-          when: not (kuma_login.failed or kuma_login.json.ok == false)
+    - name: 'Synchronize Uptime Kuma Monitors'
+      tags: sync
+      import_role:
+        name: kuma_monitor_sync
