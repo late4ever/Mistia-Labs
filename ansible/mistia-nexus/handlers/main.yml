@@ -1,5 +1,5 @@
 - name: 'ACTION: Reload Caddy Configuration'
-  listen: 'Reload Caddy'
+  listen: 'Reload Caddy-old'
   block:
     - name: 'HANDLER: Restart Caddy container to refresh Caddyfile bind mount'
       community.docker.docker_container:

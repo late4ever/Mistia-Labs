@@ -1,0 +1,14 @@
+---
+- name: Filter services for Caddy
+  ansible.builtin.set_fact:
+    services_with_proxy: "{{ all_services | selectattr('caddy_target_url', 'defined') | list }}"
+
+- name: Synchronize Caddyfile
+  ansible.builtin.template:
+    src: 'Caddyfile.j2'
+    dest: '{{ deploy_path }}/caddy/CaddyfileFolder/Caddyfile'
+    mode: '0644'
+    owner: '{{ ansible_user }}'
+    group: 'admin'
+  notify: Reload Caddy
+  become: no

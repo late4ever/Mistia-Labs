@@ -65,6 +65,7 @@ all_services:
     kuma_keyword: 'OK'
     kuma_parent: Mistia-Nexus
     dns_domain: caddy.mistia.xyz
+    caddy_target_url: http://caddy:2019
   # --8<-- [end:caddy]
 
   # --8<-- [start:portainer]
@@ -78,6 +79,7 @@ all_services:
     kuma_type: 'http'
     kuma_parent: Mistia-Nexus
     dns_domain: portainer.mistia.xyz
+    caddy_target_url: http://portainer:9000
   # --8<-- [end:portainer]
 
   # --8<-- [start:dockge]
@@ -91,6 +93,7 @@ all_services:
     kuma_type: 'http'
     kuma_parent: Mistia-Nexus
     dns_domain: dockge.mistia.xyz
+    caddy_target_url: http://dockge:5001
   # --8<-- [end:dockge]
 
   # --8<-- [start:dozzle]
@@ -104,8 +107,10 @@ all_services:
     kuma_type: 'http'
     kuma_parent: Mistia-Nexus
     dns_domain: dozzle.mistia.xyz
+    caddy_target_url: http://dozzle:8080
+    caddy_transport_dial_timeout: '10s'
+    caddy_transport_response_header_timeout: '0s'
   # --8<-- [end:dozzle]
-
   # --8<-- [start:kuma]
   - name: uptime-kuma
     tags: [core, monitoring]
@@ -117,6 +122,7 @@ all_services:
     kuma_type: 'http'
     kuma_parent: Mistia-Nexus
     dns_domain: kuma.mistia.xyz
+    caddy_target_url: http://uptime-kuma:3001
   # --8<-- [end:kuma]
 
   # --8<-- [start:duplicati]
@@ -130,6 +136,7 @@ all_services:
     kuma_type: 'http'
     kuma_parent: Mistia-Nexus
     dns_domain: duplicati.mistia.xyz
+    caddy_target_url: http://duplicati:8200
   # --8<-- [end:duplicati]
 
   # --8<-- [start:tailscale]
@@ -155,6 +162,7 @@ all_services:
     kuma_type: 'http'
     kuma_parent: Mistia-Nexus
     dns_domain: nextcloud.mistia.xyz
+    caddy_target_url: http://nextcloud:80
   # --8<-- [end:nextcloud]:
 
   - name: 'UGREEN NASync 4800 Plus'
@@ -165,6 +173,8 @@ all_services:
     kuma_parent: Mistia-Labs
     kuma_ignoreTls: yes
     dns_domain: nexus.mistia.xyz
+    caddy_target_url: https://192.168.50.4:9443
+    caddy_tls_insecure_skip_verify: true
 
   - name: 'ASUS ZenWifi Pro ET12'
     tags: [hardware]
@@ -174,6 +184,8 @@ all_services:
     kuma_parent: Mistia-Labs
     kuma_ignoreTls: yes
     dns_domain: asus-et12.mistia.xyz
+    caddy_target_url: https://192.168.50.1:8443
+    caddy_tls_insecure_skip_verify: true
 
   - name: mistia.xyz
     tags: [website]

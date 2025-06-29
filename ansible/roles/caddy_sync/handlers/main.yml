@@ -1,0 +1,6 @@
+---
+- name: 'Reload Caddy'
+  community.docker.docker_container_exec:
+    container: caddy
+    command: caddy reload --config /etc/caddy/Caddyfile
+  become: no

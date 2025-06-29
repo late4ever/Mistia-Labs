@@ -28,41 +28,45 @@
     - name: 'Setup'
       tags: always
       block:
-        - name: 'Setup Nexus Environment'
-          import_tasks: tasks/setup.yml
+        # - name: 'Setup Nexus Environment'
+        #   import_tasks: tasks/setup.yml
 
-        - name: 'ACTION: Stat Caddyfile Before Sync'
-          ansible.builtin.stat:
-            path: '{{ deploy_path }}/caddy/Caddyfile'
-          register: caddyfile_before
+        # - name: 'ACTION: Stat Caddyfile Before Sync'
+        #   ansible.builtin.stat:
+        #     path: '{{ deploy_path }}/caddy/Caddyfile'
+        #   register: caddyfile_before
 
         - name: 'Git Synchronization'
           import_role:
             name: git_sync
 
-        - name: 'ACTION: Stat Caddyfile After Sync'
-          ansible.builtin.stat:
-            path: '{{ deploy_path }}/caddy/Caddyfile'
-          register: caddyfile_after
+        # - name: 'ACTION: Stat Caddyfile After Sync'
+        #   ansible.builtin.stat:
+        #     path: '{{ deploy_path }}/caddy/Caddyfile'
+        #   register: caddyfile_after
 
-        - name: 'ACTION: Reload Caddy if Caddyfile Changed'
-          ansible.builtin.debug:
-            msg: 'Caddyfile changed, notifying handler.'
-          when: caddyfile_before.stat.checksum != caddyfile_after.stat.checksum
-          notify: 'Reload Caddy'
-
+        # - name: 'ACTION: Reload Caddy if Caddyfile Changed'
+        #   ansible.builtin.debug:
+        #     msg: 'Caddyfile changed, notifying handler.'
+        #   when: caddyfile_before.stat.checksum != caddyfile_after.stat.checksum
+        #   notify: 'Reload Caddy'
   tasks:
     - name: 'Deploy Nexus Services'
       tags: always
       import_tasks: tasks/deploy.yml
 
   post_tasks:
-    - name: 'Synchronize AdGuard Home DNS Rewrites'
+    - name: 'Synchronize Caddyfile'
       tags: sync
+      import_role:
+        name: caddy_sync
+
+    - name: 'Synchronize AdGuard Home DNS Rewrites'
+      #tags: sync
       import_role:
         name: dns_rewrite_sync
 
     - name: 'Synchronize Uptime Kuma Monitors'
-      tags: sync
+      #tags: sync
       import_role:
         name: kuma_monitor_sync

@@ -1,0 +1,105 @@
+# --- Global Options ---
+{
+	email {env.CADDY_EMAIL}
+	acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+	admin :2019 {
+		origins caddy.mistia.xyz
+	}
+
+	# --- DNS over TLS ---
+	layer4 {
+		:853 {
+			route {
+				proxy 192.168.50.2:853
+			}
+		}
+	}
+}
+
+# --- Health Check Endpoint ---
+:80 {
+	handle /healthz {
+		respond "OK" 200
+	}
+}
+
+(security_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Frame-Options "SAMEORIGIN"
+		X-Content-Type-Options "nosniff"
+		X-XSS-Protection "1; mode=block"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+}
+
+(proxy_headers) {
+    header_up Host {http.request.host}
+    header_up X-Real-IP {http.request.remote.ip}
+    header_up X-Forwarded-For {http.request.remote.ip}
+}
+
+# --- Dedicated AdGuard Home Block ---
+# This block gets a specific certificate for AdGuard Home
+
+# --8<-- [start:adguard]
+adguard.mistia.xyz {
+	import security_headers
+
+	# DNS-over-HTTPS endpoint
+	handle /dns-query* {
+		reverse_proxy https://192.168.50.2:443 {
+			import proxy_headers
+			transport http {
+				tls
+			}
+		}
+	}
+
+	# AdGuard Home UI
+	handle {
+		reverse_proxy http://192.168.50.2:80 {
+			import proxy_headers
+		}
+	}
+}
+# --8<-- [end:adguard]
+
+# --- Main Site Block with Wildcard Certificate ---
+*.mistia.xyz {
+    import security_headers
+    encode zstd br gzip
+
+    # --- Local Service Routing ---
+{% for service in services_with_proxy %}
+    # --8<-- [start:{{ service.name | replace(' ', '') }}]
+    @{{ service.name | replace(' ', '') }} host {{ service.dns_domain }}
+    handle @{{ service.name | replace(' ', '') }} {
+        reverse_proxy {{ service.caddy_target_url }} {
+            import proxy_headers
+{% if service.caddy_transport_dial_timeout is defined or service.caddy_transport_response_header_timeout is defined or service.caddy_tls_insecure_skip_verify is defined %}
+            transport http {
+{% if service.caddy_tls_insecure_skip_verify is defined and service.caddy_tls_insecure_skip_verify %}
+                tls_insecure_skip_verify
+{% endif %}
+{% if service.caddy_transport_dial_timeout is defined %}
+                dial_timeout {{ service.caddy_transport_dial_timeout }}
+{% endif %}
+{% if service.caddy_transport_response_header_timeout is defined %}
+                response_header_timeout {{ service.caddy_transport_response_header_timeout }}
+{% endif %}
+            }
+{% endif %}
+        }
+    }
+    # --8<-- [end:{{ service.name | replace(' ', '') }}]
+{% endfor %}
+
+    # --- Fallback for unknown domains ---
+    handle {
+        root * /srv/www
+        rewrite * /404.html
+        file_server
+    }
+}
